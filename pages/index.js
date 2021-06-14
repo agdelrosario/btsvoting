@@ -28,7 +28,14 @@ export default function Home() {
         </div>
       </div>
 
-      <main>
+      <div className="slogan">
+        <p className="description">
+          The #1 source of BTS voting information and updates since 2017
+        </p>
+        <p className="sub-description">
+          Posting credible awards and voting events only
+        </p>
+      </div>
         {
           !session && (
             <>
@@ -45,18 +52,72 @@ export default function Home() {
             </>
           )
         }
-        <div className="slogan">
-          <p className="description">
-            The #1 source of BTS voting information and updates since 2017
-          </p>
-          <p className="sub-description">
-            Posting credible awards and voting events only
-          </p>
-        </div>
+
+      <main>
 
         <div className="sidebar">
-        <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          <h1>Voting Updates</h1>
+          <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+        <div className="timeline">
+          <h1>Voting Timeline</h1>
+          <div className="future">
+            <div className="future-arrow">
+              <div className="icon-arrow-up" />
+            </div>
+            <div className="cards">
+              <div className="card">
+                <div className="node">
 
+                </div>
+                <div className="details">
+                  <h2>Soribada Awards</h2>
+                  <div className="categories">
+                    <div className="category">
+                      <span>Korea</span>
+                    </div>
+                    <div className="category">
+                      <div className="icon icon-music"></div>
+                      <span>Butter</span>
+                    </div>
+                  </div> 
+                  <div className="app-link">
+                    <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                  </div>
+                </div>
+                
+              </div>
+              <div className="card">
+                <div className="node">
+
+                </div>
+                <div className="details">
+                  <h2>Soribada Awards</h2>
+                  <div className="categories">
+                    <div className="category">
+                      <span>Korea</span>
+                    </div>
+                    <div className="category">
+                      <div className="icon icon-music"></div>
+                      <span>Butter</span>
+                    </div>
+                  </div> 
+                  <div className="app-link">
+                    <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          <div className="present">
+            <div className="present-node">
+
+            </div>
+          </div>
+          <div className="past">
+            
+          </div>
         </div>
 
 
@@ -109,8 +170,8 @@ export default function Home() {
         ::selection { background: yellow; }
 
         main {
-          padding: 0 70px;
           min-height: 300px;
+          display: flex;
         }
 
         .navigation {
@@ -184,7 +245,7 @@ export default function Home() {
         .title {
           margin: 0;
           font-size: 3rem;
-          font-family: 'Bebas Neue', cursive;
+          font-family: 'Bebas Neue', sans-serif;
           color: #ffffff;
           display: inline;
           line-height: 0.8rem;
@@ -193,7 +254,8 @@ export default function Home() {
         }
 
         .slogan {
-          height: 200px;
+          padding: 0 70px;
+          min-height: 300px;
         }
 
         .description {
@@ -216,68 +278,239 @@ export default function Home() {
 
         .sidebar { 
           background-color: #1F1F1F;
-          padding: 20px;
+          padding: 20px 20px 20px 70px;
+          margin: 0 35px 0 0;
+          height: 100%;
+          width: 500px;
+          box-sizing: border-box;
         }
 
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+        h1 {
+          font-family: 'Bebas Neue', sans-serif;
+          padding: 0px;
+          margin: 0px;
+          margin: 0 0 20px 0;
         }
 
-        .grid {
+        .sidebar h1 {
+        }
+
+        .icon {
+          margin-right: 5px;
+        }
+
+        .icon-music {
+          -webkit-mask: url('/icon-music.svg') no-repeat center;
+          mask: url('/icon-music.svg') no-repeat center;
+          background-color: black;
+          width: 11px;
+          height: 11px;
+        }
+
+        .icon-arrow-up {
+          -webkit-mask: url("/arrow-up.svg") no-repeat center;
+          mask: url("/arrow-up.svg") no-repeat center;
+          background-color: black;
+          width: 9px;
+          height: 5px;
+        }
+
+        .timeline {
+          position: relative;
+          padding: 20px 70px 20px 20px;
+          width: calc(100% - 500px - 35px);
+        }
+
+        .timeline .future {
+        }
+
+        .timeline .future .future-arrow {
+          width: 21px;
+          height: 21px;
+          background-color: white;
+          border-radius: 10.5px;
+          margin-left: 124px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .timeline .future .future-arrow:hover {
+          background-color: black;
+        }
+
+        .timeline .future .future-arrow:hover .icon-arrow-up {
+          background-color: white;
+        }
+
+        .timeline .future .cards {
+          border-left: 1px dashed #C4C4C4;
+          margin-left: 134px;
+          width: calc(100% - 134px);
+          padding-top: 10px;
+        }
+
+        .timeline .future .cards .card {
+          position: relative;
+          padding: 0px 0 20px 40px;
+          width: 100%;
+        }
+
+        .timeline .future .cards .card .node {
+          width: 15px;
+          height: 15px;
+          border: 1px solid #C4C4C4;
+          border-radius: 7px;
+          position: absolute;
+          left: -8px;
+          background-color: #272727;
+          top: 6px;
+        }
+
+        .timeline .future .cards .card:hover .node {
+          border: 1px solid white;
+        }
+
+        .timeline .future .cards .card:hover h2 {
+          color: white;
+        }
+        
+        .timeline .future .cards .card .details {
           display: flex;
           align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
+        }
+        
+        .timeline .future .cards .card .details .categories {
+          display: flex;
+          align-items: center;
+          margin-left: 30px;
+          
+        }
+        
+        .timeline .future .cards .card .details .categories .category {
+          background-color: #000000;
+          color: #A1A1A1;
+          padding: 3px 10px;
+          border-radius: 14.5px;
+          margin-right: 10px;
+          height: 29px;
+          display: flex;
+          align-items: center;
+        }
+        
+        .timeline .future .cards .card .details .categories .category:hover {
+          background-color: #1A1A1A;
+          color: white;
+        }
+        
+        .timeline .future .cards .card .details .categories .category:hover .icon {
+          background-color: white;
         }
 
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
+        .timeline .future .cards .card .details .categories .category .icon {
+          background-color: #A1A1A1;
+        }
+
+        .timeline .future .cards .card .details .categories .category span{
+
+          font-size: 11px;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+        
+        .timeline .future .cards .card .details .app-link {
+          margin-left: 20px;
+          
+        }
+        
+        .timeline .future .cards .card .details .app-link .tooltip {
+          font-size: 20px;
+          line-height: 10px;
+        }
+
+        
+
+        .timeline .future .cards .card h2 {
+          font-family: 'Bebas Neue', sans-serif;
+          padding: 0px;
+          margin: 0px;
+          color: #A1A1A1;
+        }
+
+        .timeline .present {
+          position: relative;
+        }
+
+        .timeline .present .present-node {
+          width: 20px;
+          height: 20px;
+          background-color: #FFF032;
           border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
+          margin-left: 124px;
         }
 
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
 
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
 
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
 
-        .logo {
-          height: 1em;
-        }
+        // code {
+        //   background: #fafafa;
+        //   border-radius: 5px;
+        //   padding: 0.75rem;
+        //   font-size: 1.1rem;
+        //   font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+        //     DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+        // }
 
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
+        // .grid {
+        //   display: flex;
+        //   align-items: center;
+        //   justify-content: center;
+        //   flex-wrap: wrap;
+
+        //   max-width: 800px;
+        //   margin-top: 3rem;
+        // }
+
+        // .card {
+        //   margin: 1rem;
+        //   flex-basis: 45%;
+        //   padding: 1.5rem;
+        //   text-align: left;
+        //   color: inherit;
+        //   text-decoration: none;
+        //   border: 1px solid #eaeaea;
+        //   border-radius: 10px;
+        //   transition: color 0.15s ease, border-color 0.15s ease;
+        // }
+
+        // .card:hover,
+        // .card:focus,
+        // .card:active {
+        //   color: #0070f3;
+        //   border-color: #0070f3;
+        // }
+
+        // .card h3 {
+        //   margin: 0 0 1rem 0;
+        //   font-size: 1.5rem;
+        // }
+
+        // .card p {
+        //   margin: 0;
+        //   font-size: 1.25rem;
+        //   line-height: 1.5;
+        // }
+
+        // .logo {
+        //   height: 1em;
+        // }
+
+        // @media (max-width: 600px) {
+        //   .grid {
+        //     width: 100%;
+        //     flex-direction: column;
+        //   }
+        // }
       `}</style>
 
       <style jsx global>{`
