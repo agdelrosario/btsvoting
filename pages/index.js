@@ -22,22 +22,22 @@ export default function Home() {
           <a href="" className="link">How to vote</a>
 
           {!session && (
-            <a href="" className="link">
+            <div className="link">
               <div className="link-note">BVO Member?</div>
               <div onClick={signIn}>Log in</div>  
-            </a>
+            </div>
           )}
           {session && (
             <a href="/portal" className="link">Portal</a>
           )}
           {session && (
-            <a href="" className="link">
+            <div className="link">
               <div className="link-note">Hi {session.user.name}</div>
                 {/* <button>
                   <Link href="/secret">To the secret</Link>
                 </button> */}
                 <div onClick={signOut}>Log out</div>
-            </a>
+            </div>
           )}
         </div>
       </div>
