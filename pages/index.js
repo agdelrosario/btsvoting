@@ -5,8 +5,7 @@ import Link from "next/link"
 import {signIn, signOut, useSession} from "next-auth/client"
 
 export default function Home() {
-  const [session, loadng] = useSession();
-
+  const [session, loading] = useSession();
 
   return (
     <div className="container">
@@ -21,10 +20,25 @@ export default function Home() {
         <div className="links">
           <a href="" className="link">Home</a>
           <a href="" className="link">How to vote</a>
-          <a href="" className="link">
-            <div className="link-note">BVO Member?</div>
-            <div>Login</div>
-          </a>
+
+          {!session && (
+            <a href="" className="link">
+              <div className="link-note">BVO Member?</div>
+              <div onClick={signIn}>Log in</div>  
+            </a>
+          )}
+          {session && (
+            <a href="/portal" className="link">Portal</a>
+          )}
+          {session && (
+            <a href="" className="link">
+              <div className="link-note">Hi {session.user.name}</div>
+                {/* <button>
+                  <Link href="/secret">To the secret</Link>
+                </button> */}
+                <div onClick={signOut}>Log out</div>
+            </a>
+          )}
         </div>
       </div>
 
@@ -36,22 +50,6 @@ export default function Home() {
           Posting credible awards and voting events only
         </p>
       </div>
-        {
-          !session && (
-            <>
-              Not signed in <br />
-              <button onClick={signIn}>Sign in</button>
-            </>
-          )
-        }
-        {
-          session && (
-            <>
-              Signed in as {session.user.email}<br />
-              <button onClick={signOut}>Sign out</button>
-            </>
-          )
-        }
 
       <main>
 
