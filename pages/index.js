@@ -24,11 +24,11 @@ export default function Home() {
           {!session && (
             <div className="link">
               <div className="link-note">BVO Member?</div>
-              <div onClick={signIn}>Log in</div>  
+              <div className="link-login" onClick={signIn}>Log in</div>  
             </div>
           )}
           {session && (
-            <a href="/portal" className="link">Portal</a>
+            <a href="/portal" className="link">Member Portal</a>
           )}
           {session && (
             <div className="link">
@@ -36,7 +36,7 @@ export default function Home() {
                 {/* <button>
                   <Link href="/secret">To the secret</Link>
                 </button> */}
-                <div onClick={signOut}>Log out</div>
+                <div className="link-login" onClick={signOut}>Log out</div>
             </div>
           )}
         </div>
@@ -194,13 +194,18 @@ export default function Home() {
           padding: 0 30px 16px 30px;
         }
 
-        .links  a.link {
+        .links  a {
           font-weight: 600;
           color: #C2C2C2;
           text-decoration: none;
         }
 
-        .links a.link:hover  {
+        .links  a  &[aria-current] {
+          background-color: #faf9f4;
+          color: #353637;
+        }
+
+        .links a:hover  {
           color: #FFF;
         }
 
@@ -209,6 +214,14 @@ export default function Home() {
           font-size: 0.8rem;
           text-transform: uppercase;
           color: #979797;
+        }
+
+        .links .link .link-login {
+          cursor: pointer;
+        }
+
+        .links .link .link-login:hover {
+          font-weight: 600;
         }
 
         footer {
