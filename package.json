@@ -10,7 +10,7 @@
   "dependencies": {
     "@geist-ui/react-icons": "^1.0.1",
     "@zeit-ui/style": "^0.9.5",
-    "next": "^10.0.0",
+    "next": "^11.0.1-canary.0",
     "next-auth": "^3.25.0",
     "node-sass": "^6.0.0",
     "react": "17.0.1",
