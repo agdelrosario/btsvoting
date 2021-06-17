@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
 const options = {
-  site: process.env.NEXTAUTH_URL,
   providers: [
     Providers.Twitter({
       clientId: process.env.TWITTER_ID,
@@ -52,7 +51,7 @@ const options = {
     redirect: async (url, _) => {
       console.log("url", url)
       if (url === '/api/auth/signin') {
-        return Promise.resolve('/profile')
+        return Promise.resolve('/portal')
       }
       return Promise.resolve('/api/auth/signin')
     },
