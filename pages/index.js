@@ -1,8 +1,8 @@
 import Head from 'next/head'
-import '@zeit-ui/style'
 import React from "react"
 import Link from "next/link"
 import {signIn, signOut, useSession} from "next-auth/client"
+import NavBar from '../components/NavBar';
 
 export default function Home() {
   const [session, loading] = useSession();
@@ -13,34 +13,8 @@ export default function Home() {
         <title>BTS Voting Organization</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="navigation">
-        <div className="title">
-          BTS Voting Organization<span className="title-dot">.</span>
-        </div>
-        <div className="links">
-          <a href="" className="link">Home</a>
-          <a href="" className="link">How to vote</a>
 
-          {!session && (
-            <div className="link">
-              <div className="link-note">BVO Member?</div>
-              <div className="link-login" onClick={signIn}>Log in</div>  
-            </div>
-          )}
-          {session && (
-            <a href="/portal" className="link">Member Portal</a>
-          )}
-          {session && (
-            <div className="link">
-              <div className="link-note">Hi {session.user.name}</div>
-                {/* <button>
-                  <Link href="/secret">To the secret</Link>
-                </button> */}
-                <div className="link-login" onClick={signOut}>Log out</div>
-            </div>
-          )}
-        </div>
-      </div>
+      <NavBar />
 
       <div className="slogan">
         <p className="description">
@@ -155,26 +129,6 @@ export default function Home() {
       <footer>
         BTS Voting Org 2021
       </footer>
-
-      <style jsx>{`
-        
-      `}</style>
-
-      <style jsx global>{`
-        
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
     </div>
   )
 }
