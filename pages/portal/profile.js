@@ -4,15 +4,15 @@ import PortalNavBar from '../../components/PortalNavBar';
 
 export default function Portal() {
   const [session, loading] = useSession();
-  const [content, setContent] = useState();
+  const [admin, setAdmin] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("/api/secret");
+      const res = await fetch(`/api/admin`);
       const json = await res.json();
 
-      if (json.content) {
-        setContent(json.content);
+      if (json.admin) {
+        setAdmin(json.admin);
       }
     };
     fetchData();
@@ -29,7 +29,34 @@ export default function Portal() {
       </main>
     );
   }
+
+  console.log('session', session)
+
   return (
-    <PortalNavBar />
+    <div className="container">
+      <PortalNavBar />
+      <main>
+        <div className="profile">
+          <div className="heading">
+            <h1>Profile</h1>
+            <span>Your information are viewable only by you and the admins</span>
+          </div>
+          <div className="profile-info">
+            <div className="profile-info-card">
+              <h6>Team</h6>
+              <input />
+            </div>
+            <div className="profile-info-card">
+              <h6>Country</h6>
+              <div>Australia</div>
+            </div>
+            <div className="profile-info-card">
+              <h6>Birthday</h6>
+              <div>September 18</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

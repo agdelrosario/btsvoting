@@ -18,7 +18,9 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile) {
-      console.log("user", user)
+      // console.log("user", user)
+      // console.log("account", account)
+      
       // console.log("account", account)
       // console.log("profile", profile)
       return true
@@ -40,14 +42,12 @@ const options = {
      * @param  {boolean} isNewUser True if new user (only available on sign in)
      * @return {object}            JSON Web Token that will be saved
      */
-    async jwt(token, user, account, profile, isNewUser) {
-      // Add access_token to the token right after signin
-      console.log("jwt token", token)
-      if (account?.accessToken) {
-        token.accessToken = account.accessToken
-      }
-      return token
-    },
+    // session: async (session, user, sessionToken) => {
+    //     //  "session" is current session object
+    //     //  below we set "user" param of "session" to value received from "jwt" callback
+    //     session.account = user.user;
+    //     return Promise.resolve(session)
+    // },
     redirect: async (url, _) => {
       console.log("url", url)
       if (url === '/api/auth/signin') {

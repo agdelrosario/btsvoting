@@ -7,15 +7,15 @@ import MultiStatisticsCard from '../../components/MultiStatisticsCard';
 
 export default function Portal() {
   const [session, loading] = useSession();
-  const [content, setContent] = useState();
+  const [admin, setAdmin] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("/api/secret");
+      const res = await fetch("/api/admin");
       const json = await res.json();
 
-      if (json.content) {
-        setContent(json.content);
+      if (json) {
+        setAdmin(json.length > 0);
       }
     };
     fetchData();
@@ -32,6 +32,7 @@ export default function Portal() {
       </main>
     );
   }
+
   return (
     <div className="container">
       <Head>
@@ -87,6 +88,9 @@ export default function Portal() {
           </div>
         </div>
         <hr />
+        <div>
+          
+        </div>
       </main>
     </div>
   );

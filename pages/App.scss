@@ -23,6 +23,13 @@ body {
 //   font-family: 'Montserrat', sans-serif;
 // }
 
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  padding: 0px;
+  margin: 0px;
+  margin: 0 0 20px 0;
+}
+
 .container {
   color: #fff;
   font-family: 'Montserrat', sans-serif;
@@ -124,6 +131,59 @@ body {
         }
       }
     }
+
+    .profile {
+      padding: 40px 70px;
+      width: 100%;
+
+      .heading {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+
+        h1 {
+          margin-bottom: 0px;
+        }
+
+        span {
+          margin-bottom: 9px;
+        }
+      }
+
+      .profile-info {
+        display: flex;
+        flex-direction: row;
+        // justify-content: space-between;
+        width: 100%;
+
+        &-card {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+  
+  
+          h6 {
+            // font-family: 'Bebas Neue', sans-serif;
+            padding: 0px;
+            margin: 3px 0 0 0;
+            text-transform: uppercase;
+            font-size: 13px;
+            width: 100px;
+          }
+
+          input {
+            background-color: transparent;
+            border: 1px solid #414141;
+
+            &:hover, &:focus {
+              border: 1px solid #ffffff;
+            }
+          }
+  
+        }
+      }
+    }
   }
 
   .navigation {
@@ -155,12 +215,15 @@ body {
   
       a {
         text-decoration: none;
+        color: #ffffff;
     
-        &:hover,
-        &:focus,
-        &:active {
-          text-decoration: underline;
+        &:hover {
+          color: #FFF032;
         }
+        // &:focus,
+        // &:active {
+        //   text-decoration: underline;
+        // }
       }
     }
 
@@ -397,13 +460,6 @@ body {
       }
     }
   }
-}
-
-h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  padding: 0px;
-  margin: 0px;
-  margin: 0 0 20px 0;
 }
 
 ::-moz-selection { background: yellow; }
