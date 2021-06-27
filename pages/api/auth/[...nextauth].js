@@ -8,6 +8,9 @@ const options = {
       clientSecret: process.env.TWITTER_SECRET,
     }),
   ],
+  pages: {
+    signIn: '/login',
+  },
   callbacks: {
     /**
      * @param  {object} user     User object

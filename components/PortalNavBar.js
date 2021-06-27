@@ -10,6 +10,8 @@ const NavBar = () => {
         <a href="/portal">BVO Portal<span className="title-dot">.</span></a>
       </div>
       <div className="links">
+        
+        {/* <a href="/" className="link">BVO Website</a> */}
         {session && (
           <a href="/portal/profile" className="link">Profile</a>
         )}

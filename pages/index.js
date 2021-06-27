@@ -29,7 +29,7 @@ export default function Home() {
 
         <div className="sidebar">
           <h1>Voting Updates</h1>
-          <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
         </div>
         <div className="timeline">
           <h1>Voting Timeline</h1>

@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useState, useEffect } from "react";
 import {signIn, signOut, useSession} from "next-auth/client"
+import { useRouter } from 'next/router';
 import PortalNavBar from '../../components/PortalNavBar';
 import StatisticsCard from '../../components/StatisticsCard';
 import MultiStatisticsCard from '../../components/MultiStatisticsCard';
@@ -8,6 +9,7 @@ import MultiStatisticsCard from '../../components/MultiStatisticsCard';
 export default function Portal() {
   const [session, loading] = useSession();
   const [admin, setAdmin] = useState();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,19 +21,14 @@ export default function Portal() {
       }
     };
     fetchData();
+
+
+    if (!session) {
+      router.push('/login')
+    }
   }, [session]);
 
   if (typeof window !== "undefined" && loading) return null;
-
-  if (!session) {
-    return (
-      <main>
-        <div>
-          <h1>You aren't signed in, please sign in first</h1>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <div className="container">
@@ -44,7 +41,7 @@ export default function Portal() {
         <div className="dashboard">
           <div className="notice">
             <h3>Notice</h3>
-            Welcome to the BTS Voting Org Portal! Your profile will be verified by the admin. After successful verification, you will be able to update your profile and view your team's statistics. Have a great day!
+            Welcome to the BTS Voting Org Portal! Your profile will be verified by the admin. After successful verification, you will be able to update your profile information and view your team's statistics. Have a great day!
           </div>
 
           <h1>Team President Namjoon Stats</h1>
