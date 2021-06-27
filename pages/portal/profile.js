@@ -32,6 +32,16 @@ export default function Portal() {
 
   console.log('session', session)
 
+  const teams = [
+    'Laserpointer',
+    'BVSU',
+    'iHeart',
+    'Bemojikens',
+    'President Namjoon',
+    'Hope World',
+    'Epipanthy'
+  ]
+
   return (
     <div className="container">
       <PortalNavBar />
@@ -44,7 +54,18 @@ export default function Portal() {
           <div className="profile-info">
             <div className="profile-info-card">
               <h6>Team</h6>
-              <input />
+              <div className="zi-select-container small">
+                <select className="zi-select">
+                  {
+                    teams.map((team) => {
+                      return (
+                        <option>{ team }</option>
+                      )
+                    })
+                  }
+                </select>
+                <i className="arrow zi-icon-up"></i>
+              </div>
             </div>
             <div className="profile-info-card">
               <h6>Country</h6>

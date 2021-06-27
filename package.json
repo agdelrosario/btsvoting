@@ -15,6 +15,7 @@
     "next-auth": "^3.25.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-select-country-list": "^2.2.3",
     "sass": "^1.35.1"
   }
 }
