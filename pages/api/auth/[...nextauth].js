@@ -18,7 +18,7 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile) {
-      // console.log("user", user)
+      console.log("user", user)
       // console.log("account", account)
       
       // console.log("account", account)
@@ -56,7 +56,7 @@ const options = {
       return Promise.resolve('/api/auth/signin')
     },
   },
-  database: `${process.env.DATABASE_URL}/users`,
+  // database: `${process.env.DATABASE_URL}/users`,
 };
 
 export default (req, res) => NextAuth(req, res, options);
