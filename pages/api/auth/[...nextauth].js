@@ -56,7 +56,7 @@ const options = {
       return Promise.resolve('/api/auth/signin')
     },
   },
-  // database: `${process.env.DATABASE_URL}/users`,
+  database: `${process.env.DATABASE_URL}/users`,
 };
 
 export default (req, res) => NextAuth(req, res, options);
