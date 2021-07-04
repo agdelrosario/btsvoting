@@ -45,6 +45,7 @@ export default function SignIn(providers) {
             {
               Object.values(providers.providers).map(provider => (
                 <div key={provider.name} className="login-button">
+                  <div className="login-button-description">For BVO Teams in {provider.name}</div>
                   <button onClick={() => signIn(provider.id)}>Sign in with {provider.name}</button>
                 </div>
               ))

@@ -31,6 +31,10 @@ h1 {
   // font-weight: 500 !important;
 }
 
+p {
+  line-height: 2em;
+}
+
 .container {
   color: #fff;
   font-family: 'Montserrat', sans-serif;
@@ -89,8 +93,23 @@ h1 {
       }
 
       .login-buttons {
-        margin: 20px 0 40px 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 40px 0 40px 0;
         .login-button {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 20px;
+          &-description {
+            margin-bottom: 10px;
+            color: #979797;
+            font-size: 12px;
+          }
+
           button {
             border: 1px solid #979797;
             background-color: transparent;
@@ -189,15 +208,15 @@ h1 {
       }
 
       .profile-info {
-        display: flex;
-        flex-direction: rows;
+        // display: flex;
+        // flex-direction: rows;
         // justify-content: space-between;
         width: 100%;
 
         &-card {
-          display: flex;
-          flex-direction: row;
-          align-items: flex-start;
+          // display: flex;
+          // flex-direction: row;
+          // align-items: flex-start;
           margin-right: 20px;
   
   

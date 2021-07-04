@@ -7,6 +7,10 @@ const options = {
       clientId: process.env.TWITTER_ID,
       clientSecret: process.env.TWITTER_SECRET,
     }),
+    Providers.Facebook({
+      clientId: process.env.FACEBOOK_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+    }),
   ],
   pages: {
     signIn: '/login',
@@ -20,23 +24,23 @@ const options = {
      *                           Return `false` to deny access
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
-    async signIn(user, account, profile) {
-      console.log("user", user)
-      // console.log("account", account)
+    // async signIn(user, account, profile) {
+    //   console.log("user", user)
+    //   // console.log("account", account)
       
-      // console.log("account", account)
-      // console.log("profile", profile)
-      return true
-      // const isAllowedToSignIn = true
-      // if (isAllowedToSignIn) {
-      //   return true
-      // } else {
-      //   // Return false to display a default error message
-      //   return false
-      //   // Or you can return a URL to redirect to:
-      //   // return '/unauthorized'
-      // }
-    },
+    //   // console.log("account", account)
+    //   // console.log("profile", profile)
+    //   return true
+    //   // const isAllowedToSignIn = true
+    //   // if (isAllowedToSignIn) {
+    //   //   return true
+    //   // } else {
+    //   //   // Return false to display a default error message
+    //   //   return false
+    //   //   // Or you can return a URL to redirect to:
+    //   //   // return '/unauthorized'
+    //   // }
+    // },
     /**
      * @param  {object}  token     Decrypted JSON Web Token
      * @param  {object}  user      User object      (only available on sign in)

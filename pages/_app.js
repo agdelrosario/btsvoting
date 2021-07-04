@@ -12,10 +12,23 @@ function MyApp({ Component, pageProps }) {
   const theme = useMemo(
     () =>
       createMuiTheme({
+        typography: {
+          fontFamily: [
+            'Bebas Nueue',
+            'Montserrat'
+          ]
+        },
         palette: {
           type: prefersDarkMode ? 'dark' : 'light',
           primary: yellow,
         },
+        overrides: {
+          MuiStepper: {
+            root: {
+              backgroundColor: 'transparent',
+            }
+          }
+        }
       }),
     [prefersDarkMode],
   );

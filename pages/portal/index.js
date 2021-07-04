@@ -28,7 +28,7 @@ export default function Portal() {
     }
   }, [session]);
 
-  if (typeof window !== "undefined" && loading) return null;
+  // if (typeof window !== "undefined" && loading) return null;
 
   return (
     <div className="container">

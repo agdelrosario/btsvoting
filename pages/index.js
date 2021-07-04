@@ -127,7 +127,8 @@ export default function Home() {
       </main>
 
       <footer>
-        BTS Voting Org 2021
+        BTS Voting Org 2021<br />
+        Developed and maintained by <a href="https://twitter.com/taeyasshibb">@taeyasshibb</a>
       </footer>
     </div>
   )
