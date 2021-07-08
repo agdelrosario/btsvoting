@@ -150,7 +150,7 @@ function getStepContent(stepIndex) {
       const json = await res.json();
 
       if (json) {
-        console.log("json", json)
+        // console.log("json", json)
         setTeams(json);
       }
     };

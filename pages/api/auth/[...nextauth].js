@@ -56,7 +56,7 @@ const options = {
     //     return Promise.resolve(session)
     // },
     redirect: async (url, _) => {
-      console.log("url", url)
+      // console.log("url", url)
       if (url === '/api/auth/signin') {
         return Promise.resolve('/portal')
       }

@@ -4,7 +4,7 @@ import { connectToDatabase } from "../../../util/mongodb";
 export default async (req, res) => {
 //   const session = await getSession({ req });
   const { db } = await connectToDatabase();
-  console.log("req", req)
+  // console.log("req", req)
   const teams = await db
     .collection("profiles")
     .find({email: req.email})

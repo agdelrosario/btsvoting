@@ -12,6 +12,7 @@ const NavBar = () => {
       <div className="links">
         
         {/* <a href="/" className="link">BVO Website</a> */}
+        {/* TO DO: profile must be unclickable on initial-setup route */}
         {session && (
           <a href="/portal/profile" className="link">Profile</a>
         )}
