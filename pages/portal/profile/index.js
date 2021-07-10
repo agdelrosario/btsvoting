@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/client";
-import countryList from 'react-select-country-list'
-import PortalNavBar from '../../../components/PortalNavBar'
+import { getSession } from "next-auth/client";
+import countryList from 'react-select-country-list';
+import PortalNavBar from '../../../components/PortalNavBar';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import MomentUtils from '@date-io/moment';
@@ -12,12 +12,13 @@ import {
 } from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
 
-export default function Portal() {
-  const [session, loading] = useSession();
+export default function Portal({session, profile, host}) {
+  // const [session, loading] = useSession();
   const [admin, setAdmin] = useState();
   const [teams, setTeams] = useState();
-  const allOptions = countryList().data;
   const [selectedDate, setSelectedDate] = useState(null);
+  // const [country, setCountry] = useState(null)
+  const [country, setCountry] = useState(countryList().valueMap[profile.country.toLowerCase()])
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -38,7 +39,6 @@ export default function Portal() {
       const json = await res.json();
 
       if (json) {
-        // console.log("json", json)
         setTeams(json);
       }
     };
@@ -92,25 +92,29 @@ export default function Portal() {
           <div className="profile-info">
             <Grid>
               <div className="profile-info-card">
-                <Autocomplete
+                <TextField className="autocomplete" label="Team" defaultValue={country} disabled variant="outlined" />
+
+                {/* <Autocomplete
                   id="combo-box-demo"
                   options={teams}
+                  // defaultValue={profile.birthday.slug}
                   getOptionLabel={(option) => option.name}
                   style={{ width: 300 }}
                   renderInput={(params) => <TextField className="autocomplete" {...params} label="Team" variant="outlined" />}
-                />
+                /> */}
               </div>
               <div className="profile-info-card">
-                <Autocomplete
+                <TextField className="autocomplete" label="Country" defaultValue={country} disabled variant="outlined" />
+                {/* <Autocomplete
                   id="combo-box-demo"
                   options={allOptions}
                   getOptionLabel={(option) => option.label}
                   style={{ width: 300 }}
                   renderInput={(params) => <TextField className="autocomplete" {...params} label="Country" variant="outlined" />}
-                />
+                /> */}
               </div>
               <div className="profile-info-card">
-                <MuiPickersUtilsProvider utils={MomentUtils}>
+                {/* <MuiPickersUtilsProvider utils={MomentUtils}>
                   <KeyboardDatePicker
                     margin="normal"
                     id="date-picker-dialog"
@@ -123,7 +127,7 @@ export default function Portal() {
                     }}
                     inputVariant="outlined"
                   />
-                </MuiPickersUtilsProvider>
+                </MuiPickersUtilsProvider> */}
               </div>
             </Grid>
           </div>
@@ -137,4 +141,18 @@ export default function Portal() {
       </main>
     </div>
   );
+}
+
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx)
+  const res = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
+  const profile = await res.json();
+  return {
+    props: {
+      session: session,
+      profile: profile,
+      host: process.env.HOST
+    }
+  }
 }

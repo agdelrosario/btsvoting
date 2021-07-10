@@ -179,17 +179,12 @@ export default function Portal({ profile, session }) {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
-  // console.log("session", session)
-  // console.log("host", process.env)
-  // console.log("context", context)
-  // console.log("process.env", process.env.HOST)
   const res = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
-  const json = await res.json();
-  // console.log('res', json)
+  const profile = await res.json();
   return {
     props: {
       session: session,
-      profile: json,
+      profile: profile,
     }
   }
 }
