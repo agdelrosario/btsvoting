@@ -1,4 +1,4 @@
-import { getSession } from "next-auth/client";
+// import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../util/mongodb";
 
 // export default async (req, res) => {
@@ -16,11 +16,11 @@ import { connectToDatabase } from "../../../util/mongodb";
 
 
 export default async (req, res) => {
-  const session = await getSession({ req });
+  // const session = await getSession({ req });
   const { db } = await connectToDatabase();
   const movies = await db
     .collection("admins")
-    .find({email: session.user.email})
+    .find({email: req.query.email})
     .limit(20)
     .toArray();
   res.json(movies);

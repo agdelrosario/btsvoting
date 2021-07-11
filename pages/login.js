@@ -2,9 +2,6 @@ import Head from 'next/head'
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import { getProviders, signIn, signOut, useSession} from "next-auth/client"
-// import PortalNavBar from '../../components/PortalNavBar';
-// import StatisticsCard from '../../components/StatisticsCard';
-// import MultiStatisticsCard from '../../components/MultiStatisticsCard';
 
 export async function getServerSideProps(context){
   const providers = await getProviders()
@@ -34,8 +31,7 @@ export default function SignIn(providers) {
         <title>BVO Portal</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* <PortalNavBar /> */}
-      <main>
+      <main className="login">
         <div className="login-page">
           <div className="title">
             <a href="/">BTS VOTING ORG<span className="title-dot">.</span></a>

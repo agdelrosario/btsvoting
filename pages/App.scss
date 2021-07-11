@@ -11,6 +11,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
     Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
     sans-serif;
+  background-color: #272727;
 }
 
 * {
@@ -38,228 +39,19 @@ p {
 .container {
   color: #fff;
   font-family: 'Montserrat', sans-serif;
-  min-height: 100vh;
-  max-width: 100vw;
-  background-color: #272727;
-
-
-  main {
-    min-height: 300px;
-    display: flex;
-    // width: 100vw;
-    box-sizing: border-box;
-
-
-    .sidebar { 
-      background-color: #1F1F1F;
-      padding: 20px 20px 20px 70px;
-      margin: 0 35px 0 0;
-      height: 100%;
-      width: 500px;
-      box-sizing: border-box;
-
-      h1 {
-      }
-    }
-
-
-    .notice {
-      border: 1px solid #414141;
-      padding: 20px;
-      margin-bottom: 20px;
-      width: 100%;
-
-      h3 {
-        font-size: 12px;
-        text-transform: uppercase;
-        padding: 0px;
-        margin: 0px;
-        margin: 0 0 5px 0;
-        color: #A5A5A5;
-      }
-    }
-
-    .login-page {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      p {
-        color: #979797;
-        font-size: 14px;
-      }
-
-      .login-buttons {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 40px 0 40px 0;
-        .login-button {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 20px;
-          &-description {
-            margin-bottom: 10px;
-            color: #979797;
-            font-size: 12px;
-          }
-
-          button {
-            border: 1px solid #979797;
-            background-color: transparent;
-            padding: 15px 30px;
-            color: white;
-            border-radius: 10px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            cursor: pointer;
-
-            &:hover {
-              border: 1px solid yellow;
-              color: yellow;
-            }
-          }
-        }
-      }
-    }
-
-    .dashboard {
-      padding: 40px 70px;
-      width: 100%;
-
-      hr {
-        color: #414141;
-        width: 1px;
-      }
-
-      .statistics {
-        display: flex;
-        flex-direction: row;
-
-        .card {
-          width: 250px;
-          border: 1px solid #414141;
-          padding: 15px;
-          margin-right: 10px;
-
-          &.multiple {
-            width: auto;
-          }
-
-          h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            padding: 0px;
-            margin: 0px;
-            margin: 0 0 5px 0;
-          }
-
-          .points {
-            display: flex;
-            flex-direction: column;
-
-            &-value {
-              font-size: 30px;
-            }
-
-            &-type {
-              margin-top: 5px;
-            }
-          }
-
-          .points-collection {
-            display: flex;
-            flex-direction: row;
-
-            .points {
-              margin-right: 20px;
-            }
-          }
-
-          &:hover {
-            border: 1px solid white;
-          }
-        }
-      }
-    }
-
-    .profile {
-      padding: 40px 70px;
-      width: 100%;
-
-      .heading {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-end;
-
-        h1 {
-          margin-bottom: 0px;
-        }
-
-        span {
-          margin-bottom: 9px;
-        }
-      }
-
-      .profile-info {
-        // display: flex;
-        // flex-direction: rows;
-        // justify-content: space-between;
-        width: 100%;
-
-        &-card {
-          // display: flex;
-          // flex-direction: row;
-          // align-items: flex-start;
-          margin-right: 20px;
-  
-  
-          h6 {
-            // font-family: 'Bebas Neue', sans-serif;
-            padding: 0px;
-            margin: 3px 0 0 0;
-            text-transform: uppercase;
-            font-size: 13px;
-            width: 100px;
-          }
-
-          .autocomplete {
-            margin-top: 16px;
-          }
-
-          // input {
-          //   background-color: transparent;
-          //   border: 1px solid #414141;
-
-          //   &:hover, &:focus {
-          //     border: 1px solid #ffffff;
-          //   }
-          // }
-  
-        }
-      }
-
-      .voting-profile {
-        margin-top: 50px;
-      }
-    }
-  }
+  // min-height: 100vh;
+  // max-width: 100vw;
   
   .title {
     margin: 0 0 16px 0;
     font-size: 40px;
     font-family: 'Bebas Neue', sans-serif;
     color: #ffffff;
-    display: inline;
+    // display: inline;
     line-height: 0.8rem;
     text-align: left;
     padding-bottom: 10px;
+    // width: 100%;
 
     .title-dot {
       font-family: 'Montserrat', sans-serif;
@@ -280,26 +72,351 @@ p {
       // }
     }
   }
+  
+  main {
+    width: 100%;
+
+
+    a {
+      text-decoration: none;
+      color: #e0e0e0;
+      background-color: #111;
+      padding: 5px 8px;
+      border-radius: 5px;
+  
+      &:hover {
+        color: #FFF032;
+        background-color: #000000;
+      }
+      // &:focus,
+      // &:active {
+      //   text-decoration: underline;
+      // }
+    }
+
+    &.login {
+      .login-page {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        p {
+          color: #979797;
+          font-size: 14px;
+        }
+
+        .login-buttons {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin: 40px 0 40px 0;
+          .login-button {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            &-description {
+              margin-bottom: 10px;
+              color: #979797;
+              font-size: 12px;
+            }
+
+            button {
+              border: 1px solid #979797;
+              background-color: transparent;
+              padding: 15px 30px;
+              color: white;
+              border-radius: 10px;
+              font-family: 'Montserrat', sans-serif;
+              font-size: 16px;
+              cursor: pointer;
+
+              &:hover {
+                border: 1px solid yellow;
+                color: yellow;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &.portal {
+      min-height: 300px;
+      display: flex;
+      width: 100vw;
+      box-sizing: border-box;
+      padding: 40px 70px;
+      width: 100%;
+
+      &.xs {
+        padding: 20px 30px;
+      }
+  
+  
+      .sidebar { 
+        background-color: #1F1F1F;
+        padding: 20px 20px 20px 70px;
+        margin: 0 35px 0 0;
+        height: 100%;
+        width: 500px;
+        box-sizing: border-box;
+      }
+  
+  
+      .notice {
+        border: 1px solid #414141;
+        padding: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+  
+        h3 {
+          font-size: 12px;
+          text-transform: uppercase;
+          padding: 0px;
+          margin: 0px;
+          margin: 0 0 5px 0;
+          color: #A5A5A5;
+        }
+  
+        p {
+          margin: 0;
+          padding: 0;
+        }
+      }
+  
+      .dashboard {
+  
+        hr {
+          color: #414141;
+          width: 1px;
+        }
+  
+        .statistics {
+          display: flex;
+          flex-direction: row;
+  
+          .card {
+            width: 250px;
+            border: 1px solid #414141;
+            padding: 15px;
+            margin-right: 10px;
+  
+            &.multiple {
+              width: auto;
+            }
+  
+            h2 {
+              font-family: 'Bebas Neue', sans-serif;
+              padding: 0px;
+              margin: 0px;
+              margin: 0 0 5px 0;
+            }
+  
+            .points {
+              display: flex;
+              flex-direction: column;
+  
+              &-value {
+                font-size: 30px;
+              }
+  
+              &-type {
+                margin-top: 5px;
+              }
+            }
+  
+            .points-collection {
+              display: flex;
+              flex-direction: row;
+  
+              .points {
+                margin-right: 20px;
+              }
+            }
+  
+            &:hover {
+              border: 1px solid white;
+            }
+          }
+        }
+      }
+  
+      .profile {
+        width: 100%;
+
+        h1 {
+          // font-family: 'Montserrat', sans-serif;
+          // font-weight: 400;
+          // font-size: 20px;
+          // text-transform: uppercase;
+        }
+  
+        .heading {
+          // display: flex;
+          // flex-direction: row;
+          // justify-content: space-between;
+          // align-items: flex-end;
+          margin-bottom: 10px;
+  
+          h1 {
+            margin: 0;
+            line-height: 28px;
+          }
+  
+          span {
+            // margin-bottom: 9px;
+            font-size: 13px;
+            color: #e0e0e0;
+          }
+        }
+  
+        .profile-info {
+          // display: flex;
+          // flex-direction: rows;
+          // justify-content: space-between;
+          width: 100%;
+
+          
+          
+  
+          &-card {
+            // display: flex;
+            // flex-direction: row;
+            // align-items: flex-start;
+            // margin-right: 20px;
+            min-width: 200px;
+    
+    
+            h6 {
+              // font-family: 'Bebas Neue', sans-serif;
+              padding: 0px;
+              margin: 3px 0 0 0;
+              text-transform: uppercase;
+              font-size: 13px;
+              width: 100px;
+            }
+  
+            .autocomplete {
+              margin-top: 16px;
+              width: 100%;
+            }
+  
+            // input {
+            //   background-color: transparent;
+            //   border: 1px solid #414141;
+  
+            //   &:hover, &:focus {
+            //     border: 1px solid #ffffff;
+            //   }
+            // }
+    
+          }
+
+
+          .voting-info {
+            border-bottom: 1px solid #414141;
+            padding: 20px 0 10px 0;
+            // max-width: 100%;
+
+            h1 {
+              font-size: 25px;
+              margin: 0;
+              padding: 0;
+              line-height: 19px;
+              font-family: 'Bebas Neue', sans-serif;
+            }
+
+            span {
+              color: #bdbdbd;
+              font-size: 14px;
+              line-height: 7px;
+            }
+
+            .item {
+              padding: 10px 15px;
+              // max-width: 100%;
+              width: 100%;
+              height: 80px;
+              border: 1px solid #9e9e9e;
+              border-radius: 10px;
+              margin: 0;
+              padding: 0;
+
+              h3 {
+                margin: 0;
+                padding: 0;
+                font-weight: 300;
+                font-size: 16px;
+              }
+
+              &.add-new-account {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #9e9e9e;
+              }
+
+              &:hover {
+                border: 1px solid #ffffff;
+                cursor: pointer;
+                color: #ffffff;
+              }
+            }
+          }
+        }
+  
+        .voting-profile {
+          margin-top: 50px;
+        }
+      }
+    }
+  }
+
+
 
   .navigation {
-    max-width: 100%;
+    // max-width: 100%;
+    // min-width: 100%;
+    width: 100%;
     border-bottom: 1px solid #414141;
-    height: 100px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
+    min-height: 100px;
+    // display: flex;
+    // flex-direction: row;
+    // align-items: flex-end;
+    // justify-content: space-between;
     padding: 0 70px;
     box-sizing: border-box;
 
+    &.xs {
+      padding: 0 20px;
+    }
+
+    // .title {
+    //   a {
+    //     line-height: 10px;
+    //   }
+    // }
+
     .links {
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-      align-items: flex-end;
-  
+      padding-bottom: 10px;
+      // width: 100%;
+      // display: flex;
+      // flex-direction: row;
+      // height: 100%;
+      // align-items: flex-end;
+
+      &.xs {
+
+      }
       .link {
-        padding: 0 30px 16px 30px;
+        // padding: 0 30px 16px 30px;
+        width: unset;
         
         .link-note {
           font-weight: 500;
@@ -531,65 +648,35 @@ p {
 ::selection { background: yellow; color: grey; }
 
 
+.add-new-account-modal {
+  width: 100vw;
+  height: 100vh;
+  background-color: #272727;
+  position: absolute;
+  color: #ffffff;
+  padding: 30px;
+  
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 19px;
+  }
 
+  .close {
+    -webkit-mask: url("/close.svg") no-repeat center;
+    mask: url("/close.svg") no-repeat center;
+    background-color: #ffffff;
+    width: 17px;
+    height: 17px;
+  }
 
+  .ticket {
+    width: 100%;
+  }
 
-// code {
-//   background: #fafafa;
-//   border-radius: 5px;
-//   padding: 0.75rem;
-//   font-size: 1.1rem;
-//   font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-//     DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-// }
-
-// .grid {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   flex-wrap: wrap;
-
-//   max-width: 800px;
-//   margin-top: 3rem;
-// }
-
-// .card {
-//   margin: 1rem;
-//   flex-basis: 45%;
-//   padding: 1.5rem;
-//   text-align: left;
-//   color: inherit;
-//   text-decoration: none;
-//   border: 1px solid #eaeaea;
-//   border-radius: 10px;
-//   transition: color 0.15s ease, border-color 0.15s ease;
-// }
-
-// .card:hover,
-// .card:focus,
-// .card:active {
-//   color: #0070f3;
-//   border-color: #0070f3;
-// }
-
-// .card h3 {
-//   margin: 0 0 1rem 0;
-//   font-size: 1.5rem;
-// }
-
-// .card p {
-//   margin: 0;
-//   font-size: 1.25rem;
-//   line-height: 1.5;
-// }
-
-// .logo {
-//   height: 1em;
-// }
-
-// @media (max-width: 600px) {
-//   .grid {
-//     width: 100%;
-//     flex-direction: column;
-//   }
-// }
+  .button {
+    width: 100%;
+    height: 100%;
+  }
+}

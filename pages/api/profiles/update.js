@@ -5,7 +5,17 @@ export default async (req, res) => {
   console.log("req", req.body)
   const data = await db
     .collection("profiles")
-    .insertOne(req.body)
-  console.log("data", data)
+    .updateOne(
+      { email: req.query.email },
+      [
+        {
+          $set: {
+            birthday: req.body.birthday,
+            team: req.body.team,
+            country: req.body.country
+          }
+        },
+      ]
+    )
   res.json(data.result);
 };

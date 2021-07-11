@@ -1,32 +1,71 @@
 
-import {signIn, signOut, useSession} from "next-auth/client"
+import { signOut, useSession } from "next-auth/client"
+import Grid from '@material-ui/core/Grid';
 
-const NavBar = () => {
+const NavBar = ({isProfilePresent, lowerThanSm}) => {
   const [session, loading] = useSession();
 
   return (
-    <div className="navigation">
-      <div className="title">
-        <a href="/portal">BVO Portal<span className="title-dot">.</span></a>
-      </div>
-      <div className="links">
-        
-        {/* <a href="/" className="link">BVO Website</a> */}
-        {/* TO DO: profile must be unclickable on initial-setup route */}
-        {session && (
-          <a href="/portal/profile" className="link">Profile</a>
+    <Grid
+      container
+      direction="row"
+      alignItems="flex-end"
+      className={`navigation ${lowerThanSm ? 'xs' : ''}`}
+      spacing={1}
+    >
+      <Grid item xs={12} sm={6} className="title">
+        <a href="/portal">
+          BVO Portal<span className="title-dot">.</span>
+        </a>
+      </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        sm={6}
+        className={`links ${lowerThanSm ? 'xs' : ''}`}
+        direction="row"
+        alignItems="flex-end"
+        justify={`${lowerThanSm ? 'flex-start' : 'flex-end'}`}
+        spacing={5}
+      >
+        {session && isProfilePresent && (
+          <Grid item className="link">
+            <a href="/portal/profile">Profile</a>
+          </Grid>
         )}
         {session && (
-          <div className="link">
+          <Grid item className="link">
             <div className="link-note">Hi {session.user.name}</div>
               {/* <button>
                 <Link href="/secret">To the secret</Link>
               </button> */}
-              <div className="link-login" onClick={signOut}>Log out</div>
-          </div>
+            <div className="link-login" onClick={signOut}>Log out</div>
+          </Grid>
         )}
-      </div>
-    </div>
+      </Grid>
+    </Grid>
+    // <div className="navigation">
+    //   <div className="title">
+    //     <a href="/portal">BVO Portal<span className="title-dot">.</span></a>
+    //   </div>
+    //   <div className="links">
+        
+    //     {/* <a href="/" className="link">BVO Website</a> */}
+    //     {session && isProfilePresent && (
+    //       <a href="/portal/profile" className="link">Profile</a>
+        // )}
+        // {session && (
+        //   <div className="link">
+        //     <div className="link-note">Hi {session.user.name}</div>
+        //       {/* <button>
+        //         <Link href="/secret">To the secret</Link>
+        //       </button> */}
+        //       <div className="link-login" onClick={signOut}>Log out</div>
+        //   </div>
+        // )}
+    //   </div>
+    // </div>
   )
 }
 

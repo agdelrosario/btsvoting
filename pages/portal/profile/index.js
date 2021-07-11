@@ -1,28 +1,35 @@
 import { useState, useEffect } from "react";
 import { getSession } from "next-auth/client";
+import { useRouter } from 'next/router';
 import countryList from 'react-select-country-list';
-import PortalNavBar from '../../../components/PortalNavBar';
+import PortalLayout from '../../../components/PortalLayout';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+// import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import MomentUtils from '@date-io/moment';
+import moment from "moment";
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
+  // KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
 
 export default function Portal({session, profile, host}) {
   // const [session, loading] = useSession();
+  const router = useRouter();
   const [admin, setAdmin] = useState();
-  const [teams, setTeams] = useState();
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [team, setTeam] = useState();
+  const isProfilePresent = profile && profile.email != null
+  const [selectedDate, setSelectedDate] = useState(isProfilePresent ? moment(profile.birthday).format('MM/DD/YYYY') : null);
   // const [country, setCountry] = useState(null)
-  const [country, setCountry] = useState(countryList().valueMap[profile.country.toLowerCase()])
+  const [country, setCountry] = useState(isProfilePresent ? countryList().valueMap[profile.country.toLowerCase()] : null)
+  const theme = useTheme();
+  const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
+  const [loading, setLoading] = useState(true)
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  // console.log('lowerThanSm', lowerThanSm)
   
 
   useEffect(() => {
@@ -34,17 +41,24 @@ export default function Portal({session, profile, host}) {
         setAdmin(json.admin);
       }
     };
-    const fetchTeams = async () => {
-      const res = await fetch(`/api/teams`);
+    
+    const fetchTeam = async () => {
+      const res = await fetch(`/api/teams/single?slug=${profile.team}`);
       const json = await res.json();
 
       if (json) {
-        setTeams(json);
+        console.log("json", json)
+        setTeam(json);
       }
     };
 
     fetchData();
-    fetchTeams();
+    if (profile && profile.email != null) {
+      fetchTeam();
+      setLoading(false);
+    } else {
+      router.push('/portal/profile/initial-setup')
+    }
   }, [session]);
 
   // if (typeof window !== "undefined" && loading) return null;
@@ -59,87 +73,76 @@ export default function Portal({session, profile, host}) {
     );
   }
 
-  // const teams = [
-  //   'Armythyst',
-  //   'Bangtan Universe',
-  //   'Bemojikens',
-  //   'BPTW',
-  //   'Bulletproof',
-  //   'BVO 1st Child',
-  //   'BVSC',
-  //   'Criteam',
-  //   'Epipanthy',
-  //   'Hope World',
-  //   'I Heart BVO',
-  //   'Impiedstor',
-  //   'Kim Seokjin',
-  //   'Lajibolala',
-  //   'Laserpointer',
-  //   'Lejindary',
-  //   'President Namjoon',
-  //   'Yeontan',
-  // ]
-
   return (
-    <div className="container">
-      <PortalNavBar />
-      <main>
-        <div className="profile">
-          <div className="heading">
-            <h1>Profile</h1>
-            <span>Your information can also be viewed by the admins. To modify, please talk to an admin.</span>
-          </div>
-          <div className="profile-info">
-            <Grid>
-              <div className="profile-info-card">
-                <TextField className="autocomplete" label="Team" defaultValue={country} disabled variant="outlined" />
-
-                {/* <Autocomplete
-                  id="combo-box-demo"
-                  options={teams}
-                  // defaultValue={profile.birthday.slug}
-                  getOptionLabel={(option) => option.name}
-                  style={{ width: 300 }}
-                  renderInput={(params) => <TextField className="autocomplete" {...params} label="Team" variant="outlined" />}
-                /> */}
-              </div>
-              <div className="profile-info-card">
-                <TextField className="autocomplete" label="Country" defaultValue={country} disabled variant="outlined" />
-                {/* <Autocomplete
-                  id="combo-box-demo"
-                  options={allOptions}
-                  getOptionLabel={(option) => option.label}
-                  style={{ width: 300 }}
-                  renderInput={(params) => <TextField className="autocomplete" {...params} label="Country" variant="outlined" />}
-                /> */}
-              </div>
-              <div className="profile-info-card">
-                {/* <MuiPickersUtilsProvider utils={MomentUtils}>
-                  <KeyboardDatePicker
-                    margin="normal"
-                    id="date-picker-dialog"
-                    label="Birthdate"
-                    format="MM/DD/YYYY"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                    KeyboardButtonProps={{
-                      'aria-label': 'change date',
-                    }}
-                    inputVariant="outlined"
-                  />
-                </MuiPickersUtilsProvider> */}
-              </div>
+    <PortalLayout profile={profile} session={session}>
+      {
+        loading && (
+          <>
+            Insert Loading Screen here
+          </>
+        )
+      }
+      {
+        !loading && (
+        <Grid 
+          container
+          className="profile"
+        >
+          <p>Note: The information in this page can also be viewed by the admins.</p>
+          {/* <div> */}
+            <Grid
+              container
+              className="heading"
+              spacing={1} 
+              direction="row"
+              alignItems="flex-end"
+            >
+              <Grid item xs={12} sm={6}><h1>Profile</h1></Grid>
+              <Grid
+                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}><span>Please talk to an admin to modify.</span></Grid>
             </Grid>
-          </div>
-          <div className="voting-profile">
-            <div className="heading">
-              <h1>Voting Profile</h1>
-              <span>Monthly stats are collated every end of the month. Please update as often as you can.</span>
+            <div className="profile-info">
+              <Grid 
+                container
+                direction="row"
+                spacing={2}
+              >
+                <Grid item xs className="profile-info-card">
+                  <TextField className="autocomplete" label="Team" value={team ? team.name : ''} disabled variant="outlined" />
+                </Grid>
+                <Grid item xs className="profile-info-card">
+                  <TextField className="autocomplete" label="Country" defaultValue={country} disabled variant="outlined" />
+                </Grid>
+                <Grid item xs className="profile-info-card">
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <KeyboardDatePicker
+                      margin="normal"
+                      id="date-picker-dialog"
+                      label="Birthdate"
+                      format="MM/DD/YYYY"
+                      value={selectedDate}
+                      // onChange={handleDateChange}
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      inputVariant="outlined"
+                      disabled
+                      style={{width:"100%"}}
+                    />
+                  </MuiPickersUtilsProvider>
+                </Grid>
+              </Grid>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>
+            <div className="voting-profile">
+              <div className="heading">
+                <h1>Voting Profile</h1>
+                <span>Monthly stats are collated every end of the month. Please update as often as you can.</span>
+              </div>
+            </div>
+          {/* </div> */}
+        </Grid>
+      )}
+    </PortalLayout>
   );
 }
 

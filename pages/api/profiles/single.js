@@ -10,5 +10,5 @@ export default async (req, res) => {
     .find({email: req.query.email})
     .limit(20)
     .toArray();
-  res.json(profile[0]);
+  res.json(profile.length > 0 ? profile[0] : {});
 };
