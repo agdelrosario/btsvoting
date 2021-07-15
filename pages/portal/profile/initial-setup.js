@@ -80,7 +80,7 @@ export default function Portal({session, profile, votingProfile, host, teams, co
         return (
           <div>
             <h1>Input voting details</h1>
-            <VotingGrid validation={validationVoting} setValidation={setValidationVoting} votingProfile={votingProfile} apps={apps} />
+            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} initialVotingProfile={votingProfile} apps={apps} />
           </div>
         );
       default:
@@ -234,7 +234,7 @@ export async function getServerSideProps(ctx) {
   const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
   const profile = await profileRes.json();
 
-  const votingProfileRes = await fetch(`${process.env.HOST}/api/voting-profiles?email=${session.user.email}`);
+  const votingProfileRes = await fetch(`${process.env.HOST}/api/voting-profiles/single?email=${session.user.email}`);
   const votingProfile = await votingProfileRes.json();
 
   const teamsRes = await fetch(`${process.env.HOST}/api/teams`);

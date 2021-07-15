@@ -38,14 +38,85 @@ const gpointLevels = [
 export default function AddNewAccount({open, setOpen, currentApp, submit}) {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
+  const [username, setUsername] = useState(null);
+  const [tickets, setTickets] = useState(null);
+  const [validation, setValidation] = useState({
+    username: null,
+    tickets: null,
+  });
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleInput = (val) => {
+  const handleUsernameInput = (username) => {
+    let val = username.target.value
+    setUsername(val);
+    let error = validation.username
+    if (error && val != null && val != '') {
+      error = false
+    }
 
+    setValidation({
+      ...validation,
+      username: error
+    });
   }
+
+  const handleTicketInput = (ticket) => {
+    let val = ticket.target.value
+    setTickets(val);
+    let error = validation.tickets
+    if (error && val != null && val != '') {
+      error = false
+    }
+
+    setValidation({
+      ...validation,
+      tickets: error
+    });
+  }
+
+  const handleGPointLevelSelect = (val) => {
+    setTickets(val);
+    let error = validation.tickets
+    if (error && val != null) {
+      error = false
+    }
+
+    setValidation({
+      ...validation,
+      tickets: error
+    });
+  };
+
+  const handleSubmit = () => {
+    let tempValidation = {
+      username: null,
+      tickets: null,
+    }
+    if (username == null || username == '') {
+      tempValidation.username = true
+    }
+    if (tickets == null || tickets == '') {
+      tempValidation.tickets = true
+    }
+
+    setValidation(tempValidation);
+
+    if (tempValidation.username || tempValidation.tickets) {
+      return null;
+    }
+
+    submit({
+      app: currentApp.key,
+      username,
+      tickets
+    });
+    handleClose();
+  }
+
+
 
   const body = (
     <div style={modalStyle} className="add-new-account-modal">
@@ -59,11 +130,30 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
       {/* error={validation.country.error} */}
       <Grid container direction="columns" spacing={2}>
         <Grid item xs={12} sm={5}>
-          <TextField className="ticket" label="Username" variant="outlined" required />
+          <TextField
+            className="ticket"
+            label="Username"
+            variant="outlined"
+            error={validation.username}
+            // onChange={(event, val) => { handleUsernameInput(val)}}
+            onChange={handleUsernameInput}
+            required
+          />
         </Grid>
         <Grid item xs={12} sm={5}>
           {
-            currentApp && currentApp.key != "fannstar" && (<TextField className="ticket" type="number" label={currentApp ? 'Total ' + currentApp.tickets : ''} variant="outlined" required />)
+            currentApp && currentApp.key != "fannstar" && (
+              <TextField
+                className="ticket"
+                type="number"
+                label={currentApp ? 'Total ' + currentApp.tickets : ''}
+                variant="outlined"
+                error={validation.tickets}
+                // onChange={(event, val) => { handleTicketInput(val)}}
+                onChange={handleTicketInput}
+                required
+              />
+            )
           }
           {
             currentApp && currentApp.key == "fannstar" && (
@@ -72,18 +162,18 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
                 id="combo-box-demo"
                 options={gpointLevels}
                 getOptionLabel={(option) => option.name}
-                onChange={(event, val) => { handleInput('team', val)}} 
-                // defaultValue={validation.team.key}
+                onChange={(event, val) => { handleGPointLevelSelect(val)}}
+                // defaultValue={validation.tickets.key}
                 // getOptionLabel={(option) => { return option.name || ''}}
-                // error={validation.team.error}
-                renderInput={(params) => <TextField  className="autocomplete" {...params} label="GPoint Level" variant="outlined" required />}
+                
+                renderInput={(params) => <TextField error={validation.tickets} className="autocomplete" {...params} label="GPoint Level" variant="outlined" required />}
               />
             )
           }
           
         </Grid>
         <Grid item xs={12} sm={2}>
-          <Button variant="contained" color="primary" onClick={submit} className="button">
+          <Button variant="contained" color="primary" onClick={handleSubmit} className="button">
             Submit
           </Button>
         </Grid>

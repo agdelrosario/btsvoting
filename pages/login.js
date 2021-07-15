@@ -23,7 +23,6 @@ export default function SignIn(providers) {
 
   if (typeof window !== "undefined" && loading) return null;
 
-  // console.log("providers", providers)
 
   return (
     <div className="container">

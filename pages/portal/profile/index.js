@@ -15,21 +15,27 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
+import VotingGrid from '../../../components/VotingGrid';
 
-export default function Portal({session, profile, host}) {
-  // const [session, loading] = useSession();
+export default function Portal({session, profile, votingProfile, host, apps}) {
   const router = useRouter();
   const [admin, setAdmin] = useState();
   const [team, setTeam] = useState();
   const isProfilePresent = profile && profile.email != null
-  const [selectedDate, setSelectedDate] = useState(isProfilePresent ? moment(profile.birthday).format('MM/DD/YYYY') : null);
-  // const [country, setCountry] = useState(null)
-  const [country, setCountry] = useState(isProfilePresent ? countryList().valueMap[profile.country.toLowerCase()] : null)
+  const [selectedDate] = useState(isProfilePresent ? moment(profile.birthday).format('MM/DD/YYYY') : null);
+  const [country] = useState(isProfilePresent ? countryList().valueMap[profile.country.toLowerCase()] : null)
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   const [loading, setLoading] = useState(true)
-
-  // console.log('lowerThanSm', lowerThanSm)
+  const [validationVoting, setValidationVoting] = useState({
+    team: { error: false, value: {
+      slug: null
+    } },
+    country: { error: false, value: {
+      value: null
+    } },
+    birthday: { error: false, value: null },
+  });
   
 
   useEffect(() => {
@@ -47,7 +53,6 @@ export default function Portal({session, profile, host}) {
       const json = await res.json();
 
       if (json) {
-        console.log("json", json)
         setTeam(json);
       }
     };
@@ -99,7 +104,10 @@ export default function Portal({session, profile, host}) {
             >
               <Grid item xs={12} sm={6}><h1>Profile</h1></Grid>
               <Grid
-                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}><span>Please talk to an admin to modify.</span></Grid>
+                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}
+              >
+                <span>Please talk to an admin to modify.</span>
+              </Grid>
             </Grid>
             <div className="profile-info">
               <Grid 
@@ -133,12 +141,29 @@ export default function Portal({session, profile, host}) {
                 </Grid>
               </Grid>
             </div>
-            <div className="voting-profile">
+            
+            <Grid
+              container
+              className="heading"
+              spacing={1} 
+              direction="row"
+              alignItems="flex-end"
+            >
+              <Grid item xs={12} sm={6}><h1>Voting Profile</h1></Grid>
+              <Grid
+                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}
+              >
+                <span>Monthly stats are collated every end of the month. Please update as often as you can.</span>
+              </Grid>
+            </Grid>
+
+            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} initialVotingProfile={votingProfile} apps={apps} />
+            {/* <div className="voting-profile">
               <div className="heading">
                 <h1>Voting Profile</h1>
                 <span>Monthly stats are collated every end of the month. Please update as often as you can.</span>
               </div>
-            </div>
+            </div> */}
           {/* </div> */}
         </Grid>
       )}
@@ -149,13 +174,22 @@ export default function Portal({session, profile, host}) {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
-  const res = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
-  const profile = await res.json();
+  const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
+  const profile = await profileRes.json();
+
+  const votingProfileRes = await fetch(`${process.env.HOST}/api/voting-profiles/single?email=${session.user.email}`);
+  const votingProfile = await votingProfileRes.json();
+
+  const appsRes = await fetch(`${process.env.HOST}/api/apps`);
+  const apps = await appsRes.json();
+
   return {
     props: {
-      session: session,
-      profile: profile,
-      host: process.env.HOST
+      session,
+      profile,
+      votingProfile,
+      host: process.env.HOST,
+      apps,
     }
   }
 }
