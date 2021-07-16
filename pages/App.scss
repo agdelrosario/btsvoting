@@ -76,24 +76,6 @@ p {
   main {
     width: 100%;
 
-
-    a {
-      text-decoration: none;
-      color: #e0e0e0;
-      background-color: #111;
-      padding: 5px 8px;
-      border-radius: 5px;
-  
-      &:hover {
-        color: #FFF032;
-        background-color: #000000;
-      }
-      // &:focus,
-      // &:active {
-      //   text-decoration: underline;
-      // }
-    }
-
     &.login {
       .login-page {
         width: 100%;
@@ -153,6 +135,23 @@ p {
       box-sizing: border-box;
       padding: 40px 70px;
       width: 100%;
+
+      a {
+        text-decoration: none;
+        color: #e0e0e0;
+        background-color: #111;
+        padding: 5px 8px;
+        border-radius: 5px;
+    
+        &:hover {
+          color: #FFF032;
+          background-color: #000000;
+        }
+        // &:focus,
+        // &:active {
+        //   text-decoration: underline;
+        // }
+      }
 
       &.xs {
         padding: 20px 30px;
@@ -349,13 +348,23 @@ p {
               margin: 0;
               padding: 12px 17px;
 
-              h3 {
-                margin: 0 0 10px 0;
-                padding: 0;
-                font-weight: 600;
+              &-header {
                 font-size: 12px;
-                color: #666666;
-                text-transform: uppercase;
+                font-weight: 600;
+
+                h3 {
+                  margin: 0 0 10px 0;
+                  padding: 0;
+                  font-weight: 600;
+                  font-size: 12px;
+                  color: #666666;
+                  text-transform: uppercase;
+                }
+
+                .action {
+                  display: none;
+                  color: #cccccc;
+                }
               }
 
               &.add-new-account {
@@ -366,14 +375,39 @@ p {
 
                 h3 {
                   margin: 0;
-                  color: #ffffff;
+                  color: #999999;
+                  font-weight: 500;
+                  font-size: 14px;
                 }
+
+                &:hover {
+                  h3 {
+                    color: #ffffff;
+                  }
+                }
+
+
+              }
+
+              span {
+                color: #fff;
+                font-size: 16px;
               }
 
               &:hover {
                 border: 1px solid #ffffff;
                 cursor: pointer;
                 color: #ffffff;
+
+
+                h3 {
+                  color: #999999;
+                }
+
+                .action {
+                  display: inline;
+                  color: #ffffff;
+                }
               }
             }
           }
