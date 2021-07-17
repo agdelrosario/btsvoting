@@ -35,15 +35,16 @@ const gpointLevels = [
   },
 ]
 
-export default function AddNewAccount({open, setOpen, currentApp, submit, currentAccount}) {
+export default function EditAccount({open, setOpen, currentApp, submit, currentAccount}) {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
-  const [username, setUsername] = useState(null);
-  const [tickets, setTickets] = useState(null);
+  const [username, setUsername] = useState(currentAccount ? currentAccount.username : null);
+  const [tickets, setTickets] = useState(currentAccount ? currentAccount.tickets : null);
   const [validation, setValidation] = useState({
     username: null,
     tickets: null,
   });
+  const [hasChanged, setHasChanged] = useState(false)
 
   console.log("currentApp", currentApp)
 
@@ -63,6 +64,8 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
       ...validation,
       username: error
     });
+
+    setHasChanged(true);
   }
 
   const handleTicketInput = (ticket) => {
@@ -77,6 +80,8 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
       ...validation,
       tickets: error
     });
+
+    setHasChanged(true);
   }
 
   const handleGPointLevelSelect = (val) => {
@@ -90,6 +95,8 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
       ...validation,
       tickets: error
     });
+    
+    setHasChanged(true);
   };
 
   const handleSubmit = () => {
@@ -118,6 +125,10 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
     handleClose();
   }
 
+  if (currentAccount && currentAccount.tickets && currentAccount.tickets.key) {
+    console.log("currentAccount.tickets.key", currentAccount.tickets.key)
+  }
+
 
 
   const body = (
@@ -140,7 +151,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
             // onChange={(event, val) => { handleUsernameInput(val)}}
             onChange={handleUsernameInput}
             required
-            value={currentAccount && currentAccount.username}
+            defaultValue={currentAccount && currentAccount.username}
           />
         </Grid>
         <Grid item xs={12} sm={5}>
@@ -155,7 +166,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
                 // onChange={(event, val) => { handleTicketInput(val)}}
                 onChange={handleTicketInput}
                 required
-                value={currentAccount.tickets}
+                defaultValue={currentAccount.tickets}
               />
             )
           }
@@ -165,10 +176,9 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
               <Autocomplete
                 id="combo-box-demo"
                 options={gpointLevels}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => option.name || ''}
                 onChange={(event, val) => { handleGPointLevelSelect(val)}}
-                defaultValue={currentAccount.tickets.key}
-                // getOptionLabel={(option) => { return option.name || ''}}
+                defaultValue={currentAccount.tickets}
                 
                 renderInput={(params) => <TextField error={validation.tickets} className="autocomplete" {...params} label="GPoint Level" variant="outlined" required />}
               />
@@ -177,12 +187,12 @@ export default function AddNewAccount({open, setOpen, currentApp, submit, curren
           
         </Grid>
         <Grid item xs={12} sm={2}>
-          <Button variant="contained" color="primary" onClick={handleSubmit} className="button">
+          <Button variant="contained" color="secondary" onClick={handleSubmit} className="button" disabled={!hasChanged}>
             Submit
           </Button>
         </Grid>
       </Grid>
-      <AddNewAccount />
+      <EditAccount />
     </div>
   );
 

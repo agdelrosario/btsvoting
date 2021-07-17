@@ -9,6 +9,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
   const [open, setOpen] = useState(false);
   const [openEditAccount, setOpenEditAccount] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
+  const [currentAccountIndex, setCurrentAccountIndex] = useState(null);
   const [currentApp, setCurrentApp] = useState();
   const [votingProfile, setVotingProfile] = useState(initialVotingProfile);
 
@@ -45,7 +46,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
       method: 'POST'
     });
     
-    const json = await res.json();
+    // const json = await res.json();
 
     const votingProfileRes = await fetch(`${host}/api/voting-profiles/single?email=${email}`);
     const votingProfileJson = await votingProfileRes.json();
@@ -54,24 +55,26 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
 
   const editAccount = async ({ app, username, tickets }) => {
     console.log("yo editing this stuff", currentAccount)
-    // const res = await fetch(`${host}/api/voting-profiles/update?email=${email}`,
-    // {
-    //   body: JSON.stringify({
-    //     app,
-    //     username,
-    //     tickets,
-    //   }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   method: 'POST'
-    // });
-    
-    // const json = await res.json();
+    // console.log("currentApp", currentApp.key)
+    console.log("currentAccountIndex", currentAccountIndex)
 
-    // const votingProfileRes = await fetch(`${host}/api/voting-profiles/single?email=${email}`);
-    // const votingProfileJson = await votingProfileRes.json();
-    // setVotingProfile(votingProfileJson)
+    const res = await fetch(`${host}/api/voting-profiles/edit?email=${email}`,
+    {
+      body: JSON.stringify({
+        appKey: app,
+        index: currentAccountIndex,
+        username,
+        tickets,
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+
+    const votingProfileRes = await fetch(`${host}/api/voting-profiles/single?email=${email}`);
+    const votingProfileJson = await votingProfileRes.json();
+    setVotingProfile(votingProfileJson)
   }
 
   const setVotingAccountData = (appKey, index, appIndex) => {
@@ -82,6 +85,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
     console.log("votingProfile", votingProfile)
     console.log("votingProfile[appKey]", votingProfile[appKey])
     setCurrentApp(apps[appIndex])
+    setCurrentAccountIndex(index)
     setCurrentAccount(votingProfile[appKey][index]);
     setOpenEditAccount(true);
   }

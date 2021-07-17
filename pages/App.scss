@@ -190,6 +190,7 @@ p {
       }
   
       .dashboard {
+        width: 100%;
   
         hr {
           color: #414141;
@@ -199,6 +200,7 @@ p {
         .statistics {
           display: flex;
           flex-direction: row;
+          margin-bottom: 30px;
   
           .card {
             width: 250px;
@@ -344,7 +346,7 @@ p {
               width: 200px;
               height: 80px;
               border: 1px solid #9e9e9e;
-              border-radius: 10px;
+              border-radius: 5px;
               margin: 0;
               padding: 12px 17px;
 

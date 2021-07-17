@@ -49,7 +49,6 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
           <Autocomplete
             id="combo-box-demo"
             options={teams}
-            // getOptionLabel={(option) => option.name}
             onChange={(event, val) => { handleInput('team', val)}} 
             defaultValue={validation.team.value}
             getOptionLabel={(option) => { return option.name || ''}}
@@ -61,7 +60,6 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
           <Autocomplete
             id="combo-box-demo"
             options={countries}
-            // getOptionLabel={(option) => option.label}
             defaultValue={validation.country.value} 
             onChange={(event, val) => { handleInput('country', val)}} 
             getOptionLabel={(option) => { return option.label || '' }}

@@ -64,8 +64,12 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
   }
 
   const handleTicketInput = (ticket) => {
+    const NON_DIGIT = /[^0-9]/g;
     let val = ticket.target.value
-    setTickets(val);
+    console.log("val", val)
+    const intValue = parseInt(val.toString().replace(NON_DIGIT, ''));
+    console.log("intValue", intValue)
+    setTickets(intValue && intValue != NaN & intValue != ''? intValue : '');
     let error = validation.tickets
     if (error && val != null && val != '') {
       error = false
@@ -152,6 +156,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
                 // onChange={(event, val) => { handleTicketInput(val)}}
                 onChange={handleTicketInput}
                 required
+                value={tickets}
               />
             )
           }
@@ -173,7 +178,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
           
         </Grid>
         <Grid item xs={12} sm={2}>
-          <Button variant="contained" color="primary" onClick={handleSubmit} className="button">
+          <Button variant="contained" color="secondary" onClick={handleSubmit} className="button">
             Submit
           </Button>
         </Grid>

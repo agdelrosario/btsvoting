@@ -1,7 +1,6 @@
 import { connectToDatabase } from "../../../util/mongodb";
 
 export default async (req, res) => {
-//   const session = await getSession({ req });
   const { db } = await connectToDatabase();
   const profile = await db
     .collection("teams")
