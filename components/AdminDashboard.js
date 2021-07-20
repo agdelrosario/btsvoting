@@ -2,6 +2,7 @@
 import { useState } from "react";
 import StatisticsCard from './StatisticsCard';
 import MultiStatisticsCard from './MultiStatisticsCard';
+import AddApp from './AddApp';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import moment from "moment";
@@ -22,6 +23,7 @@ const columns = [
 ];
 
 const AdminDashboard = ({ host, teams, apps }) => {
+  const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [appsData] = useState(apps.map((app, index) => {
     return {
       id: index + 1,
@@ -53,7 +55,11 @@ const AdminDashboard = ({ host, teams, apps }) => {
   }
 
   const openAddApp = () => {
-    
+    setAddAppModalOpen(true);
+  }
+
+  const addApp = (val) => {
+
   }
 
 
@@ -74,52 +80,56 @@ const AdminDashboard = ({ host, teams, apps }) => {
           </Button>
         </Grid>
       </Grid>
-      <div className="statistics">
+      <Grid container className="statistics">
         {
           // teams && teams.appStatistics && teams.appStatistics.map((app) => {
             apps.map((app) => {
             if (app.key == 'fannstar') {
               return (
-                <MultiStatisticsCard
-                  title="Fan n Star"
-                  isEnableMultiple
-                  pointsArray={[
-                    {
-                      "pointsValue": 2,
-                      "pointsType": "Black"
-                    },
-                    {
-                      "pointsValue": 3,
-                      "pointsType": "Gold"
-                    },
-                    {
-                      "pointsValue": 7,
-                      "pointsType": "Silver"
-                    },
-                    {
-                      "pointsValue": 19,
-                      "pointsType": "Bronze"
-                    },
-                    {
-                      "pointsValue": 25,
-                      "pointsType": "Mint"
-                    },
-                  ]}
-                />
+                <Grid item xs>
+                  <MultiStatisticsCard
+                    title="Fan n Star"
+                    isEnableMultiple
+                    pointsArray={[
+                      {
+                        "pointsValue": 2,
+                        "pointsType": "Black"
+                      },
+                      {
+                        "pointsValue": 3,
+                        "pointsType": "Gold"
+                      },
+                      {
+                        "pointsValue": 7,
+                        "pointsType": "Silver"
+                      },
+                      {
+                        "pointsValue": 19,
+                        "pointsType": "Bronze"
+                      },
+                      {
+                        "pointsValue": 25,
+                        "pointsType": "Mint"
+                      },
+                    ]}
+                  />
+                </Grid>
               )
 
             } else {
               return (
-                <StatisticsCard
-                  title="Choeaedol"
-                  pointsValue="45,062,779"
-                  pointsType="Ever Hearts"
-                />
+                <Grid item xs>
+                  <StatisticsCard
+                    title="Choeaedol"
+                    pointsValue="45,062,779"
+                    pointsType="Ever Hearts"
+                  />
+                </Grid>
               )
             }
           })
         }
-      </div>
+      </Grid>
       <div>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
@@ -140,7 +150,7 @@ const AdminDashboard = ({ host, teams, apps }) => {
           <Grid item xs={12} md={4}>
             <Grid container xs>
               <Grid item xs>
-                <h1>App Stats</h1>
+                <h1>Apps</h1>
               </Grid>
               <Grid item xs align="right">
                 <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
@@ -157,6 +167,7 @@ const AdminDashboard = ({ host, teams, apps }) => {
           </Grid> */}
         </Grid>
       </div>
+      <AddApp open={addAppModalOpen} setOpen={setAddAppModalOpen} submit={addApp} />
     </div>
   )
 };
