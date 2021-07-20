@@ -116,7 +116,7 @@ export default function Portal({session, profile, votingProfile, host, teams, co
       const existingProfileRecheckJson = await existingProfileRecheck.json()
 
       if (existingProfileRecheckJson && existingProfileRecheckJson.email != null) {
-        const res = await fetch(`${host}/api/profiles/update?email=${session.user.email}`,
+        const res = await fetch(`/api/profiles/update?email=${session.user.email}`,
         {
           body: JSON.stringify({
             birthday: validation.birthday.value,
@@ -132,7 +132,7 @@ export default function Portal({session, profile, votingProfile, host, teams, co
         
         const json = await res.json();
       } else {
-        const res = await fetch(`${host}/api/profiles/new`,
+        const res = await fetch(`/api/profiles/new`,
         {
           body: JSON.stringify({
             email: session.user.email,

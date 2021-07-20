@@ -5,14 +5,14 @@ module.exports = {
     };
     return config;
   },
-  async rewrites() {
-      return [
-        {
-          source: '/api/:path*',
-          destination: 'https://btsvoting.org/:path*',
-        },
-      ]
-    },
+  // async rewrites() {
+  //     return [
+  //       {
+  //         source: '/api/:path*',
+  //         destination: `${process.env.HOST}/api/:path*`,
+  //       },
+  //     ]
+  //   },
   // env: {
   //   customKey: 'my-value',
   // },

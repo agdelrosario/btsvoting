@@ -33,7 +33,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
   }
 
   const addAccount = async ({ app, username, tickets, }) => {
-    const res = await fetch(`${host}/api/voting-profiles/update?email=${email}`,
+    const res = await fetch(`/api/voting-profiles/update?email=${email}`,
     {
       body: JSON.stringify({
         app,
@@ -58,7 +58,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
     // console.log("currentApp", currentApp.key)
     console.log("currentAccountIndex", currentAccountIndex)
 
-    const res = await fetch(`${host}/api/voting-profiles/edit?email=${email}`,
+    const res = await fetch(`/api/voting-profiles/edit?email=${email}`,
     {
       body: JSON.stringify({
         appKey: app,
