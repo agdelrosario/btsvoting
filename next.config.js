@@ -5,6 +5,14 @@ module.exports = {
     };
     return config;
   },
+  async rewrites() {
+      return [
+        {
+          source: '/api/:path*',
+          destination: 'https://btsvoting.org/:path*',
+        },
+      ]
+    },
   // env: {
   //   customKey: 'my-value',
   // },
