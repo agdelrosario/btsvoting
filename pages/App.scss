@@ -206,7 +206,7 @@ p {
             width: 250px;
             border: 1px solid #414141;
             padding: 15px;
-            margin-right: 10px;
+            // margin-right: 10px;
   
             &.multiple {
               width: auto;
@@ -723,5 +723,6 @@ p {
   .button {
     width: 100%;
     height: 100%;
+    height: 56px;
   }
 }

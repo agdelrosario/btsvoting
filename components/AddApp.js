@@ -11,6 +11,8 @@ import Chip from '@material-ui/core/Chip';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+
 
 function getModalStyle() {
   return {
@@ -46,12 +48,22 @@ const categories = [
   "website",
 ]
 
+const ticketTypes = [
+  {
+    key: "integer",
+    name: "Integer (e.g. 3,000)"
+  },
+  {
+    key: "levels",
+    name: "Levels (e.g. Black)"
+  }
+]
 
 
-function getStyles(name, personName, theme) {
+function getStyles(name, categoryType, theme) {
   return {
     fontWeight:
-      personName.indexOf(name) === -1
+      categoryType.indexOf(name) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -77,17 +89,38 @@ export default function AddApp({open, setOpen, submit}) {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
   const [name, setName] = useState(null);
-  const [tickets, setTickets] = useState(null);
 
-  const [personName, setPersonName] = useState([]);
+  const [categoryType, setCategoryType] = useState([]);
+  const [tickets, setTickets] = useState(null);
+  const [ticketType, setTicketType] = useState(null);
   const [validation, setValidation] = useState({
     name: null,
+    categoryType: null,
     tickets: null,
+    ticketType: null,
   });
 
   const handleClose = () => {
     setOpen(false);
+    setCategoryType([]);
+    setName(null);
+    setTicketType(null);
+    setTickets(null);
   };
+
+  const handleTicketInput = (name) => {
+    let val = name.target.value
+    setTickets(val);
+    let error = validation.tickets
+    if (error && val != null && val != '') {
+      error = false
+    }
+
+    setValidation({
+      ...validation,
+      name: error
+    });
+  }
 
   const handleNameInput = (name) => {
     let val = name.target.value
@@ -121,32 +154,43 @@ export default function AddApp({open, setOpen, submit}) {
   const handleSubmit = () => {
     let tempValidation = {
       name: null,
-      tickets: null,
+      categoryType: null,
     }
+
+
+
+    console.log("name", name)
+    console.log("categoryType", categoryType)
+
     if (name == null || name == '') {
       tempValidation.name = true
     }
-    if (tickets == null || tickets == '') {
-      tempValidation.tickets = true
+    if (categoryType == null || categoryType.length == 0) {
+      tempValidation.categoryType = true
     }
 
     setValidation(tempValidation);
 
-    if (tempValidation.name || tempValidation.tickets) {
+    if (tempValidation.name || tempValidation.categoryType) {
       return null;
     }
 
     submit({
       name,
-      tickets
+      categoryType,
+      slug: slugify(name),
+      key: keyify(name,)
     });
     handleClose();
   }
 
-  const handleChange = (event) => {
-    setPersonName(event.target.value);
+  const handleCategoryTypeChange = (event) => {
+    setCategoryType(event.target.value);
   };
 
+  const handleTicketTypeChange = (event) => {
+    setTicketType(event.target.value);
+  };
 
 
   const body = (
@@ -160,7 +204,7 @@ export default function AddApp({open, setOpen, submit}) {
       </p> */}
       {/* error={validation.country.error} */}
       <Grid container direction="columns" spacing={2}>
-        <Grid item xs={12} sm={5}>
+        <Grid item xs={12} sm={3}>
           <TextField
             className="ticket"
             label="Name"
@@ -171,54 +215,92 @@ export default function AddApp({open, setOpen, submit}) {
             required
           />
         </Grid>
-        <Grid item xs={12} sm={5}>
-        <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel ref={labelRef} htmlFor="my-input">Categories</InputLabel>
-          <Select
-            labelId="demo-mutiple-chip-label"
-            id="demo-mutiple-chip"
-            multiple
-            labelWidth={labelWidth}
-            label="Categories"
-            value={personName}
-            onChange={handleChange}
-            input={
-              <OutlinedInput
-                id="select-multiple-chip"
-                labelWidth={labelWidth}
-                label="Categories"
-                className={classes.outlinedInput}
-              />
-            }
+        <Grid item xs={12} sm={2}>
+          <TextField
+            className="ticket"
+            label="Tickets"
             variant="outlined"
-            renderValue={(selected) => (
-              <div className={classes.chips}>
-                {
-                  selected.map((value) => (
-                    <Chip key={value} label={value} className={classes.chip} size="small" />
-                  ))
-                }
-              </div>
-            )}
-            // MenuProps={MenuProps}
-          >
-            {
-              categories.map((name) => (
-                <MenuItem key={name} value={name} style={getStyles(name, personName, theme)}>
-                  {name}
-                </MenuItem>
-              ))
-            }
-          </Select>
-          </FormControl>
-          
+            error={validation.tickets}
+            // onChange={(event, val) => { handleNameInput(val)}}
+            onChange={handleTicketInput}
+            required
+            helperText="e.g. Ever Hearts, GPoints"
+          />
         </Grid>
         <Grid item xs={12} sm={2}>
-          <Button variant="contained" color="secondary" onClick={handleSubmit} className="button">
-            Submit
-          </Button>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel ref={labelRef} htmlFor="my-input" error={validation.categoryType}>Ticket Type *</InputLabel>
+            <Select
+              native
+              value={ticketType}
+              onChange={handleTicketTypeChange}
+              label="Ticket Type *"
+              inputProps={{
+                name: 'age',
+                id: 'outlined-age-native-simple',
+              }}
+              defaultValue="Ticket Type"
+            >
+              <option aria-label="None" value="" />
+              {
+                ticketTypes.map((value) => (
+                  <option value={value.key} label={value.name}>{value.name}</option>
+                ))
+              }
+            </Select>
+          </FormControl>
         </Grid>
-      </Grid>
+        <Grid item xs={12} sm={3}>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel ref={labelRef} htmlFor="my-input" error={validation.categoryType}>Categories *</InputLabel>
+            <Select
+              labelId="demo-mutiple-chip-label"
+              id="demo-mutiple-chip"
+              multiple
+              labelWidth={labelWidth}
+              label="Categories *"
+              required={true}
+              value={categoryType}
+              onChange={handleCategoryTypeChange}
+              input={
+                <OutlinedInput
+                  id="select-multiple-chip"
+                  labelWidth={labelWidth}
+                  label="Categories *"
+                  required={true}
+                  className={classes.outlinedInput}
+                  error={validation.categoryType}
+                />
+              }
+              variant="outlined"
+              renderValue={(selected) => (
+                <div className={classes.chips}>
+                  {
+                    selected.map((value) => (
+                      <Chip key={value} label={value} className={classes.chip} size="small" />
+                    ))
+                  }
+                </div>
+              )}
+              // MenuProps={MenuProps}
+            >
+              {
+                categories.map((name) => (
+                  <MenuItem key={name} value={name} style={getStyles(name, categoryType, theme)}>
+                    {name}
+                  </MenuItem>
+                ))
+              }
+            </Select>
+            <FormHelperText id="my-helper-text">Where voting and collection happens</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <Button variant="contained" color="secondary" onClick={handleSubmit} className="button">
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       <AddApp />
     </div>
   );

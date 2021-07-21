@@ -58,8 +58,11 @@ const AdminDashboard = ({ host, teams, apps }) => {
     setAddAppModalOpen(true);
   }
 
-  const addApp = (val) => {
-
+  const addApp = ({name, categoryType, slug, key}) => {
+    console.log("add app name", name)
+    console.log("add app categoryType", categoryType)
+    console.log("add app slug", slug)
+    console.log("add app key", key)
   }
 
 
@@ -80,13 +83,13 @@ const AdminDashboard = ({ host, teams, apps }) => {
           </Button>
         </Grid>
       </Grid>
-      <Grid container className="statistics">
+      <Grid container className="statistics" spacing={2}>
         {
           // teams && teams.appStatistics && teams.appStatistics.map((app) => {
             apps.map((app) => {
             if (app.key == 'fannstar') {
               return (
-                <Grid item xs>
+                <Grid item>
                   <MultiStatisticsCard
                     title="Fan n Star"
                     isEnableMultiple
@@ -118,7 +121,7 @@ const AdminDashboard = ({ host, teams, apps }) => {
 
             } else {
               return (
-                <Grid item xs>
+                <Grid item>
                   <StatisticsCard
                     title="Choeaedol"
                     pointsValue="45,062,779"
