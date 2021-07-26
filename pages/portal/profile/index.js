@@ -17,7 +17,7 @@ import {
 import Grid from '@material-ui/core/Grid';
 import VotingGrid from '../../../components/VotingGrid';
 
-export default function Portal({session, profile, votingProfile, host, apps}) {
+export default function Portal({session, profile, votingProfile, host, apps,}) {
   const router = useRouter();
   const [admin, setAdmin] = useState();
   const [team, setTeam] = useState();
@@ -27,6 +27,7 @@ export default function Portal({session, profile, votingProfile, host, apps}) {
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   const [loading, setLoading] = useState(true)
+  const [appAccounts, setAppAccounts] = useState([])
   const [validationVoting, setValidationVoting] = useState({
     team: { error: false, value: {
       slug: null
@@ -57,13 +58,35 @@ export default function Portal({session, profile, votingProfile, host, apps}) {
       }
     };
 
+    const fetchAppAccounts = async () => {
+      return Promise.all(apps.map(async (app) => {
+        const res = await fetch(`/api/accounts/${app.slug}?email=${session.user.email}`)
+        const resJson = await res.json()
+
+        return {
+          key: app.key,
+          data: resJson
+        }
+      }))
+    }
+
     fetchData();
+    fetchAppAccounts().then(data => {
+      let accounts = {}
+
+      data.forEach(app => {
+        accounts[app.key] = app.data
+      })
+
+      setAppAccounts(accounts)
+    });
     if (profile && profile.email != null) {
       fetchTeam();
       setLoading(false);
     } else {
       router.push('/portal/profile/initial-setup')
     }
+
   }, [session]);
 
   // if (typeof window !== "undefined" && loading) return null;
@@ -157,7 +180,7 @@ export default function Portal({session, profile, votingProfile, host, apps}) {
               </Grid>
             </Grid>
 
-            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} initialVotingProfile={votingProfile} apps={apps} />
+            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} initialVotingProfile={votingProfile} apps={apps} appAccounts={appAccounts} />
             {/* <div className="voting-profile">
               <div className="heading">
                 <h1>Voting Profile</h1>

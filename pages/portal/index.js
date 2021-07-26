@@ -36,7 +36,7 @@ export default function Portal({ profile, session, admin, teams, apps, host }) {
         !loading && !admin && <MemberDashboard />
       }
       {
-        !loading && admin && <AdminDashboard host={host} teams={teams} apps={apps} />
+        !loading && admin && <AdminDashboard host={host} teams={teams} apps={apps} email={session.user.email} />
       }
     </PortalLayout>
   );

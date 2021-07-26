@@ -7,57 +7,28 @@ const createCollection = async (db, name) => {
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
-  let initial = {
-    email: req.query.email,
+  let params = {
+    // email: req.query.email,
+    name: req.body.name,
+    categoryType: req.body.categoryType,
+    slug: req.body.slug,
+    key: req.body.key,
+    tickets: req.body.tickets,
+    ticketType: req.body.ticketType,
+    allowCollection: req.body.allowCollection,
   }
 
-  if (req.body.app != 'whosfan') {
-    initial = {
-      ...initial,
-      whosfan: [],
-    }
+  if (req.body.levels) {
+    params.levels = req.body.levels
   }
-
-  if (req.body.app != 'fannstar') {
-    initial = {
-      ...initial,
-      fannstar: [],
-    }
-  }
-
-  if (req.body.app != 'idolchamp') {
-    initial = {
-      ...initial,
-      idolchamp: [],
-    }
-  }
-
-  if (req.body.app != 'choeaedol') {
-    initial = {
-      ...initial,
-      choeaedol: [],
-    }
-  }
-
-
-
 
   const data = await db
     .collection("apps")
-    .updateOne(
-      { email: req.query.email },
-      {
-        $set: initial,
-        $push: {
-          [req.body.app]: {
-            username: req.body.username,
-            tickets: typeof req.body.tickets == 'object' ? req.body.tickets : parseInt(req.body.tickets),
-          }
-        }
-      },
-      {
-        upsert: true,
-      }
-    )
+    .insertOne(params)
+
+  if (data.result) {
+    createCollection(db, req.body.slug)
+  }
+
   res.json(data.result);
 };

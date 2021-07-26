@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
@@ -12,13 +12,28 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import AddIcon from '@material-ui/icons/Add';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import IconButton from '@material-ui/core/IconButton';
 
 
-function getModalStyle() {
+function getModalStyle(lowerThanSm) {
+  let overflow = {}
+
+  if (lowerThanSm) {
+    overflow = {
+      overflow: 'scroll',
+    }
+  }
+
   return {
     top: `0`,
     left: `0`,
-  };
+    ...overflow,
+  }
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -86,19 +101,27 @@ export default function AddApp({open, setOpen, submit}) {
   const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
   const classes = useStyles();
   const theme = useTheme();
+  const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = useState(getModalStyle);
+  const [modalStyle, setModalStyle] = useState(getModalStyle(lowerThanSm));
   const [name, setName] = useState(null);
+  const [openLevelStep, setOpenLevelStep] = useState(false);
 
   const [categoryType, setCategoryType] = useState([]);
   const [tickets, setTickets] = useState(null);
   const [ticketType, setTicketType] = useState(null);
+  const [allowCollection, setAllowCollection] = useState(true);
   const [validation, setValidation] = useState({
     name: null,
     categoryType: null,
     tickets: null,
     ticketType: null,
+    allowCollection: null,
   });
+
+  const [levels, setLevels] = useState([])
+
+  const [levelValidation, setLevelValidation] = useState([]);
 
   const handleClose = () => {
     setOpen(false);
@@ -106,7 +129,21 @@ export default function AddApp({open, setOpen, submit}) {
     setName(null);
     setTicketType(null);
     setTickets(null);
+    setAllowCollection(true);
+    setValidation({
+      name: null,
+      categoryType: null,
+      tickets: null,
+      ticketType: null,
+      allowCollection: null,
+    });
+    setLevelValidation([]);
+    setOpenLevelStep(false);
   };
+
+  useEffect(() => {
+    setModalStyle(getModalStyle(lowerThanSm))
+  }, [lowerThanSm])
 
   const handleTicketInput = (name) => {
     let val = name.target.value
@@ -118,7 +155,7 @@ export default function AddApp({open, setOpen, submit}) {
 
     setValidation({
       ...validation,
-      name: error
+      tickets: error
     });
   }
 
@@ -155,12 +192,10 @@ export default function AddApp({open, setOpen, submit}) {
     let tempValidation = {
       name: null,
       categoryType: null,
+      tickets: null,
+      ticketType: null,
+      allowCollection: null,
     }
-
-
-
-    console.log("name", name)
-    console.log("categoryType", categoryType)
 
     if (name == null || name == '') {
       tempValidation.name = true
@@ -168,139 +203,382 @@ export default function AddApp({open, setOpen, submit}) {
     if (categoryType == null || categoryType.length == 0) {
       tempValidation.categoryType = true
     }
+    if (tickets == null || tickets == '') {
+      tempValidation.tickets = true
+    }
+    if (ticketType == null || ticketType.length == 0) {
+      tempValidation.ticketType = true
+    }
+    if (allowCollection == null) {
+      tempValidation.allowCollection = true
+    }
 
     setValidation(tempValidation);
 
-    if (tempValidation.name || tempValidation.categoryType) {
+    if (tempValidation.name || tempValidation.categoryType || tempValidation.tickets || tempValidation.ticketType || tempValidation.allowCollection) {
       return null;
     }
 
-    submit({
-      name,
-      categoryType,
-      slug: slugify(name),
-      key: keyify(name,)
-    });
-    handleClose();
+    if (ticketType == 'levels') {
+      // Transition to second step
+      setOpenLevelStep(true)
+    } else {
+
+      submit({
+        name,
+        categoryType,
+        slug: slugify(name),
+        key: keyify(name),
+        tickets,
+        ticketType,
+        allowCollection,
+      });
+      
+      handleClose();
+    }
+  }
+
+  const handleSubmitWithLevels = () => {
+    
   }
 
   const handleCategoryTypeChange = (event) => {
-    setCategoryType(event.target.value);
+    let val = event.target.value
+    setCategoryType(val);
+
+    let error = validation.categoryType
+    if (error && val != null && val.length > 0) {
+      error = false
+    }
+
+    setValidation({
+      ...validation,
+      categoryType: error
+    });
   };
 
   const handleTicketTypeChange = (event) => {
-    setTicketType(event.target.value);
+    let val = event.target.value
+    setTicketType(val);
+
+    let error = validation.ticketType
+    if (error && val != null && val != '') {
+      error = false
+    }
+
+    setValidation({
+      ...validation,
+      ticketType: error
+    });
   };
+
+  const handleAllowCollection = (event) => {
+    let val = event.target.checked
+    setAllowCollection(val)
+
+    let error = validation.allowCollection
+    if (error && val != null) {
+      error = false
+    }
+
+    setValidation({
+      ...validation,
+      allowCollection: error
+    });
+  }
+
+  const setLevelError = (index, error) => {
+    const tempLevelValidation = [...levelValidation];
+
+    tempLevelValidation[index] = error;
+
+    setLevelValidation(tempLevelValidation);
+  }
+
+  const checkIfLastLevelHasContent = () => {
+    if (levels.length == 0) {
+      return true;
+    }
+
+    const lastLevelIndex = levels.length - 1
+    const hasContent = levels[lastLevelIndex] && levels[lastLevelIndex] != undefined && levels[lastLevelIndex] != ''
+
+    if (!hasContent) {
+      setLevelError(lastLevelIndex, true)
+    }
+
+    return hasContent
+  }
+
+  const addLevel = () => {
+    if (levels.length < 10 && checkIfLastLevelHasContent()) {
+      setLevels([...levels, ""]);
+      setLevelValidation([...levelValidation, false]);
+    }
+  }
+
+  const removeLevel = (index) => {
+    const tempLevels = [...levels];
+    const tempLevelValidation = [...levelValidation];
+
+    tempLevels.splice(index, 1);
+    tempLevelValidation.splice(index, 1);
+
+    setLevels(tempLevels);
+    setLevelValidation(tempLevelValidation);
+  }
+
+  const handleChangeLevel = (val, index) => {
+    let tempLevels = [...levels]
+    const tempLevelValidation = [...levelValidation];
+
+    tempLevels[index] = val
+    tempLevelValidation[index] = false;
+    
+    setLevels(tempLevels)
+    setLevelValidation(tempLevelValidation);
+  }
+
+  const handleSubmitLevel = () => {
+    const tempLevelValidation = [...levelValidation];
+
+    levels.forEach((level, index) => {
+      const hasContent = level && level != undefined && level != ''
+      if (!hasContent) {
+        tempLevelValidation[index] = true
+      }
+    })
+
+    setLevelValidation(tempLevelValidation);
+
+    if (!tempLevelValidation.includes(true)) {
+      submit({
+        name,
+        categoryType,
+        slug: slugify(name),
+        key: keyify(name),
+        tickets,
+        ticketType,
+        allowCollection,
+        levels,
+      });
+      
+      handleClose();
+    }
+
+  }
 
 
   const body = (
     <div style={modalStyle} className="modal-style">
-      <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
-        <Grid item xs><h2 id="simple-modal-title">New app</h2></Grid>
-        <Grid item alignItems="flex-end" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
-      </Grid>
-      {/* <p id="simple-modal-description">
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-      </p> */}
-      {/* error={validation.country.error} */}
-      <Grid container direction="columns" spacing={2}>
-        <Grid item xs={12} sm={3}>
-          <TextField
-            className="ticket"
-            label="Name"
-            variant="outlined"
-            error={validation.name}
-            // onChange={(event, val) => { handleNameInput(val)}}
-            onChange={handleNameInput}
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sm={2}>
-          <TextField
-            className="ticket"
-            label="Tickets"
-            variant="outlined"
-            error={validation.tickets}
-            // onChange={(event, val) => { handleNameInput(val)}}
-            onChange={handleTicketInput}
-            required
-            helperText="e.g. Ever Hearts, GPoints"
-          />
-        </Grid>
-        <Grid item xs={12} sm={2}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel ref={labelRef} htmlFor="my-input" error={validation.categoryType}>Ticket Type *</InputLabel>
-            <Select
-              native
-              value={ticketType}
-              onChange={handleTicketTypeChange}
-              label="Ticket Type *"
-              inputProps={{
-                name: 'age',
-                id: 'outlined-age-native-simple',
-              }}
-              defaultValue="Ticket Type"
-            >
-              <option aria-label="None" value="" />
+      {
+        openLevelStep && (
+          <Grid container className="modal-main" spacing={3}>
+            <Grid container item alignItems="flex-end" style={{marginBottom: '20px'}}>
+              <Grid item xs><h2 id="simple-modal-title">Define Levels</h2></Grid>
+              <Grid item align="right" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
+            </Grid>
+
+            <Grid item>You can add a maximum of 10 levels.</Grid>
+            <Grid container item spacing={3}>
               {
-                ticketTypes.map((value) => (
-                  <option value={value.key} label={value.name}>{value.name}</option>
-                ))
+                levels && levels.map((level, index) => {
+                  return (
+                    <Grid container item xs={12} sm={6} md={4} lg={3}>
+                      <Grid item xs={1} align="center">
+                        { index + 1}
+                      </Grid>
+                      <Grid item xs={10}>
+                        <TextField
+                          className="ticket"
+                          // label="Tickets"
+                          variant="outlined"
+                          error={levelValidation[index]}
+                          onChange={(event, val) => { handleChangeLevel(event.target.value, index)}}
+                          // onChange={handleTicketInput}
+                          required
+                          // helperText="e.g. Ever Hearts, GPoints"
+                          value={level}
+                        />
+                        {
+                          levelValidation.length > 0 && levelValidation[index] && (
+                            <FormHelperText error={levelValidation[index]}>Finish filling this up first.</FormHelperText>
+                          )
+                        }
+
+                        
+                      </Grid>
+                      <Grid item xs={1}>
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => removeLevel(index)}
+                        >
+                          <DeleteForeverIcon />
+                        </IconButton>
+                        {/* <Button
+                          variant="contained"
+                          color="secondary"
+                          // className={classes.button}
+                          onClick={addLevel}
+                          startIcon={<AddIcon />}
+                        >
+                        </Button> */}
+                      </Grid>
+                    </Grid>
+                  )
+                })
               }
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel ref={labelRef} htmlFor="my-input" error={validation.categoryType}>Categories *</InputLabel>
-            <Select
-              labelId="demo-mutiple-chip-label"
-              id="demo-mutiple-chip"
-              multiple
-              labelWidth={labelWidth}
-              label="Categories *"
-              required={true}
-              value={categoryType}
-              onChange={handleCategoryTypeChange}
-              input={
-                <OutlinedInput
-                  id="select-multiple-chip"
+            </Grid>
+            <Grid container item spacing={2}>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  // className={classes.button}
+                  onClick={addLevel}
+                  startIcon={<AddIcon />}
+                >
+                  Add a level
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  // className={classes.button}
+                  onClick={handleSubmitLevel}
+                >
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        )
+      }
+      {
+        !openLevelStep && (
+          <div className="modal-main">
+          <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
+            <Grid item xs><h2 id="simple-modal-title">New app or website</h2></Grid>
+            <Grid item align="right" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} lg={4}>
+              <TextField
+                className="ticket"
+                label="Name"
+                variant="outlined"
+                error={validation.name}
+                onChange={handleNameInput}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg={4}>
+              <TextField
+                className="ticket"
+                label="Tickets"
+                variant="outlined"
+                error={validation.tickets}
+                // onChange={(event, val) => { handleNameInput(val)}}
+                onChange={handleTicketInput}
+                required
+                helperText="e.g. Ever Hearts, GPoint Level"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg={4}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel ref={labelRef} htmlFor="my-input" error={validation.ticketType}>Ticket Type *</InputLabel>
+                <Select
+                  native
+                  value={ticketType}
+                  onChange={handleTicketTypeChange}
+                  label="Ticket Type *"
+                  inputProps={{
+                    name: 'age',
+                    id: 'outlined-age-native-simple',
+                  }}
+                  defaultValue="Ticket Type"
+                  error={validation.ticketType}
+                >
+                  <option aria-label="None" value="" />
+                  {
+                    ticketTypes.map((value) => (
+                      <option value={value.key} key={`ticket-type-${value.key}`} label={value.name}>{value.name}</option>
+                    ))
+                  }
+                </Select>
+                { ticketType == 'levels' && (
+                  <FormHelperText id="my-helper-text">You will need to define these levels in the next step.</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} lg={4}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel ref={labelRef} htmlFor="my-input" error={validation.categoryType}>Categories *</InputLabel>
+                <Select
+                  labelId="demo-mutiple-chip-label"
+                  id="demo-mutiple-chip"
+                  multiple
                   labelWidth={labelWidth}
                   label="Categories *"
                   required={true}
-                  className={classes.outlinedInput}
-                  error={validation.categoryType}
-                />
-              }
-              variant="outlined"
-              renderValue={(selected) => (
-                <div className={classes.chips}>
+                  value={categoryType}
+                  onChange={handleCategoryTypeChange}
+                  input={
+                    <OutlinedInput
+                      id="select-multiple-chip"
+                      labelWidth={labelWidth}
+                      label="Categories *"
+                      required={true}
+                      className={classes.outlinedInput}
+                      error={validation.categoryType}
+                    />
+                  }
+                  variant="outlined"
+                  renderValue={(selected) => (
+                    <div className={classes.chips}>
+                      {
+                        selected.map((value) => (
+                          <Chip key={value} label={value} className={classes.chip} size="small" />
+                        ))
+                      }
+                    </div>
+                  )}
+                >
                   {
-                    selected.map((value) => (
-                      <Chip key={value} label={value} className={classes.chip} size="small" />
+                    categories.map((name) => (
+                      <MenuItem key={name} value={name} style={getStyles(name, categoryType, theme)}>
+                        {name}
+                      </MenuItem>
                     ))
                   }
-                </div>
-              )}
-              // MenuProps={MenuProps}
-            >
-              {
-                categories.map((name) => (
-                  <MenuItem key={name} value={name} style={getStyles(name, categoryType, theme)}>
-                    {name}
-                  </MenuItem>
-                ))
-              }
-            </Select>
-            <FormHelperText id="my-helper-text">Where voting and collection happens</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={2}>
-            <Button variant="contained" color="secondary" onClick={handleSubmit} className="button">
-              Submit
-            </Button>
-          </Grid>
-        </Grid>
+                </Select>
+                <FormHelperText id="my-helper-text">Where voting and collection happens, can be multiple</FormHelperText>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={allowCollection}
+                      onChange={handleAllowCollection}
+                      name="allowCollection"
+                      color="primary"
+                    />
+                  }
+                  label="Allow members to collect"
+                />
+                <FormHelperText>Can be turned on/off in the future.</FormHelperText>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Button variant="contained" color="secondary" onClick={handleSubmit} className="button">
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+        )
+      }
       <AddApp />
     </div>
   );

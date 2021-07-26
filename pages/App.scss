@@ -208,10 +208,6 @@ p {
             padding: 15px;
             // margin-right: 10px;
   
-            &.multiple {
-              width: auto;
-            }
-  
             h2 {
               font-family: 'Bebas Neue', sans-serif;
               padding: 0px;
@@ -243,6 +239,15 @@ p {
   
             &:hover {
               border: 1px solid white;
+            }
+  
+            &.multiple {
+              width: auto;
+              // min-width: 100%;
+
+              .points {
+                max-width: 50px;
+              }
             }
           }
         }
@@ -699,6 +704,10 @@ p {
   position: absolute;
   color: #ffffff;
   padding: 30px;
+
+  .modal-main {
+    // overflow: scroll;
+  }
   
   h2 {
     font-family: 'Bebas Neue', sans-serif;

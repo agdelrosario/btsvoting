@@ -11,7 +11,7 @@ import { DataGrid } from '@material-ui/data-grid';
 const columns = [
   { field: 'id', headerName: 'ID', width: 30 },
   { field: 'name', headerName: 'Name', width: 130 },
-  { field: 'slug', headerName: 'Slug', width: 130 },
+  { field: 'tickets', headerName: 'Tickets', width: 200 },
   // {
   //   field: 'categories',
   //   headerName: 'Categories',
@@ -22,13 +22,14 @@ const columns = [
   // },
 ];
 
-const AdminDashboard = ({ host, teams, apps }) => {
+const AdminDashboard = ({ host, teams, apps, email }) => {
+  const [appsContainer, setAppsContainer] = useState(apps)
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
-  const [appsData] = useState(apps.map((app, index) => {
+  const [appsData, setAppsData] = useState(apps.map((app, index) => {
     return {
       id: index + 1,
       name: app.name,
-      slug: app.slug,
+      tickets: app.tickets,
       // categories: app.categories.reduce((previous, current, index) => {
       //   if (index == 0) {
       //     return current;
@@ -58,11 +59,43 @@ const AdminDashboard = ({ host, teams, apps }) => {
     setAddAppModalOpen(true);
   }
 
-  const addApp = ({name, categoryType, slug, key}) => {
-    console.log("add app name", name)
-    console.log("add app categoryType", categoryType)
-    console.log("add app slug", slug)
-    console.log("add app key", key)
+  const addApp = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels}) => {
+
+    const res = await fetch(`/api/apps/new?email=${email}`,
+    {
+      body: JSON.stringify({
+        name,
+        categoryType,
+        slug,
+        key,
+        tickets,
+        ticketType,
+        allowCollection,
+        levels,
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+
+    
+    const json = await res.json();
+
+    if (json) {
+      // fetch apps again
+
+      const appsRes = await fetch(`/api/apps`);
+      const appsJson = await appsRes.json();
+      setAppsContainer(appsJson)
+      setAppsData(appsJson.map((app, index) => {
+        return {
+          id: index + 1,
+          name: app.name,
+          tickets: app.tickets,
+        }
+      }))
+    }
   }
 
 
@@ -86,35 +119,25 @@ const AdminDashboard = ({ host, teams, apps }) => {
       <Grid container className="statistics" spacing={2}>
         {
           // teams && teams.appStatistics && teams.appStatistics.map((app) => {
-            apps.map((app) => {
-            if (app.key == 'fannstar') {
+            appsContainer.map((app) => {
+            if (app.ticketType == 'levels') {
+              let levelArray = []
+
+              if (app.levels && app.levels.length > 0) {
+                levelArray = app.levels.map((level) => {
+                  return {
+                    pointsValue: 0,
+                    pointsType: level,
+                  }
+                })
+              }
+
               return (
                 <Grid item>
                   <MultiStatisticsCard
                     title="Fan n Star"
                     isEnableMultiple
-                    pointsArray={[
-                      {
-                        "pointsValue": 2,
-                        "pointsType": "Black"
-                      },
-                      {
-                        "pointsValue": 3,
-                        "pointsType": "Gold"
-                      },
-                      {
-                        "pointsValue": 7,
-                        "pointsType": "Silver"
-                      },
-                      {
-                        "pointsValue": 19,
-                        "pointsType": "Bronze"
-                      },
-                      {
-                        "pointsValue": 25,
-                        "pointsType": "Mint"
-                      },
-                    ]}
+                    pointsArray={levelArray}
                   />
                 </Grid>
               )
@@ -123,9 +146,9 @@ const AdminDashboard = ({ host, teams, apps }) => {
               return (
                 <Grid item>
                   <StatisticsCard
-                    title="Choeaedol"
+                    title={app.name}
                     pointsValue="45,062,779"
-                    pointsType="Ever Hearts"
+                    pointsType={app.tickets}
                   />
                 </Grid>
               )
@@ -153,11 +176,11 @@ const AdminDashboard = ({ host, teams, apps }) => {
           <Grid item xs={12} md={4}>
             <Grid container xs>
               <Grid item xs>
-                <h1>Apps</h1>
+                <h1>Apps / Websites</h1>
               </Grid>
               <Grid item xs align="right">
                 <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
-                  Add App
+                  Add App / Website
                 </Button>
               </Grid>
             </Grid>

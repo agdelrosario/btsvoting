@@ -12,6 +12,11 @@ function getModalStyle() {
   };
 }
 
+
+const keyify = (str) => {
+  return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+}
+
 const gpointLevels = [
   {
     name: 'Mint',
@@ -66,9 +71,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
   const handleTicketInput = (ticket) => {
     const NON_DIGIT = /[^0-9]/g;
     let val = ticket.target.value
-    console.log("val", val)
     const intValue = parseInt(val.toString().replace(NON_DIGIT, ''));
-    console.log("intValue", intValue)
     setTickets(intValue && intValue != NaN & intValue != ''? intValue : '');
     let error = validation.tickets
     if (error && val != null && val != '') {
@@ -113,7 +116,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
     }
 
     submit({
-      app: currentApp.key,
+      app: currentApp,
       username,
       tickets
     });
@@ -126,13 +129,13 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
     <div style={modalStyle} className="modal-style">
       <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
         <Grid item xs><h2 id="simple-modal-title">New { currentApp ? currentApp.name + ' ' : '' }Account</h2></Grid>
-        <Grid item alignItems="flex-end" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
+        <Grid item align="right" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
       </Grid>
       {/* <p id="simple-modal-description">
         Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
       </p> */}
       {/* error={validation.country.error} */}
-      <Grid container direction="columns" spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={12} sm={5}>
           <TextField
             className="ticket"
@@ -146,7 +149,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
         </Grid>
         <Grid item xs={12} sm={5}>
           {
-            currentApp && currentApp.key != "fannstar" && (
+            currentApp && currentApp.ticketType == "integer" && (
               <TextField
                 className="ticket"
                 type="number"
@@ -161,11 +164,16 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
             )
           }
           {
-            currentApp && currentApp.key == "fannstar" && (
+            currentApp && currentApp.ticketType == "levels" && (
 
               <Autocomplete
                 id="combo-box-demo"
-                options={gpointLevels}
+                options={currentApp.levels.map((level) => {
+                  return {
+                    name: level,
+                    key: keyify(level),
+                  }
+                })}
                 getOptionLabel={(option) => option.name}
                 onChange={(event, val) => { handleGPointLevelSelect(val)}}
                 // defaultValue={validation.tickets.key}

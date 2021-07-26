@@ -141,7 +141,7 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
         Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
       </p> */}
       {/* error={validation.country.error} */}
-      <Grid container direction="columns" spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={12} sm={5}>
           <TextField
             className="ticket"

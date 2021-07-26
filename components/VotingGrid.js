@@ -1,17 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Modal from '@material-ui/core/Modal';
 import AddNewAccount from './AddNewAccount';
 import EditAccount from './EditAccount';
 
-const VotingGrid = ({host, email, validation, setValidation, initialVotingProfile, apps}) => {
+const VotingGrid = ({host, email, validation, setValidation, initialVotingProfile, apps, appAccounts: tempAppAccounts}) => {
   const [open, setOpen] = useState(false);
   const [openEditAccount, setOpenEditAccount] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
   const [currentAccountIndex, setCurrentAccountIndex] = useState(null);
   const [currentApp, setCurrentApp] = useState();
-  const [votingProfile, setVotingProfile] = useState(initialVotingProfile);
+  const [appAccounts, setAppAccounts] = useState({});
+  // const [votingProfile, setVotingProfile] = useState(initialVotingProfile);
+
+
+
+
+  useEffect(() => {
+    console.log("tempAppAccounts", tempAppAccounts)
+    setAppAccounts(tempAppAccounts)
+  }, [tempAppAccounts])
+
+  // useEffect(() => {
+  //   let getAccountsPerApp = async (app) => {
+
+  //     return resJson
+  //   }
+
+
+  //   let tempAppAccounts = {...appAccounts}
+
+  //   apps.forEach(async (app) => {
+  //     tempAppAccounts[app.key] = await getAccountsPerApp(app)
+  //   })
+
+  // }, [apps])
 
   const handleInput = (item, value) => {
     let error = validation[item].error
@@ -33,7 +57,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
   }
 
   const addAccount = async ({ app, username, tickets, }) => {
-    const res = await fetch(`/api/voting-profiles/update?email=${email}`,
+    const res = await fetch(`/api/account/${app.slug}?email=${email}`,
     {
       body: JSON.stringify({
         app,
@@ -48,9 +72,14 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
     
     // const json = await res.json();
 
-    const votingProfileRes = await fetch(`${host}/api/voting-profiles/single?email=${email}`);
-    const votingProfileJson = await votingProfileRes.json();
-    setVotingProfile(votingProfileJson)
+    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?email=${email}`);
+    const newAppAccountsJson = await newAppAccounts.json();
+    console.log("newAppAccountsJson", newAppAccountsJson)
+
+    let tempAppAccounts = {...appAccounts}
+    tempAppAccounts[app.key] = newAppAccountsJson
+    localAppAccounts(tempAppAccounts);
+    // setVotingProfile(newAppAccountsJson)
   }
 
   const editAccount = async ({ app, username, tickets }) => {
@@ -109,7 +138,7 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
                 spacing={2}
               >
                 {
-                  votingProfile && votingProfile[app.key] && votingProfile[app.key].map((val, index) => (
+                  appAccounts[app.key] && appAccounts[app.key].length > 0 && appAccounts[app.key].map((val, index) => (
                     <Grid item onClick={() => setVotingAccountData(app.key, index, appIndex)}>
                       <Grid
                         className="item"
