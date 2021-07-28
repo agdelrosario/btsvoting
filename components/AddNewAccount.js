@@ -191,7 +191,6 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
           </Button>
         </Grid>
       </Grid>
-      <AddNewAccount />
     </div>
   );
 

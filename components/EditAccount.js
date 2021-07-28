@@ -12,28 +12,9 @@ function getModalStyle() {
   };
 }
 
-const gpointLevels = [
-  {
-    name: 'Mint',
-    key: 'mint',
-  },
-  {
-    name: 'Bronze',
-    key: 'bronze',
-  },
-  {
-    name: 'Silver',
-    key: 'silver',
-  },
-  {
-    name: 'Gold',
-    key: 'gold',
-  },
-  {
-    name: 'Black',
-    key: 'black',
-  },
-]
+const keyify = (str) => {
+  return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+}
 
 export default function EditAccount({open, setOpen, currentApp, submit, currentAccount}) {
   // getModalStyle is not a pure function, we roll the style only on the first render
@@ -118,18 +99,12 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
     }
 
     submit({
-      app: currentApp.key,
+      app: currentApp,
       username,
       tickets
     });
     handleClose();
   }
-
-  if (currentAccount && currentAccount.tickets && currentAccount.tickets.key) {
-    console.log("currentAccount.tickets.key", currentAccount.tickets.key)
-  }
-
-
 
   const body = (
     <div style={modalStyle} className="modal-style">
@@ -156,7 +131,7 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
         </Grid>
         <Grid item xs={12} sm={5}>
           {
-            currentApp && currentApp.key != "fannstar" && (
+            currentApp && currentApp.ticketType != "levels" && (
               <TextField
                 className="ticket"
                 type="number"
@@ -171,14 +146,19 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
             )
           }
           {
-            currentApp && currentApp.key == "fannstar" && (
+            currentApp && currentApp.ticketType == "levels" && (
 
               <Autocomplete
                 id="combo-box-demo"
-                options={gpointLevels}
+                options={currentApp.levels.map((level) => {
+                  return {
+                    name: level,
+                    key: keyify(level),
+                  }
+                })}
                 getOptionLabel={(option) => option.name || ''}
                 onChange={(event, val) => { handleGPointLevelSelect(val)}}
-                defaultValue={currentAccount.tickets}
+                defaultValue={currentAccount?.tickets || null}
                 
                 renderInput={(params) => <TextField error={validation.tickets} className="autocomplete" {...params} label="GPoint Level" variant="outlined" required />}
               />
@@ -192,7 +172,6 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
           </Button>
         </Grid>
       </Grid>
-      <EditAccount />
     </div>
   );
 

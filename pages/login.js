@@ -35,7 +35,7 @@ export default function SignIn(providers) {
           <div className="title">
             <a href="/">BTS VOTING ORG<span className="title-dot">.</span></a>
           </div>
-          <p>This login is for BVO members only. You have been warned.</p>
+          <p>Welcome to the home of BVO members. Please do not login if you are not a member.</p>
           <div className="login-buttons">
             {
               Object.values(providers.providers).map(provider => (

@@ -5,14 +5,13 @@ import Modal from '@material-ui/core/Modal';
 import AddNewAccount from './AddNewAccount';
 import EditAccount from './EditAccount';
 
-const VotingGrid = ({host, email, validation, setValidation, initialVotingProfile, apps, appAccounts: tempAppAccounts}) => {
+const VotingGrid = ({host, email, validation, setValidation, apps, appAccounts: tempAppAccounts}) => {
   const [open, setOpen] = useState(false);
   const [openEditAccount, setOpenEditAccount] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
   const [currentAccountIndex, setCurrentAccountIndex] = useState(null);
   const [currentApp, setCurrentApp] = useState();
   const [appAccounts, setAppAccounts] = useState({});
-  // const [votingProfile, setVotingProfile] = useState(initialVotingProfile);
 
 
 
@@ -57,10 +56,10 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
   }
 
   const addAccount = async ({ app, username, tickets, }) => {
+    console.log("app", app)
     const res = await fetch(`/api/account/${app.slug}?email=${email}`,
     {
       body: JSON.stringify({
-        app,
         username,
         tickets,
       }),
@@ -78,20 +77,18 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
 
     let tempAppAccounts = {...appAccounts}
     tempAppAccounts[app.key] = newAppAccountsJson
-    localAppAccounts(tempAppAccounts);
-    // setVotingProfile(newAppAccountsJson)
+    setAppAccounts(tempAppAccounts);
   }
 
   const editAccount = async ({ app, username, tickets }) => {
+    console.log("app", app)
     console.log("yo editing this stuff", currentAccount)
-    // console.log("currentApp", currentApp.key)
     console.log("currentAccountIndex", currentAccountIndex)
 
-    const res = await fetch(`/api/voting-profiles/edit?email=${email}`,
+    const res = await fetch(`/api/edit-account/${app.slug}?email=${email}`,
     {
       body: JSON.stringify({
-        appKey: app,
-        index: currentAccountIndex,
+        _id: currentAccount._id,
         username,
         tickets,
       }),
@@ -101,21 +98,23 @@ const VotingGrid = ({host, email, validation, setValidation, initialVotingProfil
       method: 'POST'
     });
 
-    const votingProfileRes = await fetch(`${host}/api/voting-profiles/single?email=${email}`);
-    const votingProfileJson = await votingProfileRes.json();
-    setVotingProfile(votingProfileJson)
+    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?email=${email}`);
+    const newAppAccountsJson = await newAppAccounts.json();
+    console.log("newAppAccountsJson", newAppAccountsJson)
+
+    let tempAppAccounts = {...appAccounts}
+    tempAppAccounts[app.key] = newAppAccountsJson
+    setAppAccounts(tempAppAccounts);
   }
 
   const setVotingAccountData = (appKey, index, appIndex) => {
-    if (votingProfile == null || votingProfile[appKey] == null) {
+    if (appAccounts == null || appAccounts[appKey] == null) {
       return null;
     }
     console.log("index", index)
-    console.log("votingProfile", votingProfile)
-    console.log("votingProfile[appKey]", votingProfile[appKey])
     setCurrentApp(apps[appIndex])
     setCurrentAccountIndex(index)
-    setCurrentAccount(votingProfile[appKey][index]);
+    setCurrentAccount(appAccounts[appKey][index]);
     setOpenEditAccount(true);
   }
 

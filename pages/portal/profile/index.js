@@ -17,7 +17,7 @@ import {
 import Grid from '@material-ui/core/Grid';
 import VotingGrid from '../../../components/VotingGrid';
 
-export default function Portal({session, profile, votingProfile, host, apps,}) {
+export default function Portal({session, profile, host, apps,}) {
   const router = useRouter();
   const [admin, setAdmin] = useState();
   const [team, setTeam] = useState();
@@ -180,7 +180,7 @@ export default function Portal({session, profile, votingProfile, host, apps,}) {
               </Grid>
             </Grid>
 
-            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} initialVotingProfile={votingProfile} apps={apps} appAccounts={appAccounts} />
+            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
             {/* <div className="voting-profile">
               <div className="heading">
                 <h1>Voting Profile</h1>
@@ -200,9 +200,6 @@ export async function getServerSideProps(ctx) {
   const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
   const profile = await profileRes.json();
 
-  const votingProfileRes = await fetch(`${process.env.HOST}/api/voting-profiles/single?email=${session.user.email}`);
-  const votingProfile = await votingProfileRes.json();
-
   const appsRes = await fetch(`${process.env.HOST}/api/apps`);
   const apps = await appsRes.json();
 
@@ -210,7 +207,6 @@ export async function getServerSideProps(ctx) {
     props: {
       session,
       profile,
-      votingProfile,
       host: process.env.HOST,
       apps,
     }

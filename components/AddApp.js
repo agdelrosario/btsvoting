@@ -96,7 +96,7 @@ function getStyles(name, categoryType, theme) {
 //   },
 // };
 
-export default function AddApp({open, setOpen, submit}) {
+export default function AddApp({open, setOpen, submit, loadedData}) {
   const labelRef = useRef()
   const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
   const classes = useStyles();
@@ -104,13 +104,13 @@ export default function AddApp({open, setOpen, submit}) {
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle, setModalStyle] = useState(getModalStyle(lowerThanSm));
-  const [name, setName] = useState(null);
+  const [name, setName] = useState(loadedData?.name || null);
   const [openLevelStep, setOpenLevelStep] = useState(false);
 
-  const [categoryType, setCategoryType] = useState([]);
-  const [tickets, setTickets] = useState(null);
-  const [ticketType, setTicketType] = useState(null);
-  const [allowCollection, setAllowCollection] = useState(true);
+  const [categoryType, setCategoryType] = useState(loadedData?.categoryType || []);
+  const [tickets, setTickets] = useState(loadedData?.tickets || null);
+  const [ticketType, setTicketType] = useState(loadedData?.ticketType || null);
+  const [allowCollection, setAllowCollection] = useState(loadedData?.allowCollection || true);
   const [validation, setValidation] = useState({
     name: null,
     categoryType: null,
@@ -119,9 +119,23 @@ export default function AddApp({open, setOpen, submit}) {
     allowCollection: null,
   });
 
-  const [levels, setLevels] = useState([])
+  const [levels, setLevels] = useState(loadedData?.levels || [])
 
   const [levelValidation, setLevelValidation] = useState([]);
+
+  useEffect(() => {
+    console.log("loadedData", loadedData)
+    setName(loadedData?.name || null)
+    setTickets(loadedData?.tickets || null)
+    setCategoryType(loadedData?.categoryType || [])
+    setAllowCollection(loadedData?.allowCollection || true)
+    setTicketType(loadedData?.ticketType || null)
+    setLevels(loadedData?.levels || [])
+
+    setLevelValidation(loadedData?.levels?.map((level) => {
+      return false
+    }) || [])
+  },[open, loadedData]);
 
   const handleClose = () => {
     setOpen(false);
@@ -232,6 +246,7 @@ export default function AddApp({open, setOpen, submit}) {
         tickets,
         ticketType,
         allowCollection,
+        edit: !!loadedData
       });
       
       handleClose();
@@ -361,6 +376,7 @@ export default function AddApp({open, setOpen, submit}) {
         ticketType,
         allowCollection,
         levels,
+        edit: !!loadedData,
       });
       
       handleClose();
@@ -470,6 +486,7 @@ export default function AddApp({open, setOpen, submit}) {
                 variant="outlined"
                 error={validation.name}
                 onChange={handleNameInput}
+                value={name}
                 required
               />
             </Grid>
@@ -481,6 +498,7 @@ export default function AddApp({open, setOpen, submit}) {
                 error={validation.tickets}
                 // onChange={(event, val) => { handleNameInput(val)}}
                 onChange={handleTicketInput}
+                value={tickets}
                 required
                 helperText="e.g. Ever Hearts, GPoint Level"
               />
@@ -579,7 +597,7 @@ export default function AddApp({open, setOpen, submit}) {
           </div>
         )
       }
-      <AddApp />
+      {/* <AddApp /> */}
     </div>
   );
 

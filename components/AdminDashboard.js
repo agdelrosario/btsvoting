@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StatisticsCard from './StatisticsCard';
 import MultiStatisticsCard from './MultiStatisticsCard';
 import AddApp from './AddApp';
@@ -38,63 +38,137 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       //   }
       // }, "")
     }
-  })) 
+  }))
+  const [editAppData, setEditAppData] = useState(null);
 
-  const computeStatisticsPerTeam = async () => {
-    const res = await fetch(`${host}/api/statistics/aggregate-team?key=bptw`);
+  // useEffect(() => {
+  //   // Reset Edit App Data every time modal is closed.
+  //   console.log("addAppModalOpen", addAppModalOpen)
+
+  // }, [addAppModalOpen])
+
+  const computeStatisticsPerTeam = async (key) => {
+    const res = await fetch(`${host}/api/statistics/aggregate-team?key=${key}`);
     const json = await res.json();
 
-    console.log("json", json)
+    return json
+  }
+
+  const computeStatisticsPerApp = async (app) => {
+    const res = await fetch(`${host}/api/statistics/aggregate-apps?key=${app.key}`);
+    const json = await res.json();
+
+    return json
+  }
+
+  const triggerCollationPerTeam = async () => {
+    console.log("Compiling statistics", moment().format())
+
+    Promise.all(teams.map(team => {
+      return computeStatisticsPerApp()
+    })).then((something) => {
+      console.log("triggerCollation", something)
+    })
   }
 
   const triggerCollation = async () => {
     console.log("Compiling statistics", moment().format())
 
-    teams.forEach(team => {
-      computeStatisticsPerTeam()
+    Promise.all(apps.map(app => {
+      return computeStatisticsPerApp(app)
+    })).then((something) => {
+      console.log("triggerCollation", something)
     })
   }
 
   const openAddApp = () => {
+    // setEditAppData(null);
     setAddAppModalOpen(true);
   }
 
-  const addApp = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels}) => {
+  const openEditApp = (data, event) => {
+    const index = parseInt(data.id) - 1
+    console.log("setting app data", apps[index])
+    // console.log("setting app data", apps[index])
+    setEditAppData(index)
+    setAddAppModalOpen(true);
+  }
 
-    const res = await fetch(`/api/apps/new?email=${email}`,
-    {
-      body: JSON.stringify({
-        name,
-        categoryType,
-        slug,
-        key,
-        tickets,
-        ticketType,
-        allowCollection,
-        levels,
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    });
-
-    
-    const json = await res.json();
-
-    if (json) {
-      // fetch apps again
-
-      const appsRes = await fetch(`/api/apps`);
-      const appsJson = await appsRes.json();
-      setAppsContainer(appsJson)
-      setAppsData(appsJson.map((app, index) => {
-        return {
-          id: index + 1,
-          name: app.name,
-          tickets: app.tickets,
-        }
-      }))
+  const addApp = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
+    if (edit) {
+      const res = await fetch(`/api/apps/edit?email=${email}`,
+      {
+        body: JSON.stringify({
+          name,
+          categoryType,
+          slug,
+          key,
+          tickets,
+          ticketType,
+          allowCollection,
+          levels,
+          _id: apps[editAppData]._id,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+  
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch apps again
+  
+        const appsRes = await fetch(`/api/apps`);
+        const appsJson = await appsRes.json();
+        setAppsContainer(appsJson)
+        setAppsData(appsJson.map((app, index) => {
+          return {
+            id: index + 1,
+            name: app.name,
+            tickets: app.tickets,
+          }
+        }))
+      }
+    } else {
+      // Add
+      const res = await fetch(`/api/apps/new?email=${email}`,
+      {
+        body: JSON.stringify({
+          name,
+          categoryType,
+          slug,
+          key,
+          tickets,
+          ticketType,
+          allowCollection,
+          levels,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+  
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch apps again
+  
+        const appsRes = await fetch(`/api/apps`);
+        const appsJson = await appsRes.json();
+        setAppsContainer(appsJson)
+        setAppsData(appsJson.map((app, index) => {
+          return {
+            id: index + 1,
+            name: app.name,
+            tickets: app.tickets,
+          }
+        }))
+      }
     }
   }
 
@@ -185,7 +259,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               </Grid>
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
-              <DataGrid rows={appsData} columns={columns} pageSize={5} />
+              <DataGrid rows={appsData} columns={columns} pageSize={5} onRowClick={openEditApp} />
             </div>
           </Grid>
           {/* <Grid item xs>
@@ -193,7 +267,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           </Grid> */}
         </Grid>
       </div>
-      <AddApp open={addAppModalOpen} setOpen={setAddAppModalOpen} submit={addApp} />
+      <AddApp open={addAppModalOpen} setOpen={setAddAppModalOpen} submit={addApp} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
     </div>
   )
 };

@@ -35,7 +35,7 @@ function getSteps() {
   return ['Welcome to BVO Portal', 'Setup personal profile', 'Input voting details'];
 }
 
-export default function Portal({session, profile, votingProfile, host, teams, countries, apps}) {
+export default function Portal({session, profile, host, teams, countries, apps}) {
   const router = useRouter();
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
@@ -80,7 +80,7 @@ export default function Portal({session, profile, votingProfile, host, teams, co
         return (
           <div>
             <h1>Input voting details</h1>
-            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} initialVotingProfile={votingProfile} apps={apps} />
+            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} />
           </div>
         );
       default:
@@ -234,9 +234,6 @@ export async function getServerSideProps(ctx) {
   const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
   const profile = await profileRes.json();
 
-  const votingProfileRes = await fetch(`${process.env.HOST}/api/voting-profiles/single?email=${session.user.email}`);
-  const votingProfile = await votingProfileRes.json();
-
   const teamsRes = await fetch(`${process.env.HOST}/api/teams`);
   const teams = await teamsRes.json();
 
@@ -249,7 +246,6 @@ export async function getServerSideProps(ctx) {
     props: {
       session,
       profile,
-      votingProfile,
       host: process.env.HOST,
       teams,
       countries,
