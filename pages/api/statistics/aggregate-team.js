@@ -66,19 +66,10 @@ const fetchStatisticsPerApp = async (db, team, apps) => {
         total: votingDoc,
       }
     }
-
-  //   aggregatePerApp(db, key, "choeaedol").then((total) => {
-  //     console.log("app", app, "total", total)
-  //     return {
-  //       key: app,
-  //       total: total
-  //     }
-  //   })
   }))
 }
 
 export default async (req, res) => {
-  // const session = await getSession({ req });
   const { db } = await connectToDatabase();
   const apps = await db
     .collection("apps")

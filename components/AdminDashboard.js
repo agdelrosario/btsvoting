@@ -40,12 +40,22 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     }
   }))
   const [editAppData, setEditAppData] = useState(null);
+  const [overallAppStatistics, setOverAllAppStatistics] = useState(null);
 
-  // useEffect(() => {
-  //   // Reset Edit App Data every time modal is closed.
-  //   console.log("addAppModalOpen", addAppModalOpen)
+  useEffect(() => {
 
-  // }, [addAppModalOpen])
+    // // Get statistics
+    const fetchData = async () => {
+      const res = await fetch(`/api/statistics/overall-app`);
+      const json = await res.json();
+
+      if (json) {
+        setOverAllAppStatistics(json.statistics);
+      }
+    };
+
+    fetchData()
+  }, [])
 
   const computeStatisticsPerTeam = async (key) => {
     const res = await fetch(`${host}/api/statistics/aggregate-team?key=${key}`);
@@ -55,10 +65,6 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   }
 
   const computeStatisticsPerApp = async (app) => {
-    const res = await fetch(`${host}/api/statistics/aggregate-apps?key=${app.key}`);
-    const json = await res.json();
-
-    return json
   }
 
   const triggerCollationPerTeam = async () => {
@@ -72,13 +78,17 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   }
 
   const triggerCollation = async () => {
-    console.log("Compiling statistics", moment().format())
+    // console.log("Compiling statistics", moment().format())
+    const res = await fetch(`${host}/api/statistics/aggregate-apps`);
+    const json = await res.json();
+    console.log("json", json)
 
-    Promise.all(apps.map(app => {
-      return computeStatisticsPerApp(app)
-    })).then((something) => {
-      console.log("triggerCollation", something)
-    })
+    if (json) {
+      setOverAllAppStatistics(json);
+    }
+
+
+    // return json
   }
 
   const openAddApp = () => {
@@ -185,6 +195,13 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           <h1>App Stats</h1>
         </Grid>
         <Grid item xs align="right">
+          {
+            overallAppStatistics && (
+              <span>
+              Last updated date: { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
+              </span>
+            )
+          }
           <Button variant="contained" color="secondary" onClick={triggerCollation} className="button">
             Trigger statistics collation
           </Button>
@@ -193,43 +210,86 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       <Grid container className="statistics" spacing={2}>
         {
           // teams && teams.appStatistics && teams.appStatistics.map((app) => {
-            appsContainer.map((app) => {
-            if (app.ticketType == 'levels') {
-              let levelArray = []
+          appsContainer.map((app) => {
 
-              if (app.levels && app.levels.length > 0) {
-                levelArray = app.levels.map((level) => {
-                  return {
-                    pointsValue: 0,
-                    pointsType: level,
+            if (overallAppStatistics) {
+              const statisticsIndex = overallAppStatistics.statistics.findIndex((appStatistic) => {
+                return appStatistic.key == app.key
+              })
+
+
+              if (statisticsIndex > -1) {
+                if (app.ticketType == 'levels') {
+                  let levelArray = []
+
+                  if (app.levels && app.levels.length > 0) {
+                    levelArray = app.levels.map((level) => {
+                      let count = 0
+
+
+                      const levelIndex = overallAppStatistics.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
+                        return totalPerLevel.key == level
+                      })
+
+                      if (levelIndex > -1) {
+                        count = overallAppStatistics.statistics[statisticsIndex].total[levelIndex].total || 0
+                      }
+
+                      return {
+                        pointsValue: count,
+                        pointsType: level,
+                      }
+                    })
+
+                    return (
+                      <Grid item>
+                        <MultiStatisticsCard
+                          title="Fan n Star"
+                          isEnableMultiple
+                          pointsArray={levelArray}
+                        />
+                      </Grid>
+                    )
                   }
-                })
+
+                } else {
+                  let points = overallAppStatistics.statistics[statisticsIndex].total || 0
+
+                  return (
+                    <Grid item>
+                      <StatisticsCard
+                        title={app.name}
+                        pointsValue={points}
+                        pointsType={app.tickets}
+                      />
+                    </Grid>
+                  )
+
+                }
               }
-
-              return (
-                <Grid item>
-                  <MultiStatisticsCard
-                    title="Fan n Star"
-                    isEnableMultiple
-                    pointsArray={levelArray}
-                  />
-                </Grid>
-              )
-
-            } else {
-              return (
-                <Grid item>
-                  <StatisticsCard
-                    title={app.name}
-                    pointsValue="45,062,779"
-                    pointsType={app.tickets}
-                  />
-                </Grid>
-              )
             }
           })
         }
       </Grid>
+      <div>
+        <Grid container spacing={3}>
+          <Grid item xs>
+            <Grid container xs>
+              <Grid item xs>
+                <h1>Team Statistics</h1>
+              </Grid>
+              <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
+                  Add Voting
+                </Button>
+              </Grid>
+            </Grid>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid rows={[]} columns={columns} pageSize={5} />
+            </div>
+          </Grid>
+        </Grid>
+      </div>
       <div>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
@@ -262,9 +322,9 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               <DataGrid rows={appsData} columns={columns} pageSize={5} onRowClick={openEditApp} />
             </div>
           </Grid>
-          {/* <Grid item xs>
-            <h1>Apps</h1>
-          </Grid> */}
+            {/* <Grid item xs>
+              <h1>Apps</h1>
+            </Grid> */}
         </Grid>
       </div>
       <AddApp open={addAppModalOpen} setOpen={setAddAppModalOpen} submit={addApp} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />

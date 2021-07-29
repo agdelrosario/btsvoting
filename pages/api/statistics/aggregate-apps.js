@@ -1,5 +1,6 @@
 // import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../util/mongodb";
+import moment from "moment";
 
 const aggregatePerLevel = async (db, level, slug, key) => {
   const aggregate = [
@@ -16,15 +17,21 @@ const aggregatePerLevel = async (db, level, slug, key) => {
     // { $unwind: `$votingDocs`},
     { $match: { "tickets.name": level }},
     {
-      $count: level
+      $count: "count"
     }
   ]
 
   const votingDoc = await db.collection(slug).aggregate(aggregate).toArray()
 
+  let total = null
+
+  if (votingDoc && votingDoc.length > 0 && votingDoc[0].count) {
+    total = votingDoc[0].count
+  }
+
   return {
     key: level,
-    total: votingDoc,
+    total,
   }
 }
 
@@ -33,46 +40,21 @@ const fetchStatisticsPerApp = async (db, apps) => {
   }))
 }
 
-export default async (req, res) => {
-  // const session = await getSession({ req });
-  const { db } = await connectToDatabase();
-
-  console.log("req.query", req.query)
-
-  const app = await db
-    .collection("apps")
-    .find({ key: req.query.key })
-    .limit(20)
-    .toArray();
-  
-  const app_data = app[0]
-  
-
-  // fetchStatisticsPerApp(db, apps).then((appData) => {
-  //   res.json({ statistics: appData})
-  // })
-
-
+const computeStatisticsPerApp = async (db, app_data) => {
   if (app_data.ticketType == "levels") {
-
-    Promise.all(app_data.levels.map(level => {
+    return Promise.all(app_data.levels.map(level => {
       return aggregatePerLevel(db, level, app_data.slug, app_data.key)
     })).then((votingDoc) => {
-      res.json( { key: app_data.key, total: votingDoc } )
+      // let count = null
+
+      // if (votingDoc && votingDoc.length > 0 && votingDoc[0].tickets) {
+      //   count = votingDoc[0].tickets
+      // }
+
+      return { key: app_data.key, total: votingDoc }
     })
   } else {
     const aggregate = [
-      // { $match: { team }},
-      // {
-      //   $lookup:
-      //     {
-      //       from: app.slug,
-      //       localField: "email",
-      //       foreignField: "email",
-      //       as: app.slug,
-      //     }
-      // },
-      // { $unwind: `$${app.slug}`},
       {
         $group: {
           _id: app_data.slug,
@@ -83,11 +65,50 @@ export default async (req, res) => {
 
     const votingDoc = await db.collection(app_data.slug).aggregate(aggregate).toArray()
 
-    res.json( {
+    let total = null
+
+    console.log(votingDoc)
+
+    if (votingDoc && votingDoc.length > 0 && votingDoc[0].tickets) {
+      total = votingDoc[0].tickets
+    }
+
+    return {
       key: app_data.key,
-      total: votingDoc,
-    } )
+      total,
+    }
   }
+}
+
+export default async (req, res) => {
+  // const session = await getSession({ req });
+  const { db } = await connectToDatabase();
+
+  console.log("req.query", req.query)
+
+  const apps = await db
+    .collection("apps")
+    .find({})
+    .limit(20)
+    .toArray();
+
+
+
+
+  Promise.all(apps.map(app => {
+    return computeStatisticsPerApp(db, app)
+  })).then(async (statistics) => {
+    let params = {
+      date: moment().format(),
+      statistics
+    }
+
+    const data = await db
+      .collection("overall-app-statistics")
+      .insertOne(params)
+
+    res.json(params)
+  });
 
 
 };
