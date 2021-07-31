@@ -10,7 +10,7 @@ import { DataGrid } from '@material-ui/data-grid';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 30 },
-  { field: 'name', headerName: 'Name', width: 130 },
+  { field: 'name', headerName: 'Name', width: 200 },
   { field: 'tickets', headerName: 'Tickets', width: 200 },
   // {
   //   field: 'categories',
@@ -41,11 +41,15 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   }))
   const [editAppData, setEditAppData] = useState(null);
   const [overallAppStatistics, setOverAllAppStatistics] = useState(null);
+  const [teamStatistics, setTeamStatistics] = useState([]);
+  const [teamStatsColumns, setTeamStatsColumns] = useState([
+    { field: 'id', headerName: 'ID', width: 40 },
+    { field: 'name', headerName: 'Name', width: 250 },
+  ])
 
   useEffect(() => {
-
-    // // Get statistics
-    const fetchData = async () => {
+    // Get statistics
+    const fetchOverallStatistics = async () => {
       const res = await fetch(`/api/statistics/overall-app`);
       const json = await res.json();
 
@@ -54,7 +58,97 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       }
     };
 
-    fetchData()
+    const fetchAppsForTeamStatistics = async () => {
+      const appColumns = apps.reduce((columns, app) => {
+        if (app.ticketType == "levels") {
+          return columns.concat(app.levels.map((level) => {
+            return {
+              field: `${app.key}-${level}`,
+              headerName: `${app.name} ${level}`,
+              width: 200,
+            }
+          }))
+        } else {
+          return columns.concat([{
+            field: app.key,
+            headerName: app.name,
+            width: 180,
+          }])
+        }
+      }, [])
+
+      console.log("teamStatsColumns", teamStatsColumns)
+
+      setTeamStatsColumns([
+        { field: 'id', headerName: 'ID', width: 40 },
+        { field: 'name', headerName: 'Name', width: 250 },
+      ].concat(appColumns))
+      
+    }
+
+    const fetchTeamStatistics = async () => {
+      const res = await fetch(`/api/statistics/teams`);
+      const json = await res.json();
+
+      if (json) {
+        // console.log("teamStatistics", json)
+        let mapped = []
+        if (json && json.length > 0) {
+
+          mapped = json.map((team, index) => {
+            const currentTeam = teams.find((currentTeam) => {
+              return currentTeam.slug == team.key
+            })
+  
+            let params = {
+              id: index + 1,
+              name: currentTeam ? currentTeam.name : team.key,
+            }
+
+            let appParams = {}
+
+            console.log("team.total", team.total)
+
+            if (team.total && team.total[team.total.length - 1].statistics) {
+              appParams = team.total[team.total.length - 1].statistics.reduce((appParams, appTotal) => {
+                console.log("appTotal", appTotal)
+                if (Array.isArray(appTotal.total)) {
+                  const levelParams = appTotal.total.reduce((levelParams, level) => {
+                    return {
+                      ...levelParams,
+                      [`${appTotal.key}-${level.key}`]: level.total
+                    }
+                  }, {})
+  
+                  return {
+                    ...appParams,
+                    ...levelParams,
+                  }
+                } else {
+                  return {
+                    ...appParams,
+                    [appTotal.key]: appTotal.total
+                  }
+                }
+              }, {})
+            }
+    
+            return {
+              ...params,
+              ...appParams
+            }
+          })
+
+          console.log('mapped', mapped)
+        }
+        
+        setTeamStatistics(mapped);
+      }
+    };
+
+    fetchAppsForTeamStatistics()
+    fetchOverallStatistics()
+    fetchTeamStatistics()
   }, [])
 
   const computeStatisticsPerTeam = async (key) => {
@@ -64,31 +158,60 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     return json
   }
 
-  const computeStatisticsPerApp = async (app) => {
-  }
-
   const triggerCollationPerTeam = async () => {
     console.log("Compiling statistics", moment().format())
 
     Promise.all(teams.map(team => {
-      return computeStatisticsPerApp()
+      return computeStatisticsPerTeam(team.slug)
     })).then((something) => {
-      console.log("triggerCollation", something)
+      console.log("team collation", something)
+      // setTeamStatistics(something)
+
+      let mapped = []
+
+      if (something && something.length > 0) {
+        // To be replaced
+        mapped = something.map((team, index) => {
+          const currentTeam = teams.find((currentTeam) => {
+            return currentTeam.slug == team.key
+          })
+
+          let params = {
+            id: index + 1,
+            name: currentTeam ? currentTeam.name : team.key,
+          }
+
+          const appParams = total.reduce((appTotal) => {
+            if (appTotal.ticketType == "levels") {
+              
+            } else {
+              return 
+            }
+          }, [])
+  
+          return {
+            ...params,
+            appParams
+          }
+        })
+      }
+    
+      setTeamStatistics(mapped);
     })
   }
 
-  const triggerCollation = async () => {
-    // console.log("Compiling statistics", moment().format())
+  const triggerCollationPerApp = async () => {
     const res = await fetch(`${host}/api/statistics/aggregate-apps`);
     const json = await res.json();
-    console.log("json", json)
 
     if (json) {
       setOverAllAppStatistics(json);
     }
+  }
 
-
-    // return json
+  const triggerCollation = async () => {
+    await triggerCollationPerApp();
+    await triggerCollationPerTeam();
   }
 
   const openAddApp = () => {
@@ -195,17 +318,19 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           <h1>App Stats</h1>
         </Grid>
         <Grid item xs align="right">
-          {
-            overallAppStatistics && (
-              <span>
-              Last updated date: { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
-              </span>
-            )
-          }
           <Button variant="contained" color="secondary" onClick={triggerCollation} className="button">
-            Trigger statistics collation
+            Compute Stats
           </Button>
         </Grid>
+      </Grid>
+      <Grid container className="section">
+        {
+          overallAppStatistics && (
+            <Grid item className="statistics-date">
+              Overall Statistics last updated at { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
+            </Grid>
+          )
+        }
       </Grid>
       <Grid container className="statistics" spacing={2}>
         {
@@ -280,12 +405,21 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               </Grid>
               <Grid item xs align="right">
                 <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
-                  Add Voting
+                  Publish to Teams
                 </Button>
               </Grid>
             </Grid>
+            <Grid container className="section">
+              {
+                overallAppStatistics && (
+                  <Grid item className="statistics-date">
+                    Team Statistics last published at { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
+                  </Grid>
+                )
+              }
+            </Grid>
             <div style={{ height: 400, width: '100%' }}>
-              <DataGrid rows={[]} columns={columns} pageSize={5} />
+              <DataGrid rows={teamStatistics} columns={teamStatsColumns} pageSize={10} />
             </div>
           </Grid>
         </Grid>

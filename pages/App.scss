@@ -197,11 +197,20 @@ p {
           color: #414141;
           width: 1px;
         }
+
+        .section {
+          margin: 0 0 15px 0;
+        }
+
+        .statistics-date {
+          color: #A5A5A5;
+          font-size: 15px;
+        }
   
         .statistics {
           display: flex;
           flex-direction: row;
-          margin-bottom: 30px;
+          margin-bottom: 10px;
   
           .card {
             width: 250px;

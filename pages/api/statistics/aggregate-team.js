@@ -1,5 +1,6 @@
 // import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../util/mongodb";
+import moment from "moment";
 
 const aggregatePerLevel = async (db, level, team, slug, key) => {
   const aggregate = [
@@ -16,15 +17,21 @@ const aggregatePerLevel = async (db, level, team, slug, key) => {
     { $unwind: `$votingDocs`},
     { $match: { "votingDocs.tickets.name": level }},
     {
-      $count: level
+      $count: "level"
     }
   ]
 
   const votingDoc = await db.collection("profiles").aggregate(aggregate).toArray()
 
+  let total = null
+
+  if (votingDoc && votingDoc.length > 0 && votingDoc[0].level) {
+    total = votingDoc[0].level
+  }
+
   return {
     key: level,
-    total: votingDoc,
+    total: total,
   }
 }
 
@@ -60,10 +67,16 @@ const fetchStatisticsPerApp = async (db, team, apps) => {
       ]
 
       const votingDoc = await db.collection("profiles").aggregate(aggregate).toArray()
+
+      let total = null
+    
+      if (votingDoc && votingDoc.length > 0 && votingDoc[0].tickets) {
+        total = votingDoc[0].tickets
+      }
   
       return {
         key: app.key,
-        total: votingDoc,
+        total: total,
       }
     }
   }))
@@ -77,8 +90,31 @@ export default async (req, res) => {
     .limit(20)
     .toArray();
 
-  fetchStatisticsPerApp(db, req.query.key, apps).then((appData) => {
-    res.json({ team: req.query.key, statistics: appData})
+  fetchStatisticsPerApp(db, req.query.key, apps).then(async (appData) => {
+
+    let params = {
+      date: moment().format(),
+      statistics: appData,
+    }
+
+    const data = await db
+      .collection("team-statistics")
+      .updateOne(
+        { key: req.query.key },
+        {
+          $set: {
+            key: req.query.key,
+          },
+          $push: {
+            total: params
+          }
+        },
+        {
+          upsert: true,
+        }
+      )
+
+    res.json({ key: req.query.key, total: appData})
   })
 
 
