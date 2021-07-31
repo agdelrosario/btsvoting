@@ -706,6 +706,10 @@ p {
 ::-moz-selection { background: yellow; color: grey; }
 ::selection { background: yellow; color: grey; }
 
+.loading {
+  width: 100%;
+}
+
 
 .modal-style {
   width: 100vw;

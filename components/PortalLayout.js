@@ -18,7 +18,7 @@ const contentStyle = {
   flexDirection: "column"
 };
 
-const Layout = props => {
+const PortalLayout = props => {
 
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
@@ -29,7 +29,7 @@ const Layout = props => {
         <title>BVO Portal</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <PortalNavBar isProfilePresent={props.profile.email != null} lowerThanSm={lowerThanSm} />
+      <PortalNavBar isProfilePresent={props.profile.email != null} lowerThanSm={lowerThanSm} admin={props.admin} />
       <main className={`portal ${lowerThanSm ? 'xs' : ''}`}>
         {props.children}
       </main>
@@ -44,4 +44,4 @@ const Layout = props => {
   // </div>
 };
 
-export default Layout;
+export default PortalLayout;

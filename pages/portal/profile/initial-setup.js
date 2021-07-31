@@ -35,12 +35,17 @@ function getSteps() {
   return ['Welcome to BVO Portal', 'Setup personal profile', 'Input voting details'];
 }
 
-export default function Portal({session, profile, host, teams, countries, apps}) {
+export default function Portal({session, profile, host, teams, countries, apps, admin}) {
   const router = useRouter();
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
-  const isProfilePresent = profile && profile.email != null
+  const isProfilePresent = profile && profile.team != null
   const steps = getSteps();
+  console.log("admin", admin)
+  const [teamsData, setTeamsData] = useState(admin.email ? teams : teams.filter((team) => {
+    return team.slug != "admins"
+  }))
+
   const [validation, setValidation] = useState({
     team: { error: false, value: {
       slug: null
@@ -59,6 +64,7 @@ export default function Portal({session, profile, host, teams, countries, apps})
     } },
     birthday: { error: false, value: null },
   });
+  const [appAccounts, setAppAccounts] = useState([])
 
   function getStepContent(stepIndex) {
     switch (stepIndex) {
@@ -66,21 +72,22 @@ export default function Portal({session, profile, host, teams, countries, apps})
         return (
           <div>
             <h1>Welcome to BVO Portal!</h1>
-            <p>This is the site where BVO members update their number of voting tickets (Ever Hearts, Jellies, etc.) and keep up with their teams statistics for a more productive BVO. There are lots of things planned for this space so please stay tuned! For now, we are now going to set up your personal and voting profiles.</p>
+            <p>BVO members can update their number of voting tickets (Ever Hearts, Jellies, etc.) and keep up with their teams statistics here. There are lots of things planned for this space so please stay tuned!</p>
           </div>
         );
       case 1:
         return (
           <div>
             <h1>Setup personal profile</h1>
-            <ProfileGrid validation={validation} setValidation={setValidation} teams={teams} countries={countries} />
+            <ProfileGrid validation={validation} setValidation={setValidation} teams={teamsData} countries={countries} />
           </div>
         );
       case 2:
         return (
           <div>
             <h1>Input voting details</h1>
-            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} />
+            {/* <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} /> */}
+            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
           </div>
         );
       default:
@@ -166,7 +173,31 @@ export default function Portal({session, profile, host, teams, countries, apps})
   useEffect(() => {
     if (isProfilePresent) {
       router.push('/portal')
+    } else {
+
+      const fetchAppAccounts = async () => {
+        return Promise.all(apps.map(async (app) => {
+          const res = await fetch(`/api/accounts/${app.slug}?email=${session.user.email}`)
+          const resJson = await res.json()
+  
+          return {
+            key: app.key,
+            data: resJson
+          }
+        }))
+      }
+      
+      fetchAppAccounts().then(data => {
+        let accounts = {}
+  
+        data.forEach(app => {
+          accounts[app.key] = app.data
+        })
+  
+        setAppAccounts(accounts)
+      });
     }
+
   }, []);
 
   if (!session) {
@@ -180,7 +211,7 @@ export default function Portal({session, profile, host, teams, countries, apps})
   }
   
   return (
-    <PortalLayout profile={profile} session={session}>
+    <PortalLayout profile={profile} session={session} admin={!!admin.email}>
       {
         (isProfilePresent) && (
           <div className="profile">
@@ -242,6 +273,9 @@ export async function getServerSideProps(ctx) {
 
   const countries = countryList().data;
 
+  const adminRes = await fetch(`${process.env.HOST}/api/admin?email=${session.user.email}`);
+  const admin = await adminRes.json();
+
   return {
     props: {
       session,
@@ -250,6 +284,7 @@ export async function getServerSideProps(ctx) {
       teams,
       countries,
       apps,
+      admin,
     }
   }
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getSession } from "next-auth/client";
 import { useRouter } from 'next/router';
 import countryList from 'react-select-country-list';
+import Loading from '../../../components/Loading';
 import PortalLayout from '../../../components/PortalLayout';
 import TextField from '@material-ui/core/TextField';
 // import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -17,11 +18,10 @@ import {
 import Grid from '@material-ui/core/Grid';
 import VotingGrid from '../../../components/VotingGrid';
 
-export default function Portal({session, profile, host, apps,}) {
+export default function Profile({session, profile, host, apps, admin}) {
   const router = useRouter();
-  const [admin, setAdmin] = useState();
   const [team, setTeam] = useState();
-  const isProfilePresent = profile && profile.email != null
+  const isProfilePresent = profile && profile.team != null
   const [selectedDate] = useState(isProfilePresent ? moment(profile.birthday).format('MM/DD/YYYY') : null);
   const [country] = useState(isProfilePresent ? countryList().valueMap[profile.country.toLowerCase()] : null)
   const theme = useTheme();
@@ -40,14 +40,6 @@ export default function Portal({session, profile, host, apps,}) {
   
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch(`/api/admin`);
-      const json = await res.json();
-
-      if (json.admin) {
-        setAdmin(json.admin);
-      }
-    };
     
     const fetchTeam = async () => {
       const res = await fetch(`/api/teams/single?slug=${profile.team}`);
@@ -70,7 +62,6 @@ export default function Portal({session, profile, host, apps,}) {
       }))
     }
 
-    fetchData();
     fetchAppAccounts().then(data => {
       let accounts = {}
 
@@ -80,7 +71,7 @@ export default function Portal({session, profile, host, apps,}) {
 
       setAppAccounts(accounts)
     });
-    if (profile && profile.email != null) {
+    if (profile && !!profile.team) {
       fetchTeam();
       setLoading(false);
     } else {
@@ -102,12 +93,10 @@ export default function Portal({session, profile, host, apps,}) {
   }
 
   return (
-    <PortalLayout profile={profile} session={session}>
+    <PortalLayout profile={profile} session={session} admin={!!admin.email}>
       {
         loading && (
-          <>
-            Insert Loading Screen here
-          </>
+          <Loading />
         )
       }
       {
@@ -203,12 +192,16 @@ export async function getServerSideProps(ctx) {
   const appsRes = await fetch(`${process.env.HOST}/api/apps`);
   const apps = await appsRes.json();
 
+  const adminRes = await fetch(`${process.env.HOST}/api/admin?email=${session.user.email}`);
+  const admin = await adminRes.json();
+
   return {
     props: {
       session,
       profile,
       host: process.env.HOST,
       apps,
+      admin,
     }
   }
 }

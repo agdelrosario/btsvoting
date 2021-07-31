@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import PortalLayout from '../../components/PortalLayout';
 import MemberDashboard from '../../components/MemberDashboard';
 import AdminDashboard from '../../components/AdminDashboard';
+import Loading from '../../components/Loading';
 
 
 export default function Portal({ profile, session, admin, teams, apps, host }) {
@@ -16,7 +17,7 @@ export default function Portal({ profile, session, admin, teams, apps, host }) {
     console.log('profile', profile)
     if (!session) {
       router.push('/login')
-    } else if (!profile || profile.email == null) {
+    } else if (!profile || !profile.team) {
       router.push('/portal/profile/initial-setup')
     } else {
       setLoading(false);
@@ -24,12 +25,10 @@ export default function Portal({ profile, session, admin, teams, apps, host }) {
   }, [session, profile]);
 
   return (
-    <PortalLayout profile={profile} session={session}>
+    <PortalLayout profile={profile} session={session} admin={!!admin.email}>
       {
         loading && (
-          <>
-            Insert Loading Screen here
-          </>
+          <Loading />
         )
       }
       {

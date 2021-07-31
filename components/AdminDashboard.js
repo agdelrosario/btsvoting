@@ -319,7 +319,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
         </Grid>
         <Grid item xs align="right">
           <Button variant="contained" color="secondary" onClick={triggerCollation} className="button">
-            Compute Stats
+            Compute
           </Button>
         </Grid>
       </Grid>

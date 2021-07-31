@@ -2,7 +2,7 @@
 import { signOut, useSession } from "next-auth/client"
 import Grid from '@material-ui/core/Grid';
 
-const NavBar = ({isProfilePresent, lowerThanSm}) => {
+const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
   const [session, loading] = useSession();
 
   return (
@@ -29,6 +29,11 @@ const NavBar = ({isProfilePresent, lowerThanSm}) => {
         justify={`${lowerThanSm ? 'flex-start' : 'flex-end'}`}
         spacing={5}
       >
+        {session && isProfilePresent && admin && (
+          <Grid item className="link">
+            <a href="/portal/users">Users</a>
+          </Grid>
+        )}
         {session && isProfilePresent && (
           <Grid item className="link">
             <a href="/portal/profile">Profile</a>
@@ -69,4 +74,4 @@ const NavBar = ({isProfilePresent, lowerThanSm}) => {
   )
 }
 
-export default NavBar;
+export default PortalNavBar;
