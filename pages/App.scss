@@ -542,15 +542,21 @@ p {
     min-height: 300px;
 
     .description {
-      margin-top: 70px;
-      line-height: 1rem;
+      // margin: 70px 0 0 0;
+      // line-height: 1.5rem;
       font-size: 1.5rem;
     }
   
     .sub-description {
       color: #9B9B9B;
-      line-height: 1;
+      // line-height: 1;
       font-size: 1.5rem;
+    }
+  }
+
+  &.mobile {
+    .slogan {
+      padding: 0 30px !important;
     }
   }
 
@@ -577,7 +583,8 @@ p {
   .timeline {
     position: relative;
     padding: 20px 70px 20px 20px;
-    width: calc(100% - 500px - 35px);
+    // width: calc(100% - 500px - 35px);
+    max-width: 100%;
 
     .future {
       .future-arrow {
@@ -602,7 +609,7 @@ p {
       .cards {
         border-left: 1px dashed #C4C4C4;
         margin-left: 134px;
-        width: calc(100% - 134px);
+        // width: calc(100% - 134px);
         padding-top: 10px;
 
         .card {

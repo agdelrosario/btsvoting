@@ -1,96 +1,115 @@
 import Head from 'next/head'
 import React from "react"
 import Link from "next/link"
-import {signIn, signOut, useSession} from "next-auth/client"
+// import {signIn, signOut, useSession} from "next-auth/client"
 import NavBar from '../components/NavBar';
+import Grid from '@material-ui/core/Grid';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function Home() {
-  const [session, loading] = useSession();
+  // const [session, loading] = useSession();
+
+  const theme = useTheme();
+  const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
 
   return (
-    <div className="container">
+    <div className={`container${lowerThanSm ? " mobile" : ""}`}>
       <Head>
         <title>BTS Voting Organization</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <NavBar />
+      <NavBar lowerThanSm={lowerThanSm} />
 
-      <div className="slogan">
-        <p className="description">
-          The #1 source of BTS voting information and updates since 2017
-        </p>
-        <p className="sub-description">
-          Posting credible awards and voting events only
-        </p>
-      </div>
+      <Grid container className={`slogan`} spacing={1}>
+        <Grid container item xs={12} className="description" alignItem="flex-end" justify="flex-start" align="flex-end" alignContent="flex-end">
+          <span>The #1 source of BTS voting information and updates since 2017</span>
+        </Grid>
+        <Grid container item xs={12}  className="sub-description" alignItem="flex-start" align="flex-start">
+          <Grid item>Posting credible awards and voting events only</Grid>
+        </Grid>
+      </Grid>
 
       <main>
-
-        <div className="sidebar">
-          <h1>Voting Updates</h1>
-          <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
-        </div>
-        <div className="timeline">
-          <h1>Voting Timeline</h1>
-          <div className="future">
-            <div className="future-arrow">
-              <div className="icon-arrow-up" />
-            </div>
-            <div className="cards">
-              <div className="card">
-                <div className="node">
-
-                </div>
-                <div className="details">
-                  <h2>Soribada Awards</h2>
-                  <div className="categories">
-                    <div className="category">
-                      <span>Korea</span>
+        {
+          !lowerThanSm && (
+            <Grid container>
+    
+              <Grid item xs={12} lg={2} className="sidebar">
+                <h1>Voting Updates</h1>
+                <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
+              </Grid>
+              <Grid item xs={12} lg={10} className="timeline">
+                <h1>Voting Timeline</h1>
+                <div className="future">
+                  <div className="future-arrow">
+                    <div className="icon-arrow-up" />
+                  </div>
+                  <div className="cards">
+                    <div className="card">
+                      <div className="node">
+    
+                      </div>
+                      <div className="details">
+                        <h2>Soribada Awards</h2>
+                        <div className="categories">
+                          <div className="category">
+                            <span>Korea</span>
+                          </div>
+                          <div className="category">
+                            <div className="icon icon-music"></div>
+                            <span>Butter</span>
+                          </div>
+                        </div> 
+                        <div className="app-link">
+                          <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                        </div>
+                      </div>
+                      
                     </div>
-                    <div className="category">
-                      <div className="icon icon-music"></div>
-                      <span>Butter</span>
+                    <div className="card">
+                      <div className="node">
+    
+                      </div>
+                      <div className="details">
+                        <h2>Soribada Awards</h2>
+                        <div className="categories">
+                          <div className="category">
+                            <span>Korea</span>
+                          </div>
+                          <div className="category">
+                            <div className="icon icon-music"></div>
+                            <span>Butter</span>
+                          </div>
+                        </div> 
+                        <div className="app-link">
+                          <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                        </div>
+                      </div>
+                      
                     </div>
-                  </div> 
-                  <div className="app-link">
-                    <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
                   </div>
                 </div>
-                
-              </div>
-              <div className="card">
-                <div className="node">
-
-                </div>
-                <div className="details">
-                  <h2>Soribada Awards</h2>
-                  <div className="categories">
-                    <div className="category">
-                      <span>Korea</span>
-                    </div>
-                    <div className="category">
-                      <div className="icon icon-music"></div>
-                      <span>Butter</span>
-                    </div>
-                  </div> 
-                  <div className="app-link">
-                    <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                <div className="present">
+                  <div className="present-node">
+    
                   </div>
                 </div>
-                
-              </div>
-            </div>
-          </div>
-          <div className="present">
-            <div className="present-node">
+                <div className="past">
+                  
+                </div>
+              </Grid>
+            </Grid>
+          )
+        }
+        {
+          lowerThanSm && (
+            <Grid container>
 
-            </div>
-          </div>
-          <div className="past">
-            
-          </div>
-        </div>
+            </Grid>
+          )
+        }
 
 
         {/* 
