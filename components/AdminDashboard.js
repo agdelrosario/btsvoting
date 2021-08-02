@@ -396,7 +396,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           })
         }
       </Grid>
-      <div>
+      {/* <div>
         <Grid container spacing={3}>
           <Grid item xs>
             <Grid container xs>
@@ -423,7 +423,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             </div>
           </Grid>
         </Grid>
-      </div>
+      </div> */}
       <div>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
