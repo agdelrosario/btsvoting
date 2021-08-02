@@ -79,6 +79,8 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
               KeyboardButtonProps={{
                 'aria-label': 'change date',
               }}
+              maxDate={new Date()}
+              minDate={new Date('January 1, 1940')}
               invalidDateMessage="Invalid date format. Should be MM/DD/YYYY."
               inputVariant="outlined"
               onError={
