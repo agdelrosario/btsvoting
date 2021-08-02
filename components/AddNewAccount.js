@@ -159,7 +159,6 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
                 // onChange={(event, val) => { handleTicketInput(val)}}
                 onChange={handleTicketInput}
                 required
-                value={tickets}
               />
             )
           }

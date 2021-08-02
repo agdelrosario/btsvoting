@@ -1,8 +1,5 @@
 import { connectToDatabase } from "../../../util/mongodb";
 import { ObjectID } from 'mongodb'
-
-const createCollection = async (db, name) => {
-  db.createCollection(name)
 }
 
 export default async (req, res) => {

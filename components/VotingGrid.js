@@ -131,6 +131,8 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
                           <Grid item xs><h3>Account { (index + 1) }</h3></Grid>
                           <Grid item xs align="right" className="action">UPDATE</Grid>
                         </Grid>
+
+                        <div className="username">{val.username}</div>
                         <span>{val.tickets && val.tickets.name ? val.tickets.name : val.tickets}</span>
                       </Grid>
                     </Grid>

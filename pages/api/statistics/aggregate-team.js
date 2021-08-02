@@ -82,40 +82,58 @@ const fetchStatisticsPerApp = async (db, team, apps) => {
   }))
 }
 
+const fetchStatisticsPerTeam = async (db, teams, apps) => {
+  return Promise.all(teams?.map(async (team) => {
+    return fetchStatisticsPerApp(db, team.slug, apps).then(async (appData) => {
+
+      let params = {
+        date: moment().format(),
+        statistics: appData,
+      }
+  
+      const data = await db
+        .collection("team-statistics")
+        .updateOne(
+          { key: req.query.key },
+          {
+            $set: {
+              key: req.query.key,
+            },
+            $push: {
+              total: params
+            }
+          },
+          {
+            upsert: true,
+          }
+        )
+
+      return data
+    })
+
+  }))
+  return 
+
+}
+
 export default async (req, res) => {
   const { db } = await connectToDatabase();
+
+  const teams = await db
+    .collection("teams")
+    .find({})
+    .limit(20)
+    .toArray();
+
+
   const apps = await db
     .collection("apps")
     .find({})
     .limit(20)
     .toArray();
 
-  fetchStatisticsPerApp(db, req.query.key, apps).then(async (appData) => {
-
-    let params = {
-      date: moment().format(),
-      statistics: appData,
-    }
-
-    const data = await db
-      .collection("team-statistics")
-      .updateOne(
-        { key: req.query.key },
-        {
-          $set: {
-            key: req.query.key,
-          },
-          $push: {
-            total: params
-          }
-        },
-        {
-          upsert: true,
-        }
-      )
-
-    res.json({ key: req.query.key, total: appData})
-  })
-
+    fetchStatisticsPerTeam(db, teams, apps).then (() => {
+      
+    })
 
 };

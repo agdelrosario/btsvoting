@@ -152,7 +152,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   }, [])
 
   const computeStatisticsPerTeam = async (key) => {
-    const res = await fetch(`${host}/api/statistics/aggregate-team?key=${key}`);
+    const res = await fetch(`/api/statistics/aggregate-team?key=${key}`);
     const json = await res.json();
 
     return json
@@ -211,7 +211,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
 
   const triggerCollation = async () => {
     await triggerCollationPerApp();
-    await triggerCollationPerTeam();
+    // await triggerCollationPerTeam();
   }
 
   const openAddApp = () => {
