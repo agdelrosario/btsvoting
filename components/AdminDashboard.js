@@ -431,11 +431,11 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               <Grid item xs>
                 <h1>Votings</h1>
               </Grid>
-              <Grid item xs align="right">
+              {/* <Grid item xs align="right">
                 <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
                   Add Voting
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid rows={[]} columns={columns} pageSize={5} />
