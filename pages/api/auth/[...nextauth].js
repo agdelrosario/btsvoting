@@ -60,11 +60,11 @@ const options = {
       console.log("linkAccount message", message)
       const { db } = await connectToDatabase();
 
-      const admin = await db
-        .collection("admins")
-        .find({email: message.user.email})
-        .limit(20)
-        .toArray();
+      // const admin = await db
+      //   .collection("admins")
+      //   .find({email: message.user.email})
+      //   .limit(20)
+      //   .toArray();
 
       const data = await db
         .collection("profiles")
@@ -100,6 +100,16 @@ const options = {
     async signIn(user, account, profile, isNewUser) {
       // console.log("account", account)
       const { db } = await connectToDatabase();
+
+      const admin = await db
+        .collection("admins")
+        .find({email: user.email})
+        .limit(20)
+        .toArray();
+
+      if (admin && admin.length > 0) {
+        return true
+      }
 
       let params = null
 

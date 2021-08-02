@@ -169,7 +169,7 @@ export default function Profile({session, profile, host, apps, admin}) {
               </Grid>
             </Grid>
 
-            <VotingGrid host={host} email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
+            <VotingGrid email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
             {/* <div className="voting-profile">
               <div className="heading">
                 <h1>Voting Profile</h1>
