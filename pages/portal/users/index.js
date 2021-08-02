@@ -12,32 +12,32 @@ const columns = [
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'provider', headerName: 'Provider', width: 200 },
   { field: 'role', headerName: 'Role', width: 200 },
-  {
-    field: "actions",
-    headerName: "Actions",
-    sortable: false,
-    filterable: false,
-    disableClickEventBubbling: true,
-    width: 200,
-    renderCell: (params) => {
-      const onClick = () => {
-        // const api: GridApi = params.api;
-        // const fields = api
-        //   .getAllColumns()
-        //   .map((c) => c.field)
-        //   .filter((c) => c !== "__check__" && !!c);
-        // const thisRow = {};
+  // {
+  //   field: "actions",
+  //   headerName: "Actions",
+  //   sortable: false,
+  //   filterable: false,
+  //   disableClickEventBubbling: true,
+  //   width: 200,
+  //   renderCell: (params) => {
+  //     const onClick = () => {
+  //       // const api: GridApi = params.api;
+  //       // const fields = api
+  //       //   .getAllColumns()
+  //       //   .map((c) => c.field)
+  //       //   .filter((c) => c !== "__check__" && !!c);
+  //       // const thisRow = {};
 
-        // fields.forEach((f) => {
-        //   thisRow[f] = params.getValue(f);
-        // });
+  //       // fields.forEach((f) => {
+  //       //   thisRow[f] = params.getValue(f);
+  //       // });
 
-        // return alert(JSON.stringify(thisRow, null, 4));
-      };
+  //       // return alert(JSON.stringify(thisRow, null, 4));
+  //     };
 
-      return <Button onClick={onClick}>Click</Button>;
-    }
-  }
+  //     return <Button onClick={onClick}>Click</Button>;
+  //   }
+  // }
   // {
   //   field: 'categories',
   //   headerName: 'Categories',

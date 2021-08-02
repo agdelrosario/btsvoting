@@ -37,6 +37,15 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
   const handleClose = () => {
     setOpen(false);
   }
+  
+  const handleDelete = async (app) => {
+    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?email=${email}`);
+    const newAppAccountsJson = await newAppAccounts.json();
+
+    let tempAppAccounts = {...appAccounts}
+    tempAppAccounts[app.key] = newAppAccountsJson
+    setAppAccounts(tempAppAccounts);
+  }
 
   const addAccount = async ({ app, username, tickets, }) => {
     // console.log("app", app)
@@ -145,7 +154,7 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
       <AddNewAccount open={open} setOpen={setOpen} currentApp={currentApp} submit={addAccount} />
       {
         openEditAccount && (
-          <EditAccount open={openEditAccount} setOpen={setOpenEditAccount} currentApp={currentApp} submit={editAccount} currentAccount={currentAccount}  />
+          <EditAccount open={openEditAccount} setOpen={setOpenEditAccount} currentApp={currentApp} submit={editAccount} currentAccount={currentAccount} handleDelete={handleDelete}  />
         )
       }
     </form>

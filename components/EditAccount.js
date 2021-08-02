@@ -4,6 +4,8 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import IconButton from '@material-ui/core/IconButton';
 
 function getModalStyle() {
   return {
@@ -16,7 +18,7 @@ const keyify = (str) => {
   return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 }
 
-export default function EditAccount({open, setOpen, currentApp, submit, currentAccount}) {
+export default function EditAccount({open, setOpen, currentApp, submit, currentAccount, handleDelete}) {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
   const [username, setUsername] = useState(currentAccount ? currentAccount.username : null);
@@ -106,6 +108,27 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
     handleClose();
   }
 
+  const deleteAccount = async () => {
+    console.log('currentAccount', currentAccount)
+    const res = await fetch(`/api/account/delete`,
+    {
+      body: JSON.stringify({
+        _id: currentAccount._id,
+        app: currentApp.slug,
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'DELETE'
+    });
+    const resJson = await res.json();
+
+    if (resJson) {
+      handleDelete(currentApp)
+      handleClose();
+    }
+  }
+
   const body = (
     <div style={modalStyle} className="modal-style">
       <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
@@ -172,6 +195,21 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
           </Button>
         </Grid>
       </Grid>
+      <Grid container style={{marginTop: 20}}>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="secondary"
+            // className={classes.button}
+            onClick={deleteAccount}
+            startIcon={<DeleteForeverIcon />}
+          >
+            Delete Account
+          </Button>
+        </Grid>
+
+      </Grid>
+      
     </div>
   );
 
