@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }) {
           ]
         },
         palette: {
-          type: prefersDarkMode ? 'dark' : 'light',
+          type: 'dark',
           primary: yellow,
           secondary: blueGrey,
         },

@@ -4,12 +4,38 @@ import { connectToDatabase } from "../../../util/mongodb";
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
-  // const votingDoc = await db.collection(slug).aggregate(aggregate).toArray()
+  const aggregate = [
+    // { $match: { team }},
+    {
+      $lookup:
+        {
+          from: "whitelist",
+          localField: "username",
+          foreignField: "username",
+          as: "teamInfo",
+        }
+    },
+    {'$match'  : {'teamInfo' : { '$size': 0 } }},
+    // { $unwind: `$teamInfo`},
+    // { $match: { "tickets.name": level }},
+    // {
+    //   $group: {
+    //     _id: app_data.slug,
+    //     tickets: { $sum: `$tickets` },
+    //   }
+    // },
+  ]
 
-  const profiles = await db
-    .collection("profiles")
-    .find({ team: {$exists: false}})
-    // .limit()
-    .toArray();
-  res.json(profiles);
+  
+
+  const votingDoc = await db.collection("profiles").aggregate(aggregate).toArray()
+  console.log("votingDoc", votingDoc)
+
+  // const profiles = await db
+  //   .collection("profiles")
+  //   .aggregate(aggregate)
+  //   // .find({})
+  //   // .limit()
+  //   .toArray();
+  res.json(votingDoc);
 };

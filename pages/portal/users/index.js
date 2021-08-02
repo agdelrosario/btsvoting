@@ -48,57 +48,6 @@ const columns = [
   // },
 ];
 
-const requestColumns = [
-  { field: 'id', headerName: 'ID', width: 30 },
-  { field: 'username', headerName: 'Username', width: 200 },
-  { field: 'provider', headerName: 'Provider', width: 200 },
-  { field: 'role', headerName: 'Role', width: 200 },
-  {
-    field: "actions",
-    headerName: "Actions",
-    sortable: false,
-    filterable: false,
-    disableClickEventBubbling: true,
-    width: 200,
-    renderCell: (params) => {
-      console.log("params", params)
-      return params.value.map((param) => {
-        if (param == "accept") {
-          const onClick = () => {
-            // const api: GridApi = params.api;
-            // const fields = api
-            //   .getAllColumns()
-            //   .map((c) => c.field)
-            //   .filter((c) => c !== "__check__" && !!c);
-            // const thisRow = {};
-    
-            // fields.forEach((f) => {
-            //   thisRow[f] = params.getValue(f);
-            // });
-    
-            // return alert(JSON.stringify(thisRow, null, 4));
-          };
-    
-    
-    
-          return <Button onClick={onClick}>Accept Member</Button>;
-          
-        } else {
-          return <Button>Click</Button>;
-        }
-      })
-    }
-  }
-  // {
-  //   field: 'categories',
-  //   headerName: 'Categories',
-  //   // description: 'This column has a value getter and is not sortable.',
-  //   sortable: false,
-  //   width: 120,
-      
-  // },
-];
-
 export default function Users({session, profile, host, apps, admin}) {
   const [profiles, setProfiles] = useState();
   const [loading, setLoading] = useState(true)
@@ -165,6 +114,49 @@ export default function Users({session, profile, host, apps, admin}) {
   //     method: 'POST'
   //   });
   // }
+
+  const requestColumns = [
+    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'username', headerName: 'Username', width: 200 },
+    { field: 'provider', headerName: 'Provider', width: 200 },
+    { field: 'role', headerName: 'Role', width: 200 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      filterable: false,
+      disableClickEventBubbling: true,
+      width: 200,
+      renderCell: (params) => {
+        console.log("params", params)
+        return params.value.map((param) => {
+          if (param == "accept") {
+            const onClick = () => {
+              // const api: GridApi = params.api;
+              // const fields = api
+              //   .getAllColumns()
+              //   .map((c) => c.field)
+              //   .filter((c) => c !== "__check__" && !!c);
+              // const thisRow = {};
+      
+              // fields.forEach((f) => {
+              //   thisRow[f] = params.getValue(f);
+              // });
+      
+              // return alert(JSON.stringify(thisRow, null, 4));
+            };
+      
+      
+      
+            return <Button onClick={onClick}>Accept Member</Button>;
+            
+          } else {
+            return <Button>Click</Button>;
+          }
+        })
+      }
+    }
+  ];
 
   if (!session) {
     return (
