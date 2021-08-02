@@ -1,6 +1,5 @@
 import { connectToDatabase } from "../../../util/mongodb";
 import { ObjectID } from 'mongodb'
-}
 
 export default async (req, res) => {
   const { db } = await connectToDatabase();
