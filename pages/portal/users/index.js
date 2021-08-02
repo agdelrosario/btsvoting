@@ -48,9 +48,62 @@ const columns = [
   // },
 ];
 
+const requestColumns = [
+  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'username', headerName: 'Username', width: 200 },
+  { field: 'provider', headerName: 'Provider', width: 200 },
+  { field: 'role', headerName: 'Role', width: 200 },
+  {
+    field: "actions",
+    headerName: "Actions",
+    sortable: false,
+    filterable: false,
+    disableClickEventBubbling: true,
+    width: 200,
+    renderCell: (params) => {
+      console.log("params", params)
+      return params.value.map((param) => {
+        if (param == "accept") {
+          const onClick = () => {
+            // const api: GridApi = params.api;
+            // const fields = api
+            //   .getAllColumns()
+            //   .map((c) => c.field)
+            //   .filter((c) => c !== "__check__" && !!c);
+            // const thisRow = {};
+    
+            // fields.forEach((f) => {
+            //   thisRow[f] = params.getValue(f);
+            // });
+    
+            // return alert(JSON.stringify(thisRow, null, 4));
+          };
+    
+    
+    
+          return <Button onClick={onClick}>Accept Member</Button>;
+          
+        } else {
+          return <Button>Click</Button>;
+        }
+      })
+    }
+  }
+  // {
+  //   field: 'categories',
+  //   headerName: 'Categories',
+  //   // description: 'This column has a value getter and is not sortable.',
+  //   sortable: false,
+  //   width: 120,
+      
+  // },
+];
+
 export default function Users({session, profile, host, apps, admin}) {
   const [profiles, setProfiles] = useState();
   const [loading, setLoading] = useState(true)
+  const [requests, setRequests] = useState()
+  const [requestsLoading, setRequestsLoading] = useState(true)
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -72,11 +125,46 @@ export default function Users({session, profile, host, apps, admin}) {
       }
     }
 
+    const fetchRequests = async () => {
+      const requestsRes = await fetch(`/api/profiles/requests`);
+      const requests = await requestsRes.json();
+
+      if (requests) {
+        console.log('requests', requests)
+        setRequests(requests.map((profile, index) => {
+          return {
+            id: index + 1,
+            username: profile.username,
+            provider: profile.provider,
+            role: profile.role,
+            actions: ['accept']
+          }
+        }))
+      }
+    }
+
     fetchUsers().then(() => {
       setLoading(false)
     })
 
+    fetchRequests().then(() => {
+      setRequestsLoading(false) 
+    })
+
   }, []);
+
+  // const uploadData = async () => {
+  //   const res = await fetch(`/api/upload`,
+  //   {
+  //     body: JSON.stringify({
+  //       text: "something"
+  //     }),
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     method: 'POST'
+  //   });
+  // }
 
   if (!session) {
     return (
@@ -97,13 +185,44 @@ export default function Users({session, profile, host, apps, admin}) {
       }
       {
         !loading && (
-        <Grid 
-          container
-          className="users"
-        >
-          <DataGrid rows={profiles} columns={columns} pageSize={5} disableColumnSelector />
-        </Grid>
-      )}
+          <Grid  container style={{marginBottom: 20}}>
+            <Grid
+              container
+              item
+              className="users"
+              direction="column"
+            >
+              <Grid item><h1>Existing Users</h1></Grid>
+              
+              <Grid item
+              style={{minHeight: 400}}><DataGrid rows={profiles} columns={columns} pageSize={5} disableColumnSelector /></Grid>
+            </Grid>
+          </Grid>
+        )
+      }
+      {
+        requestsLoading && (
+          <Loading />
+        )
+      }
+      {
+        !requestsLoading && (
+          <Grid  container spacing={4}>
+            <Grid
+              container
+              item
+              className="users"
+              style={{minHeight: 400}}
+              direction="column"
+            >
+              <Grid item><h1>Requests</h1></Grid>
+              <Grid item
+              style={{minHeight: 400}}><DataGrid rows={requests} columns={requestColumns} pageSize={5} disableColumnSelector /></Grid>
+            </Grid>
+          </Grid>
+        )
+      }
+      {/* <div onClick={uploadData}>Click here to upload data</div> */}
     </PortalLayout>
   );
 }
