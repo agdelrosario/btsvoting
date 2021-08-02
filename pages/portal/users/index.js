@@ -128,21 +128,20 @@ export default function Users({session, profile, host, apps, admin}) {
       disableClickEventBubbling: true,
       width: 200,
       renderCell: (params) => {
-        console.log("params", params)
+        console.log("params", params.row)
         return params.value.map((param) => {
           if (param == "accept") {
-            const onClick = () => {
-              // const res = await fetch(`/api/whitelist/accept`,
-              // {
-              //   body: JSON.stringify({
-              //     // username: validation.birthday.value,
-              //     // team: validation.team.value.slug,
-              //   }),
-              //   headers: {
-              //     'Content-Type': 'application/json'
-              //   },
-              //   method: 'POST'
-              // });
+            const onClick = async () => {
+              const res = await fetch(`/api/whitelist/accept`,
+              {
+                body: JSON.stringify({
+                  username: params.row.username,
+                }),
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                method: 'POST'
+              });
               
               // const json = await res.json();
               // const api: GridApi = params.api;

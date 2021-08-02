@@ -5,7 +5,7 @@ export default async (req, res) => {
   const { db } = await connectToDatabase();
 
   const aggregate = [
-    // { $match: { team }},
+    { $match: { team: {$exists: 0} }},
     {
       $lookup:
         {

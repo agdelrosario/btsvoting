@@ -118,43 +118,45 @@ export default function Portal({session, profile, host, teams, countries, apps, 
         setValidation(temporaryObj)  
         return;
       }
-      const existingProfileRecheck = await fetch(`${host}/api/profiles/single?email=${session.user.email}`);
-      const existingProfileRecheckJson = await existingProfileRecheck.json()
+      // const existingProfileRecheck = await fetch(`/api/profiles/single?email=${session.user.email}`);
+      // const existingProfileRecheckJson = await existingProfileRecheck.json()
 
-      if (existingProfileRecheckJson && existingProfileRecheckJson.email != null) {
-        const res = await fetch(`/api/profiles/update?email=${session.user.email}`,
-        {
-          body: JSON.stringify({
-            birthday: validation.birthday.value,
-            team: validation.team.value.slug,
-            country: validation.country.value.value,
-            lastUpdatedDate: moment().format(),
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST'
-        });
+      // console.log("existingProfileRecheck", existingProfileRecheck)
+
+      // if (existingProfileRecheckJson && existingProfileRecheckJson.email != null) {
+      const res = await fetch(`/api/profiles/update?email=${session.user.email}`,
+      {
+        body: JSON.stringify({
+          birthday: validation.birthday.value,
+          team: validation.team.value.slug,
+          country: validation.country.value.value,
+          lastUpdatedDate: moment().format(),
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+      
+      const json = await res.json();
+      // } else {
+      //   const res = await fetch(`/api/profiles/new`,
+      //   {
+      //     body: JSON.stringify({
+      //       email: session.user.email,
+      //       birthday: validation.birthday.value,
+      //       team: validation.team.value.slug,
+      //       country: validation.country.value.value,
+      //       setupDate: moment().format(),
+      //     }),
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     },
+      //     method: 'POST'
+      //   });
         
-        const json = await res.json();
-      } else {
-        const res = await fetch(`/api/profiles/new`,
-        {
-          body: JSON.stringify({
-            email: session.user.email,
-            birthday: validation.birthday.value,
-            team: validation.team.value.slug,
-            country: validation.country.value.value,
-            setupDate: moment().format(),
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST'
-        });
-        
-        const json = await res.json();
-      }
+      //   const json = await res.json();
+      // }
     } else if (activeStep == 2) {
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
