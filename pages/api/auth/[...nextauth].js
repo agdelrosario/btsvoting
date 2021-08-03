@@ -74,6 +74,7 @@ const options = {
           },
           {
             $set: {
+              email: message.user.email,
               provider: message.providerAccount.provider,
               username: message.providerAccount.provider == 'twitter' ? message.providerAccount.params.screen_name : message.user.name,
               user_id: message.providerAccount.id,
