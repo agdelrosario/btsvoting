@@ -3,7 +3,7 @@ import StatisticsCard from './StatisticsCard';
 import MultiStatisticsCard from './MultiStatisticsCard';
 
 const MemberDashboard = ({profile}) => {
-  console.log("profile", profile)
+  // console.log("profile", profile)
 
   return (
     <div>

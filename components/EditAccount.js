@@ -29,7 +29,7 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
   });
   const [hasChanged, setHasChanged] = useState(false)
 
-  console.log("currentApp", currentApp)
+  // console.log("currentApp", currentApp)
 
   const handleClose = () => {
     setOpen(false);
@@ -109,7 +109,7 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
   }
 
   const deleteAccount = async () => {
-    console.log('currentAccount', currentAccount)
+    // console.log('currentAccount', currentAccount)
     const res = await fetch(`/api/account/delete`,
     {
       body: JSON.stringify({

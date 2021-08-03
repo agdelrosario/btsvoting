@@ -9,7 +9,8 @@ export default async (req, res) => {
       [
         {
           $set: {
-            birthday: req.body.birthday,
+            month: req.body.month ? req.body.month.toString() : "",
+            day: req.body.day,
             team: req.body.team,
             country: req.body.country
           }

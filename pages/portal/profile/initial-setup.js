@@ -53,7 +53,13 @@ export default function Portal({session, profile, host, teams, countries, apps, 
     country: { error: false, value: {
       value: null
     } },
-    birthday: { error: false, value: null },
+    month: { error: false, value: {
+      value: null
+    } },
+    day: { error: false, value: {
+      value: null
+    } },
+    // birthday: { error: false, value: null },
   });
   const [validationVoting, setValidationVoting] = useState({
     team: { error: false, value: {
@@ -103,9 +109,15 @@ export default function Portal({session, profile, host, teams, countries, apps, 
       if (!(validation.country.value && validation.country.value.value && validation.country.value.value != '')) {
         errors.push('country');
       }
-      if (!(validation.birthday.value && validation.birthday.value != '')) {
-        errors.push('birthday');
+      if (!(validation.month.value && validation.month.value.value && validation.month.value.value != '')) {
+        errors.push('month');
       }
+      if (!(validation.day.value && validation.day.value.value && validation.day.value.value != '')) {
+        errors.push('day');
+      }
+      // if (!(validation.birthday.value && validation.birthday.value != '')) {
+      //   errors.push('birthday');
+      // }
 
       if (errors.length > 0) {
 
@@ -127,7 +139,8 @@ export default function Portal({session, profile, host, teams, countries, apps, 
       const res = await fetch(`/api/profiles/update?email=${session.user.email}`,
       {
         body: JSON.stringify({
-          birthday: validation.birthday.value,
+          month: validation.month.value.value,
+          day: validation.day.value.value,
           team: validation.team.value.slug,
           country: validation.country.value.value,
           lastUpdatedDate: moment().format(),

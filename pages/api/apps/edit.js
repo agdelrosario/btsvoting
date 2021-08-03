@@ -20,7 +20,7 @@ export default async (req, res) => {
     params.levels = req.body.levels
   }
 
-  console.log("req.body", req.body)
+  // console.log("req.body", req.body)
 
   const data = await db
     .collection("apps")

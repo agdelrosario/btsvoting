@@ -29,7 +29,7 @@ export default async (req, res) => {
   
 
   const votingDoc = await db.collection("profiles").aggregate(aggregate).toArray()
-  console.log("votingDoc", votingDoc)
+  // console.log("votingDoc", votingDoc)
 
   // const profiles = await db
   //   .collection("profiles")

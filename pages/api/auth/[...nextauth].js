@@ -20,13 +20,13 @@ const options = {
   events: {
     async updateUser(message) {
 
-      console.log("updateUser message", message)
+      // console.log("updateUser message", message)
 
     },
     async createUser(message) {
       const { db } = await connectToDatabase();
 
-      console.log("createUser message", message)
+      // console.log("createUser message", message)
 
       const admin = await db
         .collection("admins")
@@ -57,7 +57,7 @@ const options = {
     },
     async linkAccount(message) {
 
-      console.log("linkAccount message", message)
+      // console.log("linkAccount message", message)
       const { db } = await connectToDatabase();
 
       // const admin = await db
@@ -98,7 +98,8 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile, isNewUser) {
-      // console.log("account", account)
+      // console.log("signIn profile", profile)
+      // console.log("signIn account", account)
       const { db } = await connectToDatabase();
 
       const admin = await db
@@ -131,6 +132,27 @@ const options = {
           return true
         }
       }
+
+      const data = await db
+        .collection("profiles")
+        .updateOne(
+          {
+            email: profile.email,
+          },
+          {
+            $set: {
+              email: profile.email,
+              user_id: account.id,
+              email: profile.email,
+              role: admin && admin.length > 0 ? "admin" : "member",
+              provider: account.provider,
+              username: params.username,
+            }
+          },
+          {
+            upsert: true,
+          }
+        )
       
       return '/unauthorized'
       // const isAllowedToSignIn = true

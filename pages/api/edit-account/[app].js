@@ -5,7 +5,7 @@ import { ObjectID } from 'mongodb'
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
-  console.log('req.body._id', req.body._id)
+  // console.log('req.body._id', req.body._id)
 
   const data = await db
     .collection(req.query.app)

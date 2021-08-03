@@ -22,8 +22,10 @@ export default function Profile({session, profile, host, apps, admin}) {
   const router = useRouter();
   const [team, setTeam] = useState();
   const isProfilePresent = profile && profile.team != null
-  const [selectedDate] = useState(isProfilePresent ? moment(profile.birthday).format('MM/DD/YYYY') : null);
+  const [selectedDate] = useState(isProfilePresent ? moment(`${profile.month}-${profile.day}-2021`) : null);
   const [country] = useState(isProfilePresent ? countryList().valueMap[profile.country.toLowerCase()] : null)
+  const [month] = useState(selectedDate ? selectedDate.format('MMMM') : null)
+  const [day] = useState(selectedDate ? selectedDate.format('D') : null)
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   const [loading, setLoading] = useState(true)
@@ -35,8 +37,15 @@ export default function Profile({session, profile, host, apps, admin}) {
     country: { error: false, value: {
       value: null
     } },
-    birthday: { error: false, value: null },
+    month: { error: false, value: {
+      value: null
+    } },
+    day: { error: false, value: {
+      value: null
+    } },
   });
+
+  // console.log(`${profile.day}-${profile.month}-2021`, moment(`${profile.month}-${profile.day}-2021`).format('MMMM'))
   
 
   useEffect(() => {
@@ -133,9 +142,17 @@ export default function Profile({session, profile, host, apps, admin}) {
                 <Grid item xs className="profile-info-card">
                   <TextField className="autocomplete" label="Country" defaultValue={country} disabled variant="outlined" />
                 </Grid>
-                <Grid item xs className="profile-info-card">
-                  <MuiPickersUtilsProvider utils={MomentUtils}>
+                <Grid container item xs className="profile-info-card" spacing={1}
+                direction="row">
+                  <Grid item xs={8}>
+                    <TextField className="autocomplete" label="Month" defaultValue={month} disabled variant="outlined" />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField className="autocomplete" label="Day" defaultValue={day} disabled variant="outlined" />
+                  </Grid>
+                  {/* <MuiPickersUtilsProvider utils={MomentUtils}>
                     <KeyboardDatePicker
+                      views={['day', 'month']}
                       margin="normal"
                       id="date-picker-dialog"
                       label="Birthdate"
@@ -149,7 +166,7 @@ export default function Profile({session, profile, host, apps, admin}) {
                       disabled
                       style={{width:"100%"}}
                     />
-                  </MuiPickersUtilsProvider>
+                  </MuiPickersUtilsProvider> */}
                 </Grid>
               </Grid>
             </div>

@@ -14,7 +14,7 @@ export default function Portal({ profile, session, admin, teams, apps, host }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log('profile', profile)
+    // console.log('profile', profile)
     if (!session) {
       router.push('/login')
     } else if (!profile || !profile.team) {

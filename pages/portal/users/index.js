@@ -12,85 +12,145 @@ const columns = [
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'provider', headerName: 'Provider', width: 200 },
   { field: 'role', headerName: 'Role', width: 200 },
-  // {
-  //   field: "actions",
-  //   headerName: "Actions",
-  //   sortable: false,
-  //   filterable: false,
-  //   disableClickEventBubbling: true,
-  //   width: 200,
-  //   renderCell: (params) => {
-  //     const onClick = () => {
-  //       // const api: GridApi = params.api;
-  //       // const fields = api
-  //       //   .getAllColumns()
-  //       //   .map((c) => c.field)
-  //       //   .filter((c) => c !== "__check__" && !!c);
-  //       // const thisRow = {};
-
-  //       // fields.forEach((f) => {
-  //       //   thisRow[f] = params.getValue(f);
-  //       // });
-
-  //       // return alert(JSON.stringify(thisRow, null, 4));
-  //     };
-
-  //     return <Button onClick={onClick}>Click</Button>;
-  //   }
-  // }
-  // {
-  //   field: 'categories',
-  //   headerName: 'Categories',
-  //   // description: 'This column has a value getter and is not sortable.',
-  //   sortable: false,
-  //   width: 120,
-      
-  // },
 ];
 
 export default function Users({session, profile, host, apps, admin}) {
-  const [profiles, setProfiles] = useState();
+  const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true)
-  const [requests, setRequests] = useState()
+  const [requests, setRequests] = useState([])
   const [requestsLoading, setRequestsLoading] = useState(true)
+  const [requestColumns, setRequestColumns] = useState([
+    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'username', headerName: 'Username', width: 200 },
+    { field: 'provider', headerName: 'Provider', width: 200 },
+    { field: 'role', headerName: 'Role', width: 200 }
+  ])
+  // console.log('profiles', profiles)
+
+  const fetchUsers = async () => {
+    const profilesRes = await fetch(`/api/profiles`);
+    const profilesJson = await profilesRes.json();
+
+    if (profilesJson) {
+      // console.log('profiles', profilesJson)
+      setProfiles(profilesJson.map((profile, index) => {
+        return {
+          id: index + 1,
+          username: profile.username,
+          provider: profile.provider,
+          team: profile.teamInfo.name,
+          role: profile.role,
+          // actions: ['allowAdmin']
+        }
+      }))
+      // console.log('profiles', profiles)
+    } else {
+      setProfiles([])
+      // console.log('profiles', profiles)
+    }
+  }
+
+  const fetchRequests = async () => {
+    const requestsRes = await fetch(`/api/profiles/requests`);
+    const requestsJson = await requestsRes.json();
+
+    if (requestsJson && requestsJson.length > 0) {
+      // console.log('requests', requestsJson)
+      setRequests(requestsJson.map((profile, index) => {
+        return {
+          id: index + 1,
+          username: profile.username,
+          provider: profile.provider,
+          role: profile.role,
+          actions: ['accept', 'decline']
+        }
+      }))
+
+      setRequestColumns([
+          { field: 'id', headerName: 'ID', width: 30 },
+          { field: 'username', headerName: 'Username', width: 200 },
+          { field: 'provider', headerName: 'Provider', width: 200 },
+          { field: 'role', headerName: 'Role', width: 200 },
+          {
+            field: "actions",
+            headerName: "Actions",
+            sortable: false,
+            filterable: false,
+            disableClickEventBubbling: true,
+            width: 400,
+            renderCell: (params) => {
+              // console.log("params", params.row)
+              return (
+                <Grid container spacing={1}>
+                  {
+                    params.value.map((param) => {
+                      if (param == "accept") {
+                        const onClick = async () => {
+                          const res = await fetch(`/api/whitelist/accept`,
+                          {
+                            body: JSON.stringify({
+                              username: params.row.username,
+                            }),
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            method: 'POST'
+                          });
+      
+                          const resJson = await res.json()
+      
+                          if (resJson) {
+                            fetchRequests()
+                            fetchUsers()
+                          }
+                        };
+                  
+                        return <Grid item><Button color="secondary" variant="contained" onClick={onClick}>Accept Member</Button></Grid>;
+                        
+                      } else if (param == "decline") {
+                        const onClick = async () => {
+                          const res = await fetch(`/api/whitelist/decline`,
+                          {
+                            body: JSON.stringify({
+                              username: params.row.username,
+                            }),
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            method: 'POST'
+                          });
+      
+                          const resJson = await res.json()
+      
+                          if (resJson) {
+                            fetchRequests()
+                          }
+                        };
+                  
+                        return <Grid item><Button color="secondary" variant="contained" onClick={onClick}>Decline Member</Button></Grid>;
+                        
+                      } else {
+                        return <Button>Click</Button>;
+                      }
+                    })
+                  }
+                </Grid>
+              )
+            }
+          }
+        ])
+    } else {
+      setRequests([])
+      setRequestColumns([
+        { field: 'id', headerName: 'ID', width: 30 },
+        { field: 'username', headerName: 'Username', width: 200 },
+        { field: 'provider', headerName: 'Provider', width: 200 },
+        { field: 'role', headerName: 'Role', width: 200 }
+      ])
+    }
+  }
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const profilesRes = await fetch(`/api/profiles`);
-      const profiles = await profilesRes.json();
-
-      if (profiles) {
-        console.log('profiles', profiles)
-        setProfiles(profiles.map((profile, index) => {
-          return {
-            id: index + 1,
-            username: profile.username,
-            provider: profile.provider,
-            team: profile.teamInfo.name,
-            role: profile.role,
-            actions: ['allowAdmin']
-          }
-        }))
-      }
-    }
-
-    const fetchRequests = async () => {
-      const requestsRes = await fetch(`/api/profiles/requests`);
-      const requests = await requestsRes.json();
-
-      if (requests) {
-        console.log('requests', requests)
-        setRequests(requests.map((profile, index) => {
-          return {
-            id: index + 1,
-            username: profile.username,
-            provider: profile.provider,
-            role: profile.role,
-            actions: ['accept']
-          }
-        }))
-      }
-    }
 
     fetchUsers().then(() => {
       setLoading(false)
@@ -115,60 +175,9 @@ export default function Users({session, profile, host, apps, admin}) {
   //   });
   // }
 
-  const requestColumns = [
-    { field: 'id', headerName: 'ID', width: 30 },
-    { field: 'username', headerName: 'Username', width: 200 },
-    { field: 'provider', headerName: 'Provider', width: 200 },
-    { field: 'role', headerName: 'Role', width: 200 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      sortable: false,
-      filterable: false,
-      disableClickEventBubbling: true,
-      width: 200,
-      renderCell: (params) => {
-        console.log("params", params.row)
-        return params.value.map((param) => {
-          if (param == "accept") {
-            const onClick = async () => {
-              const res = await fetch(`/api/whitelist/accept`,
-              {
-                body: JSON.stringify({
-                  username: params.row.username,
-                }),
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                method: 'POST'
-              });
-              
-              // const json = await res.json();
-              // const api: GridApi = params.api;
-              // const fields = api
-              //   .getAllColumns()
-              //   .map((c) => c.field)
-              //   .filter((c) => c !== "__check__" && !!c);
-              // const thisRow = {};
-      
-              // fields.forEach((f) => {
-              //   thisRow[f] = params.getValue(f);
-              // });
-      
-              // return alert(JSON.stringify(thisRow, null, 4));
-            };
-      
-      
-      
-            return <Button onClick={onClick}>Accept Member</Button>;
-            
-          } else {
-            return <Button>Click</Button>;
-          }
-        })
-      }
-    }
-  ];
+
+  // console.log("requests", requests)
+  // console.log("requestColumns", requestColumns)
 
   if (!session) {
     return (

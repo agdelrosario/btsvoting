@@ -107,11 +107,11 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
 
             let appParams = {}
 
-            console.log("team.total", team.total)
+            // console.log("team.total", team.total)
 
             if (team.total && team.total[team.total.length - 1].statistics) {
               appParams = team.total[team.total.length - 1].statistics.reduce((appParams, appTotal) => {
-                console.log("appTotal", appTotal)
+                // console.log("appTotal", appTotal)
                 if (Array.isArray(appTotal.total)) {
                   const levelParams = appTotal.total.reduce((levelParams, level) => {
                     return {
@@ -139,7 +139,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             }
           })
 
-          console.log('mapped', mapped)
+          // console.log('mapped', mapped)
         }
         
         setTeamStatistics(mapped);
@@ -221,7 +221,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
 
   const openEditApp = (data, event) => {
     const index = parseInt(data.id) - 1
-    console.log("setting app data", apps[index])
+    // console.log("setting app data", apps[index])
     // console.log("setting app data", apps[index])
     setEditAppData(index)
     setAddAppModalOpen(true);

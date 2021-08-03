@@ -36,7 +36,7 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
     router.push(link)
   }
 
-  console.log("router", router.pathname)
+  // console.log("router", router.pathname)
 
   const list = () => (
     <div

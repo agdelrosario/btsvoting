@@ -1,3 +1,4 @@
+import { useState } from "react";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import MomentUtils from '@date-io/moment';
@@ -6,8 +7,22 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
+// import DatePicker from '@material-ui/lab/DatePicker';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import moment from "moment";
+
 
 const ProfileGrid = ({validation, setValidation, teams, countries}) => {
+  const [months, setMonths] = useState(moment.months().map((month, index) => {
+    return {
+      value: index + 1,
+      label: month,
+    }
+  }))
+  const [days, setDays] = useState([])
+  
+  console.log("validation month", validation.month)
+  
 
   const handleInput = (item, value) => {
     let error = validation[item].error
@@ -15,13 +30,54 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
       error = false
     }
 
-    setValidation({
-      ...validation,
-      [item]: {
-        error,
-        value
+    console.log("value", value)
+
+    if (item == 'month') {
+      if (value && value.label && value.label != '') {
+        setDays(new Array(moment(`${value.label} 2021`).daysInMonth()).fill(null).map((x, i) => {
+          const currentDay = moment().startOf('month').add(i, 'days').format('D')
+          return {
+            value: currentDay,
+            label: currentDay,
+          }
+        }))
+  
+        setValidation({
+          ...validation,
+          "day": {
+            error: false,
+            value: null,
+          },
+          [item]: {
+            error,
+            value
+          }
+        });
+      } else {
+        setDays([])
+  
+        setValidation({
+          ...validation,
+          "day": {
+            error: false,
+            value: null,
+          },
+          [item]: {
+            error,
+            value
+          }
+        });
       }
-    });
+
+    } else {
+      setValidation({
+        ...validation,
+        [item]: {
+          error,
+          value
+        }
+      });
+    }
   };
 
   const handleDateChange = (date) => {
@@ -38,9 +94,10 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
       }
     });
   };
-
   return (
     <form className="profile-info">
+      <p>Each input field allows you to type in your data to search through the options. Finalise your selection by tapping the item in the dropdown.</p>
+      <br />
       <Grid
         container
         spacing={3}
@@ -67,10 +124,35 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
-          <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Grid container item xs={12} sm={6} md={4} spacing={1}>
+          <Grid item xs={8}>
+            <Autocomplete
+              id="combo-box-demo"
+              options={months}
+              defaultValue={validation.month.value} 
+              onChange={(event, val) => { handleInput('month', val)}} 
+              getOptionLabel={(option) => { return option.label || '' }}
+              renderInput={(params) => <TextField error={validation.month.error} className="autocomplete" {...params} label="Birth Month" variant="outlined" required />}
+            />
+            {/* <FormHelperText>Birthday</FormHelperText> */}
+          </Grid>
+          <Grid item xs={4}>
+            <Autocomplete
+              id="combo-box-demo"
+              options={days}
+              defaultValue={validation.day.value}
+              value={validation.day.value}
+              onChange={(event, val) => { handleInput('day', val)}} 
+              getOptionLabel={(option) => { return option.label || '' }}
+              disabled={days.length == 0 }
+              renderInput={(params) => <TextField error={validation.day.error} className="autocomplete" {...params} label="Day" variant="outlined" disabled={days.length == 0 } required />}
+            />
+            {/* <Grid item xs={12}><FormHelperText>Birthday</FormHelperText></Grid> */}
+          </Grid>
+          {/* <MuiPickersUtilsProvider utils={MomentUtils}>
             <KeyboardDatePicker
               id="date-picker-dialog"
+              views={['month','day']}
               label="Birthdate"
               format="MM/DD/YYYY"
               value={validation.birthday.value}
@@ -99,7 +181,7 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
               style={{width:"100%"}}
               required
             />
-          </MuiPickersUtilsProvider>
+          </MuiPickersUtilsProvider> */}
         </Grid>
       </Grid>
     </form>

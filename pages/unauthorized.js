@@ -36,6 +36,7 @@ export default function Unathorized(providers) {
             <a href="/">BTS VOTING ORG<span className="title-dot">.</span></a>
           </div>
           <p>You are not allowed to enter the site. Please wait until admin approves your request.</p>
+          <a href="/login">Login again</a>
           {/* <div className="login-buttons">
             {
               Object.values(providers.providers).map(provider => (

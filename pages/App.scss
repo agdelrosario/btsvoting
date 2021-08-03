@@ -92,12 +92,26 @@ p {
           font-size: 14px;
         }
 
+        a {
+          text-decoration: none;
+          color: #ffffff;
+      
+          &:hover {
+            color: #FFF032;
+          }
+          // &:focus,
+          // &:active {
+          //   text-decoration: underline;
+          // }
+        }
+
         .login-buttons {
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           margin: 40px 0 40px 0;
+
           .login-button {
             display: flex;
             flex-direction: column;
