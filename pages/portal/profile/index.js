@@ -22,7 +22,7 @@ export default function Profile({session, profile, host, apps, admin}) {
   const router = useRouter();
   const [team, setTeam] = useState();
   const isProfilePresent = profile && profile.team != null
-  const [selectedDate] = useState(isProfilePresent ? moment(`${profile.month}-${profile.day}-2021`) : null);
+  const [selectedDate] = useState(isProfilePresent ? moment(`${profile.month}-${profile.day}-2021`, 'MM-D-YYYY') : null);
   const [country] = useState(isProfilePresent ? countryList().valueMap[profile.country.toLowerCase()] : null)
   const [month] = useState(selectedDate ? selectedDate.format('MMMM') : null)
   const [day] = useState(selectedDate ? selectedDate.format('D') : null)
@@ -44,8 +44,6 @@ export default function Profile({session, profile, host, apps, admin}) {
       value: null
     } },
   });
-
-  // console.log(`${profile.day}-${profile.month}-2021`, moment(`${profile.month}-${profile.day}-2021`).format('MMMM'))
   
 
   useEffect(() => {

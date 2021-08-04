@@ -34,7 +34,12 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
 
     if (item == 'month') {
       if (value && value.label && value.label != '') {
-        setDays(new Array(moment(`${value.label} 2021`).daysInMonth()).fill(null).map((x, i) => {
+        console.log("value.label", value.label)
+        const month = moment(`${value.label} 1, 2021`)
+        console.log("month", month)
+        const arraySize = month.daysInMonth()
+        console.log("arraySize", arraySize)
+        setDays(new Array(arraySize).fill(null).map((x, i) => {
           const currentDay = moment().startOf('month').add(i, 'days').format('D')
           return {
             value: currentDay,
@@ -130,6 +135,7 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
               id="combo-box-demo"
               options={months}
               defaultValue={validation.month.value} 
+              value={validation.month.value}
               onChange={(event, val) => { handleInput('month', val)}} 
               getOptionLabel={(option) => { return option.label || '' }}
               renderInput={(params) => <TextField error={validation.month.error} className="autocomplete" {...params} label="Birth Month" variant="outlined" required />}
