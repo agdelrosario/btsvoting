@@ -41,7 +41,7 @@ export default function Portal({session, profile, host, teams, countries, apps, 
   const [activeStep, setActiveStep] = useState(0);
   const isProfilePresent = profile && profile.team != null
   const steps = getSteps();
-  console.log("admin", admin)
+  console.log("session", session.id)
   const [teamsData, setTeamsData] = useState(admin.email ? teams : teams.filter((team) => {
     return team.slug != "admins"
   }))

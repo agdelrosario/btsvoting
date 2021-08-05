@@ -2,6 +2,7 @@ import { PanoramaSharp } from "@material-ui/icons";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import { connectToDatabase } from "../../../util/mongodb";
+import { ObjectID } from 'mongodb'
 
 const options = {
   providers: [
@@ -20,13 +21,39 @@ const options = {
   events: {
     async updateUser(message) {
 
-      // console.log("updateUser message", message)
+      console.log("updateUser message", message)
+
+      // const admin = await db
+      //   .collection("admins")
+      //   .find({email: message.email})
+      //   .limit(20)
+      //   .toArray();
+
+      // const data = await db
+      // .collection("profiles")
+      // .updateOne(
+      //   {
+      //     email: message.email,
+      //   },
+      //   {
+      //     $set: {
+      //       user_id: message.id,
+      //       email: message.email,
+      //       role: admin && admin.length > 0 ? "admin" : "member"
+      //     }
+      //     // provider: message.providerAccount.provider,
+      //     // username: message.providerAccount.provider == 'twitter' ? message.providerAccount.params.screen_name : message.user.name,
+      //   },
+      //   {
+      //     upsert: true,
+      //   }
+      // )
 
     },
     async createUser(message) {
       const { db } = await connectToDatabase();
 
-      // console.log("createUser message", message)
+      console.log("createUser message", message)
 
       const admin = await db
         .collection("admins")
@@ -38,11 +65,12 @@ const options = {
         .collection("profiles")
         .updateOne(
           {
-            email: message.email,
+            userId: ObjectID(message.user.id),
+            // email: message.email,
           },
           {
             $set: {
-              user_id: message.id,
+              userId: message.id,
               email: message.email,
               role: admin && admin.length > 0 ? "admin" : "member"
             }
@@ -57,7 +85,7 @@ const options = {
     },
     async linkAccount(message) {
 
-      // console.log("linkAccount message", message)
+      console.log("linkAccount message", message)
       const { db } = await connectToDatabase();
 
       // const admin = await db
@@ -70,14 +98,16 @@ const options = {
         .collection("profiles")
         .updateOne(
           {
-            email: message.user.email,
+            // email: message.user.email,
+            userId: ObjectID(message.user.id),
           },
           {
             $set: {
+              userId: message.user.id,
               email: message.user.email,
               provider: message.providerAccount.provider,
               username: message.providerAccount.provider == 'twitter' ? message.providerAccount.params.screen_name : message.user.name,
-              user_id: message.providerAccount.id,
+              providerId: message.providerAccount.id,
             }
             // email: message.user.email,
             // role: admin && admin.length > 0 ? "admin" : "member"
@@ -99,8 +129,9 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile, isNewUser) {
-      // console.log("signIn profile", profile)
-      // console.log("signIn account", account)
+      console.log("signIn profile", profile)
+      console.log("signIn account", account)
+      console.log("signIn user", user)
       const { db } = await connectToDatabase();
 
       const admin = await db
@@ -108,17 +139,40 @@ const options = {
         .find({email: user.email})
         .limit(20)
         .toArray();
-
-      if (admin && admin.length > 0) {
-        return true
-      }
-
+  
       let params = null
 
       if (account.provider == 'facebook') {
         params = {username: profile.name}
       } else if (account.provider == 'twitter') {
         params = {username: profile.screen_name}
+      }
+
+      const data = await db
+        .collection("profiles")
+        .updateOne(
+          {
+            userId: ObjectID(user.id),
+            // email: profile.email,
+          },
+          {
+            $set: {
+              userId: user.id,
+              email: profile.email,
+              providerId: account.id,
+              email: profile.email,
+              role: admin && admin.length > 0 ? "admin" : "member",
+              provider: account.provider,
+              username: params.username,
+            }
+          },
+          {
+            upsert: true,
+          }
+        )
+
+      if (admin && admin.length > 0) {
+        return true
       }
 
 
@@ -133,27 +187,6 @@ const options = {
           return true
         }
       }
-
-      const data = await db
-        .collection("profiles")
-        .updateOne(
-          {
-            email: profile.email,
-          },
-          {
-            $set: {
-              email: profile.email,
-              user_id: account.id,
-              email: profile.email,
-              role: admin && admin.length > 0 ? "admin" : "member",
-              provider: account.provider,
-              username: params.username,
-            }
-          },
-          {
-            upsert: true,
-          }
-        )
       
       return '/unauthorized'
       // const isAllowedToSignIn = true
@@ -180,6 +213,11 @@ const options = {
     //     session.account = user.user;
     //     return Promise.resolve(session)
     // },
+    session: async (session, user) => {
+      console.log("user", user)
+       session.id = user.id
+       return Promise.resolve(session)
+    },
     redirect: async (url, _) => {
       // console.log("url", url)
       if (url === '/api/auth/signin') {
