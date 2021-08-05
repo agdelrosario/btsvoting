@@ -36,6 +36,47 @@ p {
   line-height: 2em;
 }
 
+.frontpage-temporary {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #979797;
+  
+  .title {
+    margin: 0 0 16px 0;
+    font-size: 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    color: #ffffff;
+    // display: inline;
+    line-height: 0.8rem;
+    text-align: left;
+    padding-bottom: 10px;
+    // width: 100%;
+
+    .title-dot {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 4rem;
+      color: #FFF032;
+    }
+
+    a {
+      text-decoration: none;
+      color: #ffffff;
+  
+      &:hover {
+        color: #FFF032;
+      }
+      // &:focus,
+      // &:active {
+      //   text-decoration: underline;
+      // }
+    }
+  }
+}
+
 .container {
   color: #fff;
   font-family: 'Montserrat', sans-serif;
