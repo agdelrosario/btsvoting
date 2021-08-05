@@ -112,6 +112,7 @@ const fetchStatisticsPerTeam = async (db, teams, apps) => {
     })
 
   }))
+  return 
 
 }
 
@@ -131,9 +132,8 @@ export default async (req, res) => {
     .limit(20)
     .toArray();
 
-    fetchStatisticsPerTeam(db, teams, apps).then ((statistics) => {
-      console.log("statistics", statistics)
-      res.json({statistics: []})
+    fetchStatisticsPerTeam(db, teams, apps).then (() => {
+      
     })
 
 };

@@ -152,16 +152,19 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   }, [])
 
   const computeStatisticsPerTeam = async (key) => {
+    const res = await fetch(`/api/statistics/aggregate-team?key=${key}`);
+    const json = await res.json();
+
+    return json
   }
 
   const triggerCollationPerTeam = async () => {
     console.log("Compiling statistics", moment().format())
-    const res = await fetch(`/api/statistics/aggregate-team?key=${key}`);
-    const something = await res.json();
 
-    if (something) {
-
-    // return json
+    Promise.all(teams.map(team => {
+      return computeStatisticsPerTeam(team.slug)
+    })).then((something) => {
+      console.log("team collation", something)
       // setTeamStatistics(something)
 
       let mapped = []
@@ -194,7 +197,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       }
     
       setTeamStatistics(mapped);
-    }
+    })
   }
 
   const triggerCollationPerApp = async () => {
