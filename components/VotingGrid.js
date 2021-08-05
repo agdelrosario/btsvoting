@@ -5,7 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import AddNewAccount from './AddNewAccount';
 import EditAccount from './EditAccount';
 
-const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAppAccounts}) => {
+const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempAppAccounts}) => {
   const [open, setOpen] = useState(false);
   const [openEditAccount, setOpenEditAccount] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
@@ -39,7 +39,7 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
   }
   
   const handleDelete = async (app) => {
-    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?email=${email}`);
+    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?userId=${userId}`);
     const newAppAccountsJson = await newAppAccounts.json();
 
     let tempAppAccounts = {...appAccounts}
@@ -49,7 +49,7 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
 
   const addAccount = async ({ app, username, tickets, }) => {
     // console.log("app", app)
-    const res = await fetch(`/api/account/${app.slug}?email=${email}`,
+    const res = await fetch(`/api/account/${app.slug}?userId=${userId}`,
     {
       body: JSON.stringify({
         username,
@@ -63,7 +63,7 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
     
     // const json = await res.json();
 
-    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?email=${email}`);
+    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?userId=${userId}`);
     const newAppAccountsJson = await newAppAccounts.json();
 
     let tempAppAccounts = {...appAccounts}
@@ -72,7 +72,7 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
   }
 
   const editAccount = async ({ app, username, tickets }) => {
-    const res = await fetch(`/api/edit-account/${app.slug}?email=${email}`,
+    const res = await fetch(`/api/edit-account/${app.slug}?userId=${userId}`,
     {
       body: JSON.stringify({
         _id: currentAccount._id,
@@ -85,7 +85,7 @@ const VotingGrid = ({email, validation, setValidation, apps, appAccounts: tempAp
       method: 'POST'
     });
 
-    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?email=${email}`);
+    const newAppAccounts = await fetch(`/api/accounts/${app.slug}?userId=${userId}`);
     const newAppAccountsJson = await newAppAccounts.json();
 
     let tempAppAccounts = {...appAccounts}

@@ -10,7 +10,7 @@ export default async (req, res) => {
   const data = await db
     .collection(req.query.app)
     .updateOne(
-      { email: req.query.email, _id: ObjectID(req.body._id) },
+      { userId: req.query.userId, _id: ObjectID(req.body._id) },
       {
         $set: {
           username: req.body.username,

@@ -9,8 +9,8 @@ const aggregatePerLevel = async (db, level, team, slug, key) => {
       $lookup:
         {
           from: slug,
-          localField: "email",
-          foreignField: "email",
+          localField: "userId",
+          foreignField: "userId",
           as: "votingDocs",
         }
     },
@@ -52,8 +52,8 @@ const fetchStatisticsPerApp = async (db, team, apps) => {
           $lookup:
             {
               from: app.slug,
-              localField: "email",
-              foreignField: "email",
+              localField: "userId",
+              foreignField: "userId",
               as: app.slug,
             }
         },

@@ -59,7 +59,7 @@ export default function Profile({session, profile, host, apps, admin}) {
 
     const fetchAppAccounts = async () => {
       return Promise.all(apps.map(async (app) => {
-        const res = await fetch(`/api/accounts/${app.slug}?email=${session.user.email}`)
+        const res = await fetch(`/api/accounts/${app.slug}?userId=${session.id}`)
         const resJson = await res.json()
 
         return {
@@ -184,7 +184,7 @@ export default function Profile({session, profile, host, apps, admin}) {
               </Grid>
             </Grid>
 
-            <VotingGrid email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
+            <VotingGrid userId={session.id} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
             {/* <div className="voting-profile">
               <div className="heading">
                 <h1>Voting Profile</h1>
@@ -201,7 +201,7 @@ export default function Profile({session, profile, host, apps, admin}) {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
-  const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
+  const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?userId=${session.id}`);
   const profile = await profileRes.json();
 
   const appsRes = await fetch(`${process.env.HOST}/api/apps`);

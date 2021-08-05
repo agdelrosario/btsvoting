@@ -1,4 +1,5 @@
 import { connectToDatabase } from "../../../util/mongodb";
+import { ObjectID } from 'mongodb'
 
 export default async (req, res) => {
   const { db } = await connectToDatabase();
@@ -7,7 +8,7 @@ export default async (req, res) => {
     .collection(req.query.app)
     .insertOne(
       {
-        email: req.query.email,
+        userId: ObjectID(req.query.userId),
         username: req.body.username,
         tickets: typeof req.body.tickets == 'object' ? req.body.tickets : parseInt(req.body.tickets),
       }

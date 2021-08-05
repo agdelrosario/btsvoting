@@ -1,12 +1,13 @@
 // import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../util/mongodb";
+import { ObjectID } from 'mongodb'
 
 export default async (req, res) => {
 //   const session = await getSession({ req });
   const { db } = await connectToDatabase();
 
   const aggregate = [
-    { $match: { email: req.query.email }},
+    { $match: { userId: ObjectID(req.query.userId) }},
     {
       $lookup:
         {

@@ -65,7 +65,7 @@ const options = {
         .collection("profiles")
         .updateOne(
           {
-            userId: ObjectID(message.user.id),
+            userId: ObjectID(message.id),
             // email: message.email,
           },
           {
@@ -129,9 +129,9 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile, isNewUser) {
-      console.log("signIn profile", profile)
-      console.log("signIn account", account)
-      console.log("signIn user", user)
+      // console.log("signIn profile", profile)
+      // console.log("signIn account", account)
+      // console.log("signIn user", user)
       const { db } = await connectToDatabase();
 
       const admin = await db
@@ -214,7 +214,7 @@ const options = {
     //     return Promise.resolve(session)
     // },
     session: async (session, user) => {
-      console.log("user", user)
+      // console.log("user", user)
        session.id = user.id
        return Promise.resolve(session)
     },

@@ -41,7 +41,6 @@ export default function Portal({session, profile, host, teams, countries, apps, 
   const [activeStep, setActiveStep] = useState(0);
   const isProfilePresent = profile && profile.team != null
   const steps = getSteps();
-  console.log("session", session.id)
   const [teamsData, setTeamsData] = useState(admin.email ? teams : teams.filter((team) => {
     return team.slug != "admins"
   }))
@@ -92,7 +91,7 @@ export default function Portal({session, profile, host, teams, countries, apps, 
         return (
           <div>
             <h1>Input voting details</h1>
-            <VotingGrid email={session.user.email} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
+            <VotingGrid userId={session.id} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
           </div>
         );
       default:
@@ -136,7 +135,7 @@ export default function Portal({session, profile, host, teams, countries, apps, 
       // console.log("existingProfileRecheck", existingProfileRecheck)
 
       // if (existingProfileRecheckJson && existingProfileRecheckJson.email != null) {
-      const res = await fetch(`/api/profiles/update?email=${session.user.email}`,
+      const res = await fetch(`/api/profiles/update?userId=${session.id}`,
       {
         body: JSON.stringify({
           month: validation.month.value.value,
@@ -191,7 +190,7 @@ export default function Portal({session, profile, host, teams, countries, apps, 
 
       const fetchAppAccounts = async () => {
         return Promise.all(apps.map(async (app) => {
-          const res = await fetch(`/api/accounts/${app.slug}?email=${session.user.email}`)
+          const res = await fetch(`/api/accounts/${app.slug}?userId=${session.id}`)
           const resJson = await res.json()
   
           return {
@@ -276,7 +275,8 @@ export default function Portal({session, profile, host, teams, countries, apps, 
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
-  const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
+
+  const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?userId=${session.id}`);
   const profile = await profileRes.json();
 
   const teamsRes = await fetch(`${process.env.HOST}/api/teams`);

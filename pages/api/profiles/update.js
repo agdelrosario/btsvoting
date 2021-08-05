@@ -1,11 +1,12 @@
 import { connectToDatabase } from "../../../util/mongodb";
+import { ObjectID } from 'mongodb'
 
 export default async (req, res) => {
   const { db } = await connectToDatabase();
   const data = await db
     .collection("profiles")
     .updateOne(
-      { email: req.query.email },
+      { userId: ObjectId(req.query.userId) },
       [
         {
           $set: {
