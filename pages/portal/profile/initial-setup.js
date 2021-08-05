@@ -276,6 +276,7 @@ export default function Portal({session, profile, host, teams, countries, apps, 
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
+  console.log("session", session)
   const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?email=${session.user.email}`);
   const profile = await profileRes.json();
 

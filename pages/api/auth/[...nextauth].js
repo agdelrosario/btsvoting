@@ -22,6 +22,37 @@ const options = {
 
       // console.log("updateUser message", message)
 
+      // console.log("linkAccount message", message)
+      const { db } = await connectToDatabase();
+
+      // const admin = await db
+      //   .collection("admins")
+      //   .find({email: message.user.email})
+      //   .limit(20)
+      //   .toArray();
+
+      const data = await db
+        .collection("profiles")
+        .updateOne(
+          {
+            email: message.user.email,
+          },
+          {
+            $set: {
+              email: message.user.email,
+              provider: message.providerAccount.provider,
+              username: message.providerAccount.provider == 'twitter' ? message.providerAccount.params.screen_name : message.user.name,
+              user_id: message.providerAccount.id,
+            }
+            // email: message.user.email,
+            // role: admin && admin.length > 0 ? "admin" : "member"
+          },
+          {
+            upsert: true,
+          }
+        )
+    //   // res.json(data.result);
+
     },
     async createUser(message) {
       const { db } = await connectToDatabase();
@@ -109,6 +140,27 @@ const options = {
         .limit(20)
         .toArray();
 
+      const data = await db
+        .collection("profiles")
+        .updateOne(
+          {
+            email: profile.email,
+          },
+          {
+            $set: {
+              email: profile.email,
+              user_id: account.id,
+              email: profile.email,
+              role: admin && admin.length > 0 ? "admin" : "member",
+              provider: account.provider,
+              username: params.username,
+            }
+          },
+          {
+            upsert: true,
+          }
+        )
+
       if (admin && admin.length > 0) {
         return true
       }
@@ -133,27 +185,6 @@ const options = {
           return true
         }
       }
-
-      const data = await db
-        .collection("profiles")
-        .updateOne(
-          {
-            email: profile.email,
-          },
-          {
-            $set: {
-              email: profile.email,
-              user_id: account.id,
-              email: profile.email,
-              role: admin && admin.length > 0 ? "admin" : "member",
-              provider: account.provider,
-              username: params.username,
-            }
-          },
-          {
-            upsert: true,
-          }
-        )
       
       return '/unauthorized'
       // const isAllowedToSignIn = true
