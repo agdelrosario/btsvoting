@@ -108,7 +108,9 @@ const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempA
   return (
     <form className="profile-info">
       {
-        apps && apps.map((app, appIndex) => {
+        apps && apps.filter((app) => {
+          return app.allowCollection
+        }).map((app, appIndex) => {
           return (
             <Grid container direction="column" className="voting-info" spacing={2}>
               <Grid container item xs spacing={1} alignItems="flex-end" >

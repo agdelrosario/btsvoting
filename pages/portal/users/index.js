@@ -101,7 +101,7 @@ export default function Users({session, profile, host, apps, admin}) {
       
                           if (resJson) {
                             fetchRequests()
-                            fetchUsers()
+                            // fetchUsers()
                           }
                         };
                   

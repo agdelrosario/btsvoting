@@ -96,7 +96,7 @@ function getStyles(name, categoryType, theme) {
 //   },
 // };
 
-export default function AddApp({open, setOpen, submit, loadedData}) {
+export default function AddApp({open, submit, loadedData, closeModal}) {
   const labelRef = useRef()
   const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
   const classes = useStyles();
@@ -110,7 +110,7 @@ export default function AddApp({open, setOpen, submit, loadedData}) {
   const [categoryType, setCategoryType] = useState(loadedData?.categoryType || []);
   const [tickets, setTickets] = useState(loadedData?.tickets || null);
   const [ticketType, setTicketType] = useState(loadedData?.ticketType || null);
-  const [allowCollection, setAllowCollection] = useState(loadedData?.allowCollection || true);
+  const [allowCollection, setAllowCollection] = useState(loadedData ? loadedData.allowCollection : true);
   const [validation, setValidation] = useState({
     name: null,
     categoryType: null,
@@ -128,7 +128,7 @@ export default function AddApp({open, setOpen, submit, loadedData}) {
     setName(loadedData?.name || null)
     setTickets(loadedData?.tickets || null)
     setCategoryType(loadedData?.categoryType || [])
-    setAllowCollection(loadedData?.allowCollection || true)
+    setAllowCollection(loadedData? loadedData.allowCollection : true)
     setTicketType(loadedData?.ticketType || null)
     setLevels(loadedData?.levels || [])
 
@@ -138,7 +138,7 @@ export default function AddApp({open, setOpen, submit, loadedData}) {
   },[open, loadedData]);
 
   const handleClose = () => {
-    setOpen(false);
+    // setOpen(false);
     setCategoryType([]);
     setName(null);
     setTicketType(null);
@@ -153,6 +153,7 @@ export default function AddApp({open, setOpen, submit, loadedData}) {
     });
     setLevelValidation([]);
     setOpenLevelStep(false);
+    closeModal();
   };
 
   useEffect(() => {

@@ -88,6 +88,8 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
     </div>
   );
 
+  console.log("lowerThanSm", lowerThanSm)
+
   return (
     <Grid
       container

@@ -305,6 +305,11 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     }
   }
 
+  const closeAppModal = () => {
+    setEditAppData(null)
+    setAddAppModalOpen(false)
+  }
+
 
 
   return (
@@ -461,7 +466,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             </Grid> */}
         </Grid>
       </div>
-      <AddApp open={addAppModalOpen} setOpen={setAddAppModalOpen} submit={addApp} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
+      <AddApp open={addAppModalOpen} submit={addApp} closeModal={closeAppModal} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
     </div>
   )
 };

@@ -35,7 +35,7 @@ export default function Unathorized(providers) {
           <div className="title">
             <a href="/">BTS VOTING ORG<span className="title-dot">.</span></a>
           </div>
-          <p>You are not allowed to enter the site. Please wait until admin approves your request.</p>
+          <p align="center">Sorry! You are not allowed to enter the site. Please wait until admin approves your request.<br />If you are not notified by admin of your approval, please check back in 24 hours.</p>
           <a href="/login">Login again</a>
           {/* <div className="login-buttons">
             {
