@@ -6,7 +6,7 @@ export default async (req, res) => {
   const data = await db
     .collection("profiles")
     .updateOne(
-      { userId: ObjectId(req.query.userId) },
+      { userId: ObjectID(req.query.userId) },
       [
         {
           $set: {
