@@ -85,34 +85,15 @@ const fetchStatisticsPerApp = async (db, team, apps) => {
 const fetchStatisticsPerTeam = async (db, teams, apps) => {
   return Promise.all(teams?.map(async (team) => {
     return fetchStatisticsPerApp(db, team.slug, apps).then(async (appData) => {
-
-      let params = {
-        date: moment().format(),
+      // console.log("appData", appData)
+      return {
+        team: team.slug,
         statistics: appData,
       }
-  
-      const data = await db
-        .collection("team-statistics")
-        .updateOne(
-          { key: req.query.key },
-          {
-            $set: {
-              key: req.query.key,
-            },
-            $push: {
-              total: params
-            }
-          },
-          {
-            upsert: true,
-          }
-        )
-
-      return data
     })
 
   }))
-  return 
+  // return 
 
 }
 
@@ -132,8 +113,18 @@ export default async (req, res) => {
     .limit(20)
     .toArray();
 
-    fetchStatisticsPerTeam(db, teams, apps).then (() => {
-      
-    })
+  fetchStatisticsPerTeam(db, teams, apps).then (async (statistics) => {
+    // console.log("team stats", statistics)
+    const data = await db
+      .collection("team-statistics")
+      .insertOne({
+        date: moment().format(),
+        statistics: statistics,
+      })
+
+    res.json({statistics: statistics})
+
+    // return data
+  })
 
 };

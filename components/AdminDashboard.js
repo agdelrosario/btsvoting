@@ -151,9 +151,11 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     fetchTeamStatistics()
   }, [])
 
-  const computeStatisticsPerTeam = async (key) => {
-    const res = await fetch(`/api/statistics/aggregate-team?key=${key}`);
+  const computeStatisticsPerTeam = async () => {
+    const res = await fetch(`/api/statistics/aggregate-team`);
     const json = await res.json();
+
+    console.log("computeStatisticsPerTeam", json)
 
     return json
   }
@@ -161,43 +163,41 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   const triggerCollationPerTeam = async () => {
     console.log("Compiling statistics", moment().format())
 
-    Promise.all(teams.map(team => {
-      return computeStatisticsPerTeam(team.slug)
-    })).then((something) => {
-      console.log("team collation", something)
-      // setTeamStatistics(something)
 
-      let mapped = []
+    await computeStatisticsPerTeam()
+    // console.log("team collation", something)
+    // // setTeamStatistics(something)
 
-      if (something && something.length > 0) {
-        // To be replaced
-        mapped = something.map((team, index) => {
-          const currentTeam = teams.find((currentTeam) => {
-            return currentTeam.slug == team.key
-          })
+    // let mapped = []
 
-          let params = {
-            id: index + 1,
-            name: currentTeam ? currentTeam.name : team.key,
-          }
+    // if (something && something.length > 0) {
+    //   // To be replaced
+    //   mapped = something.map((team, index) => {
+    //     const currentTeam = teams.find((currentTeam) => {
+    //       return currentTeam.slug == team.key
+    //     })
 
-          const appParams = total.reduce((appTotal) => {
-            if (appTotal.ticketType == "levels") {
-              
-            } else {
-              return 
-            }
-          }, [])
+    //     let params = {
+    //       id: index + 1,
+    //       name: currentTeam ? currentTeam.name : team.key,
+    //     }
+
+    //     const appParams = total.reduce((appTotal) => {
+    //       if (appTotal.ticketType == "levels") {
+            
+    //       } else {
+    //         return 
+    //       }
+    //     }, [])
+
+    //     return {
+    //       ...params,
+    //       appParams
+    //     }
+    //   })
+    // }
   
-          return {
-            ...params,
-            appParams
-          }
-        })
-      }
-    
-      setTeamStatistics(mapped);
-    })
+    // setTeamStatistics(mapped);
   }
 
   const triggerCollationPerApp = async () => {
@@ -211,7 +211,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
 
   const triggerCollation = async () => {
     await triggerCollationPerApp();
-    // await triggerCollationPerTeam();
+    await triggerCollationPerTeam();
   }
 
   const openAddApp = () => {

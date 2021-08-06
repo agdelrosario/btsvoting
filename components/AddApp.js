@@ -124,7 +124,6 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
   const [levelValidation, setLevelValidation] = useState([]);
 
   useEffect(() => {
-    console.log("loadedData", loadedData)
     setName(loadedData?.name || null)
     setTickets(loadedData?.tickets || null)
     setCategoryType(loadedData?.categoryType || [])
