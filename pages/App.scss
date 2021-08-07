@@ -571,6 +571,10 @@ p {
           font-size: 0.8rem;
           text-transform: uppercase;
           color: #979797;
+          max-width: 80px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
   
         .link-login {

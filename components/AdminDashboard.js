@@ -413,11 +413,11 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               <Grid item xs>
                 <h1>Team Statistics</h1>
               </Grid>
-              <Grid item xs align="right">
+              {/* <Grid item xs align="right">
                 <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
                   Publish to Teams
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
             <Grid container className="section">
               {
