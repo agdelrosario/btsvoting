@@ -90,57 +90,53 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       const res = await fetch(`/api/statistics/teams`);
       const json = await res.json();
 
+      console.log("fetchTeamStatistics", json)
+
       if (json) {
         // console.log("teamStatistics", json)
-        let mapped = []
-        if (json && json.length > 0) {
-
-          mapped = json.map((team, index) => {
-            const currentTeam = teams.find((currentTeam) => {
-              return currentTeam.slug == team.key
-            })
-  
-            let params = {
-              id: index + 1,
-              name: currentTeam ? currentTeam.name : team.key,
-            }
-
-            let appParams = {}
-
-            // console.log("team.total", team.total)
-
-            if (team.total && team.total[team.total.length - 1].statistics) {
-              appParams = team.total[team.total.length - 1].statistics.reduce((appParams, appTotal) => {
-                // console.log("appTotal", appTotal)
-                if (Array.isArray(appTotal.total)) {
-                  const levelParams = appTotal.total.reduce((levelParams, level) => {
-                    return {
-                      ...levelParams,
-                      [`${appTotal.key}-${level.key}`]: level.total
-                    }
-                  }, {})
-  
-                  return {
-                    ...appParams,
-                    ...levelParams,
-                  }
-                } else {
-                  return {
-                    ...appParams,
-                    [appTotal.key]: appTotal.total
-                  }
-                }
-              }, {})
-            }
-    
-            return {
-              ...params,
-              ...appParams
-            }
+        let mapped = json.statistics.map((team, index) => {
+          const currentTeam = teams.find((currentTeam) => {
+            return currentTeam.slug == team.team
           })
 
-          // console.log('mapped', mapped)
-        }
+          let params = {
+            id: index + 1,
+            name: currentTeam ? currentTeam.name : team.team,
+          }
+
+          let appParams = {}
+
+          if (team.statistics && team.statistics.length > 0) {
+            appParams = team.statistics.reduce((teamStatistics, team) => {
+
+              if (Array.isArray(team.total)) {
+                const levelParams = team.total.reduce((levelParams, level) => {
+                  return {
+                    ...levelParams,
+                    [`${team.key}-${level.key}`]: level.total
+                  }
+                }, {})
+
+                return {
+                  ...teamStatistics,
+                  ...levelParams,
+                }
+              } else {
+                return {
+                  ...teamStatistics,
+                  [team.key]: team.total
+                }
+              }
+            }, {})
+          }
+  
+          return {
+            ...params,
+            ...appParams
+          }
+        })
+
+        console.log('mapped', mapped)
         
         setTeamStatistics(mapped);
       }
@@ -155,49 +151,59 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     const res = await fetch(`/api/statistics/aggregate-team`);
     const json = await res.json();
 
-    console.log("computeStatisticsPerTeam", json)
-
     return json
   }
 
   const triggerCollationPerTeam = async () => {
-    console.log("Compiling statistics", moment().format())
+    const json = await computeStatisticsPerTeam()
 
+    if (json) {
+      let mapped = json.statistics.map((team, index) => {
+        const currentTeam = teams.find((currentTeam) => {
+          return currentTeam.slug == team.team
+        })
 
-    await computeStatisticsPerTeam()
-    // console.log("team collation", something)
-    // // setTeamStatistics(something)
+        let params = {
+          id: index + 1,
+          name: currentTeam ? currentTeam.name : team.team,
+        }
 
-    // let mapped = []
+        let appParams = {}
 
-    // if (something && something.length > 0) {
-    //   // To be replaced
-    //   mapped = something.map((team, index) => {
-    //     const currentTeam = teams.find((currentTeam) => {
-    //       return currentTeam.slug == team.key
-    //     })
+        if (team.statistics && team.statistics.length > 0) {
+          appParams = team.statistics.reduce((teamStatistics, team) => {
 
-    //     let params = {
-    //       id: index + 1,
-    //       name: currentTeam ? currentTeam.name : team.key,
-    //     }
+            if (Array.isArray(team.total)) {
+              const levelParams = team.total.reduce((levelParams, level) => {
+                return {
+                  ...levelParams,
+                  [`${team.key}-${level.key}`]: level.total
+                }
+              }, {})
 
-    //     const appParams = total.reduce((appTotal) => {
-    //       if (appTotal.ticketType == "levels") {
-            
-    //       } else {
-    //         return 
-    //       }
-    //     }, [])
+              return {
+                ...teamStatistics,
+                ...levelParams,
+              }
+            } else {
+              return {
+                ...teamStatistics,
+                [team.key]: team.total
+              }
+            }
+          }, {})
+        }
 
-    //     return {
-    //       ...params,
-    //       appParams
-    //     }
-    //   })
-    // }
-  
-    // setTeamStatistics(mapped);
+        return {
+          ...params,
+          ...appParams
+        }
+      })
+
+      console.log('mapped', mapped)
+      
+      setTeamStatistics(mapped);
+    }
   }
 
   const triggerCollationPerApp = async () => {
@@ -339,7 +345,6 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       </Grid>
       <Grid container className="statistics" spacing={2}>
         {
-          // teams && teams.appStatistics && teams.appStatistics.map((app) => {
           appsContainer.map((app) => {
 
             if (overallAppStatistics) {
@@ -401,7 +406,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           })
         }
       </Grid>
-      {/* <div>
+      <div>
         <Grid container spacing={3}>
           <Grid item xs>
             <Grid container xs>
@@ -428,7 +433,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             </div>
           </Grid>
         </Grid>
-      </div> */}
+      </div>
       <div>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>

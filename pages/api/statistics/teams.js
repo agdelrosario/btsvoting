@@ -5,6 +5,8 @@ export default async (req, res) => {
   const teams = await db
     .collection("team-statistics")
     .find({})
+    .sort({ $natural: -1 }).limit(1)
     .toArray();
-  res.json(teams);
+
+  res.json(teams && teams.length > 0 ? teams[0] : {});
 };

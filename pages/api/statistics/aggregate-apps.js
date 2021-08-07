@@ -1,4 +1,3 @@
-// import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../util/mongodb";
 import moment from "moment";
 
@@ -45,12 +44,6 @@ const computeStatisticsPerApp = async (db, app_data) => {
     return Promise.all(app_data.levels.map(level => {
       return aggregatePerLevel(db, level, app_data.slug, app_data.key)
     })).then((votingDoc) => {
-      // let count = null
-
-      // if (votingDoc && votingDoc.length > 0 && votingDoc[0].tickets) {
-      //   count = votingDoc[0].tickets
-      // }
-
       return { key: app_data.key, total: votingDoc }
     })
   } else {
@@ -67,8 +60,6 @@ const computeStatisticsPerApp = async (db, app_data) => {
 
     let total = null
 
-    console.log(votingDoc)
-
     if (votingDoc && votingDoc.length > 0 && votingDoc[0].tickets) {
       total = votingDoc[0].tickets
     }
@@ -81,19 +72,13 @@ const computeStatisticsPerApp = async (db, app_data) => {
 }
 
 export default async (req, res) => {
-  // const session = await getSession({ req });
   const { db } = await connectToDatabase();
-
-  console.log("req.query", req.query)
 
   const apps = await db
     .collection("apps")
     .find({})
     .limit(20)
     .toArray();
-
-
-
 
   Promise.all(apps.map(app => {
     return computeStatisticsPerApp(db, app)
@@ -109,6 +94,4 @@ export default async (req, res) => {
 
     res.json(params)
   });
-
-
 };

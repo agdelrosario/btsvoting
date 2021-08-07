@@ -7,7 +7,7 @@ import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'id', headerName: 'ID', width: 40 },
   { field: 'username', headerName: 'Username', width: 200 },
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'provider', headerName: 'Provider', width: 200 },
@@ -67,7 +67,7 @@ export default function Users({session, profile, host, apps, admin}) {
       }))
 
       setRequestColumns([
-          { field: 'id', headerName: 'ID', width: 30 },
+          { field: 'id', headerName: 'ID', width: 40 },
           { field: 'username', headerName: 'Username', width: 200 },
           { field: 'provider', headerName: 'Provider', width: 200 },
           { field: 'role', headerName: 'Role', width: 200 },
@@ -208,7 +208,7 @@ export default function Users({session, profile, host, apps, admin}) {
               <Grid item><h1>Existing Users</h1></Grid>
               
               <Grid item
-              style={{minHeight: 400}}><DataGrid rows={profiles} columns={columns} pageSize={5} disableColumnSelector /></Grid>
+              style={{minHeight: 400}}><DataGrid rows={profiles} columns={columns} pageSize={10} disableColumnSelector /></Grid>
             </Grid>
           </Grid>
         )
@@ -230,7 +230,7 @@ export default function Users({session, profile, host, apps, admin}) {
             >
               <Grid item><h1>Requests</h1></Grid>
               <Grid item
-              style={{minHeight: 400}}><DataGrid rows={requests} columns={requestColumns} pageSize={5} disableColumnSelector /></Grid>
+              style={{minHeight: 400}}><DataGrid rows={requests} columns={requestColumns} pageSize={10} disableColumnSelector /></Grid>
             </Grid>
           </Grid>
         )
