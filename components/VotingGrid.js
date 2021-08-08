@@ -107,6 +107,7 @@ const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempA
 
   return (
     <form className="profile-info">
+      <p>You may add in your accounts separately or sum them by yourself into one account. For apps like Fan N Star where the tickets are in levels (Mint, Gold, etc.), you are required to add in each account individually.</p>
       {
         apps && apps.filter((app) => {
           return app.allowCollection

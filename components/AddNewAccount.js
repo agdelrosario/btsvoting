@@ -132,14 +132,14 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
         <Grid item align="right" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
       </Grid>
       {/* <p id="simple-modal-description">
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+        Note: The username do not need to be the same is in the app. You can put a nickname for the account as you wish in the username field, to help you identify each account in the future as you update.
       </p> */}
       {/* error={validation.country.error} */}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={5}>
           <TextField
             className="ticket"
-            label="Username"
+            label="Nickname"
             variant="outlined"
             error={validation.username}
             // onChange={(event, val) => { handleUsernameInput(val)}}
