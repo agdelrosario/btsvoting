@@ -2,7 +2,7 @@ import { PanoramaSharp } from "@material-ui/icons";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import { connectToDatabase } from "../../../util/mongodb";
-import { ObjectID } from 'mongodb'
+import { ObjectID, ObjectId } from 'mongodb'
 
 const options = {
   providers: [
@@ -129,10 +129,12 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile, isNewUser) {
-      // console.log("signIn profile", profile)
-      // console.log("signIn account", account)
-      // console.log("signIn user", user)
+      console.log("signIn profile", profile)
+      console.log("signIn account", account)
+      console.log("signIn user", user)
       const { db } = await connectToDatabase();
+
+      // console.log("Sign in")
 
       const admin = await db
         .collection("admins")
@@ -152,7 +154,7 @@ const options = {
         .collection("profiles")
         .updateOne(
           {
-            userId: ObjectID(user.id),
+            providerId: account.id,
             // email: profile.email,
           },
           {
