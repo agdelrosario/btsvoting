@@ -29,7 +29,7 @@ const PortalLayout = props => {
         <title>BVO Portal</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <PortalNavBar isProfilePresent={props.profile.email != null} lowerThanSm={lowerThanSm} admin={props.admin} />
+      <PortalNavBar isProfilePresent={props.profile.team != null} lowerThanSm={lowerThanSm} admin={props.admin} />
       <main className={`portal ${lowerThanSm ? 'xs' : ''}`}>
         {props.children}
         <div className="footer">
