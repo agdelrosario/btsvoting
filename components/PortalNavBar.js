@@ -60,7 +60,7 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
             <ListItemText primary="Profile" />
           </ListItem>
         )}
-        {session && isProfilePresent && (
+        {session && (
           <ListItem button key="users" onClick={signOut}>
             <ListItemIcon><ExitToAppIcon /></ListItemIcon>
             <ListItemText primary="Log out" />
