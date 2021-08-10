@@ -103,7 +103,7 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
       </Grid>
       {
         lowerThanSm && (
-          <Grid item xs={3} key="top" align="right">
+          <Grid item xs={3} sm={6} key="top" align="right">
             {/* <Button onClick={toggleDrawer(true)}>Top</Button> */}
             <IconButton
               aria-label="delete"

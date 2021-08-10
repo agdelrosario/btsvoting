@@ -21,7 +21,7 @@ const contentStyle = {
 const PortalLayout = props => {
 
   const theme = useTheme();
-  const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
+  const lowerThanSm = useMediaQuery(theme.breakpoints.down('sm'));
   
   return (
     <div className={`container ${lowerThanSm ? 'xs' : ''}`}>

@@ -143,7 +143,7 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
         <Grid item xs={12} sm={5}>
           <TextField
             className="ticket"
-            label="Username"
+            label="Nickname"
             variant="outlined"
             error={validation.username}
             // onChange={(event, val) => { handleUsernameInput(val)}}

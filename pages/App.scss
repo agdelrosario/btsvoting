@@ -533,16 +533,23 @@ p {
     // min-width: 100%;
     width: 100%;
     border-bottom: 1px solid #414141;
-    min-height: 100px;
+    height: 100px;
     // display: flex;
     // flex-direction: row;
     // align-items: flex-end;
     // justify-content: space-between;
     padding: 0 70px;
     box-sizing: border-box;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    right: 0;
+    background-color: #272727;
+    z-index: 1;
 
     &.xs {
       padding: 0 30px;
+      height: 70px;
     }
 
     // .title {
