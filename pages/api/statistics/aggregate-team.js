@@ -114,15 +114,19 @@ export default async (req, res) => {
     .toArray();
 
   fetchStatisticsPerTeam(db, teams, apps).then (async (statistics) => {
-    // console.log("team stats", statistics)
+    const datePublished = moment().format()
     const data = await db
       .collection("team-statistics")
       .insertOne({
-        date: moment().format(),
+        date: datePublished,
         statistics: statistics,
       })
 
-    res.json({statistics: statistics})
+    res.json({
+      statistics,
+      insertedId: (data && data.insertedId) || null,
+      publishedDate: datePublished,
+    })
 
     // return data
   })

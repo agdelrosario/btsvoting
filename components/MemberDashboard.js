@@ -1,8 +1,26 @@
 
 import StatisticsCard from './StatisticsCard';
 import MultiStatisticsCard from './MultiStatisticsCard';
+import { useState, useEffect } from "react";
+import Grid from '@material-ui/core/Grid';
+import moment from "moment";
 
-const MemberDashboard = ({profile}) => {
+const MemberDashboard = ({profile, apps}) => {
+  const [teamStats, setTeamStats] = useState(null)
+  
+  useEffect(() => {
+    const fetchTeamStatistics = async () => {
+      const res = await fetch(`/api/statistics/team?team=${profile.teamInfo.slug}`);
+      const json = await res.json();
+
+      if (json) {
+        setTeamStats(json)
+      }
+    };
+
+    fetchTeamStatistics()
+  }, [])
+
 
   return (
     <div>
@@ -12,46 +30,84 @@ const MemberDashboard = ({profile}) => {
           <p>Welcome to the BTS Voting Org Portal! Have a great day!</p>
         </div>
 
-        <h1>Team { profile.teamInfo.name } Stats</h1>
-        <p>Coming soon</p>
-        {/* <div className="statistics">
-          <StatisticsCard
-            title="Idol Champ"
-            pointsValue="2,986,443"
-            pointsType="Ruby Chamsims"
-          />
-          <StatisticsCard
-            title="Choeaedol"
-            pointsValue="45,062,779"
-            pointsType="Ever Hearts"
-          />
-          <MultiStatisticsCard
-            title="Fan n Star"
-            isEnableMultiple
-            pointsArray={[
-              {
-                "pointsValue": 2,
-                "pointsType": "Black"
-              },
-              {
-                "pointsValue": 3,
-                "pointsType": "Gold"
-              },
-              {
-                "pointsValue": 7,
-                "pointsType": "Silver"
-              },
-              {
-                "pointsValue": 19,
-                "pointsType": "Bronze"
-              },
-              {
-                "pointsValue": 25,
-                "pointsType": "Mint"
-              },
-            ]}
-          />
-        </div> */}
+        <div className="dashboard-section">
+          <Grid container>
+            <Grid container item xs>
+              <h1>Team { profile.teamInfo.name } Stats</h1>
+            </Grid>
+          </Grid>
+          <Grid container className="section">
+            {
+              teamStats && (
+                <Grid item className="statistics-date">
+                  Team Statistics last updated at { moment(teamStats.publishedDate).format("MMMM Do YYYY, h:mm:ss a") }
+                </Grid>
+              )
+            }
+          </Grid>
+          <Grid container className="statistics" spacing={2}>
+            {
+              apps.map((app) => {
+                if (teamStats) {
+                  const statisticsIndex = teamStats.statistics.findIndex((appStatistic) => {
+                    return appStatistic.key == app.key
+                  })
+
+
+                  if (statisticsIndex > -1) {
+                    if (app.ticketType == 'levels') {
+                      let levelArray = []
+
+                      if (app.levels && app.levels.length > 0) {
+                        levelArray = app.levels.map((level) => {
+                          let count = 0
+
+
+                          const levelIndex = teamStats.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
+                            return totalPerLevel.key == level
+                          })
+
+                          if (levelIndex > -1) {
+                            count = teamStats.statistics[statisticsIndex].total[levelIndex].total || 0
+                          }
+
+                          return {
+                            pointsValue: count,
+                            pointsType: level,
+                          }
+                        })
+
+                        return (
+                          <Grid item>
+                            <MultiStatisticsCard
+                              title="Fan n Star"
+                              isEnableMultiple
+                              pointsArray={levelArray}
+                            />
+                          </Grid>
+                        )
+                      }
+
+                    } else {
+                      let points = teamStats.statistics[statisticsIndex].total || 0
+
+                      return (
+                        <Grid item>
+                          <StatisticsCard
+                            title={app.name}
+                            pointsValue={points}
+                            pointsType={app.tickets}
+                          />
+                        </Grid>
+                      )
+
+                    }
+                  }
+                }
+              })
+            }
+          </Grid>
+        </div>
       </div>
       <div>
 

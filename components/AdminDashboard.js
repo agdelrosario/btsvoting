@@ -46,6 +46,8 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     { field: 'id', headerName: 'ID', width: 40 },
     { field: 'name', headerName: 'Name', width: 250 },
   ])
+  const [insertedId, setInsertedId] = useState(null);
+  const [teamStatsPublishedDate, setTeamStatsPublishedDate] = useState(null);
 
   useEffect(() => {
     // Get statistics
@@ -131,7 +133,9 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           }
         })
         
+        setInsertedId(json._id);
         setTeamStatistics(mapped);
+        setTeamStatsPublishedDate(json.publishedDate);
       }
     };
 
@@ -151,6 +155,13 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     const json = await computeStatisticsPerTeam()
 
     if (json) {
+      if (json.insertedId) {
+        setInsertedId(json.insertedId);
+      }
+
+      
+      setTeamStatsPublishedDate(json.publishedDate);
+
       let mapped = json.statistics.map((team, index) => {
         const currentTeam = teams.find((currentTeam) => {
           return currentTeam.slug == team.team
@@ -305,6 +316,19 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
     setAddAppModalOpen(false)
   }
 
+  const publishTeamStats = async () => {
+    const res = await fetch(`/api/statistics/publish-teams`,
+    {
+      body: JSON.stringify({
+        insertedId: insertedId
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+  }
+
 
 
   return (
@@ -313,106 +337,109 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
         <h3>Notice</h3>
         <p>Welcome, admin. Have a nice day!</p>
       </div>
-      <Grid container>
-        <Grid container item xs>
-          <h1>App Stats</h1>
+
+      <div className="dashboard-section">
+        <Grid container>
+          <Grid container item xs>
+            <h1>App Stats</h1>
+          </Grid>
+          <Grid item xs align="right">
+            <Button variant="contained" color="secondary" onClick={triggerCollation} className="button">
+              Compute
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs align="right">
-          <Button variant="contained" color="secondary" onClick={triggerCollation} className="button">
-            Compute
-          </Button>
+        <Grid container className="section">
+          {
+            overallAppStatistics && (
+              <Grid item className="statistics-date">
+                Overall Statistics last updated at { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
+              </Grid>
+            )
+          }
         </Grid>
-      </Grid>
-      <Grid container className="section">
-        {
-          overallAppStatistics && (
-            <Grid item className="statistics-date">
-              Overall Statistics last updated at { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
-            </Grid>
-          )
-        }
-      </Grid>
-      <Grid container className="statistics" spacing={2}>
-        {
-          appsContainer.map((app) => {
+        <Grid container className="statistics" spacing={2}>
+          {
+            appsContainer.map((app) => {
 
-            if (overallAppStatistics) {
-              const statisticsIndex = overallAppStatistics.statistics.findIndex((appStatistic) => {
-                return appStatistic.key == app.key
-              })
+              if (overallAppStatistics) {
+                const statisticsIndex = overallAppStatistics.statistics.findIndex((appStatistic) => {
+                  return appStatistic.key == app.key
+                })
 
 
-              if (statisticsIndex > -1) {
-                if (app.ticketType == 'levels') {
-                  let levelArray = []
+                if (statisticsIndex > -1) {
+                  if (app.ticketType == 'levels') {
+                    let levelArray = []
 
-                  if (app.levels && app.levels.length > 0) {
-                    levelArray = app.levels.map((level) => {
-                      let count = 0
+                    if (app.levels && app.levels.length > 0) {
+                      levelArray = app.levels.map((level) => {
+                        let count = 0
 
 
-                      const levelIndex = overallAppStatistics.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
-                        return totalPerLevel.key == level
+                        const levelIndex = overallAppStatistics.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
+                          return totalPerLevel.key == level
+                        })
+
+                        if (levelIndex > -1) {
+                          count = overallAppStatistics.statistics[statisticsIndex].total[levelIndex].total || 0
+                        }
+
+                        return {
+                          pointsValue: count,
+                          pointsType: level,
+                        }
                       })
 
-                      if (levelIndex > -1) {
-                        count = overallAppStatistics.statistics[statisticsIndex].total[levelIndex].total || 0
-                      }
+                      return (
+                        <Grid item>
+                          <MultiStatisticsCard
+                            title="Fan n Star"
+                            isEnableMultiple
+                            pointsArray={levelArray}
+                          />
+                        </Grid>
+                      )
+                    }
 
-                      return {
-                        pointsValue: count,
-                        pointsType: level,
-                      }
-                    })
+                  } else {
+                    let points = overallAppStatistics.statistics[statisticsIndex].total || 0
 
                     return (
                       <Grid item>
-                        <MultiStatisticsCard
-                          title="Fan n Star"
-                          isEnableMultiple
-                          pointsArray={levelArray}
+                        <StatisticsCard
+                          title={app.name}
+                          pointsValue={points}
+                          pointsType={app.tickets}
                         />
                       </Grid>
                     )
+
                   }
-
-                } else {
-                  let points = overallAppStatistics.statistics[statisticsIndex].total || 0
-
-                  return (
-                    <Grid item>
-                      <StatisticsCard
-                        title={app.name}
-                        pointsValue={points}
-                        pointsType={app.tickets}
-                      />
-                    </Grid>
-                  )
-
                 }
               }
-            }
-          })
-        }
-      </Grid>
-      <div>
+            })
+          }
+        </Grid>
+      </div>
+      <div className="dashboard-section">
         <Grid container spacing={3}>
           <Grid item xs>
             <Grid container xs>
               <Grid item xs>
                 <h1>Team Statistics</h1>
               </Grid>
-              {/* <Grid item xs align="right">
-                <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
+              <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={publishTeamStats} className="button">
                   Publish to Teams
                 </Button>
-              </Grid> */}
+              </Grid>
             </Grid>
             <Grid container className="section">
               {
                 overallAppStatistics && (
                   <Grid item className="statistics-date">
-                    Team Statistics last published at { moment(overallAppStatistics.date).format("MMMM Do YYYY, h:mm:ss a") }
+                    Team Statistics last published at { moment(teamStatsPublishedDate).format("MMMM Do YYYY, h:mm:ss a") }
                   </Grid>
                 )
               }
@@ -423,7 +450,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           </Grid>
         </Grid>
       </div>
-      <div>
+      <div className="dashboard-section">
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             <Grid container xs>
