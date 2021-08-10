@@ -77,8 +77,6 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
         }
       }, [])
 
-      console.log("teamStatsColumns", teamStatsColumns)
-
       setTeamStatsColumns([
         { field: 'id', headerName: 'ID', width: 40 },
         { field: 'name', headerName: 'Name', width: 250 },
@@ -90,10 +88,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       const res = await fetch(`/api/statistics/teams`);
       const json = await res.json();
 
-      console.log("fetchTeamStatistics", json)
-
       if (json) {
-        // console.log("teamStatistics", json)
         let mapped = json.statistics.map((team, index) => {
           const currentTeam = teams.find((currentTeam) => {
             return currentTeam.slug == team.team
@@ -124,7 +119,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               } else {
                 return {
                   ...teamStatistics,
-                  [team.key]: team.total
+                  [team.key]: Number(team.total).toLocaleString()
                 }
               }
             }, {})
@@ -135,8 +130,6 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             ...appParams
           }
         })
-
-        console.log('mapped', mapped)
         
         setTeamStatistics(mapped);
       }
@@ -188,7 +181,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             } else {
               return {
                 ...teamStatistics,
-                [team.key]: team.total
+                [team.key]: Number(team.total).toLocaleString()
               }
             }
           }, {})
@@ -199,8 +192,6 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
           ...appParams
         }
       })
-
-      console.log('mapped', mapped)
       
       setTeamStatistics(mapped);
     }
@@ -227,8 +218,6 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
 
   const openEditApp = (data, event) => {
     const index = parseInt(data.id) - 1
-    // console.log("setting app data", apps[index])
-    // console.log("setting app data", apps[index])
     setEditAppData(index)
     setAddAppModalOpen(true);
   }

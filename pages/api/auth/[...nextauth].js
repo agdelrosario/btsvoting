@@ -21,8 +21,6 @@ const options = {
   events: {
     async updateUser(message) {
 
-      console.log("updateUser message", message)
-
       // const admin = await db
       //   .collection("admins")
       //   .find({email: message.email})
@@ -52,8 +50,6 @@ const options = {
     },
     async createUser(message) {
       const { db } = await connectToDatabase();
-
-      console.log("createUser message", message)
 
       const admin = await db
         .collection("admins")
@@ -85,7 +81,6 @@ const options = {
     },
     async linkAccount(message) {
 
-      console.log("linkAccount message", message)
       const { db } = await connectToDatabase();
 
       // const admin = await db
@@ -129,9 +124,6 @@ const options = {
      *                           Return `string` to redirect to (eg.: "/unauthorized")
      */
     async signIn(user, account, profile, isNewUser) {
-      console.log("signIn profile", profile)
-      console.log("signIn account", account)
-      console.log("signIn user", user)
       const { db } = await connectToDatabase();
 
       // console.log("Sign in")

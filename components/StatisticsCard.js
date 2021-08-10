@@ -7,7 +7,7 @@ const StatisticsCard = (props) => {
       </div>
       <div className="points">
         <span className="points-value">
-          { props.pointsValue }
+          { Number(props.pointsValue).toLocaleString() }
         </span>
         <span className="points-type">{ props.pointsType }</span>
       </div>

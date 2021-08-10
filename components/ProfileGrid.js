@@ -20,9 +20,6 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
     }
   }))
   const [days, setDays] = useState([])
-  
-  console.log("validation month", validation.month)
-  
 
   const handleInput = (item, value) => {
     let error = validation[item].error
@@ -30,15 +27,10 @@ const ProfileGrid = ({validation, setValidation, teams, countries}) => {
       error = false
     }
 
-    console.log("value", value)
-
     if (item == 'month') {
       if (value && value.label && value.label != '') {
-        console.log("value.label", value.label)
         const month = moment(`${value.label} 1, 2021`)
-        console.log("month", month)
         const arraySize = month.daysInMonth()
-        console.log("arraySize", arraySize)
         setDays(new Array(arraySize).fill(null).map((x, i) => {
           const currentDay = moment().startOf('month').add(i, 'days').format('D')
           return {

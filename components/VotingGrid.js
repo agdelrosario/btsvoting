@@ -136,7 +136,7 @@ const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempA
                         </Grid>
 
                         <div className="username">{val.username}</div>
-                        <span>{val.tickets && val.tickets.name ? val.tickets.name : val.tickets}</span>
+                        <span>{val.tickets && val.tickets.name ? val.tickets.name : Number(val.tickets).toLocaleString()}</span>
                       </Grid>
                     </Grid>
                   ))
