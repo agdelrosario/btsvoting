@@ -1,5 +1,6 @@
 import { connectToDatabase } from "../../../util/mongodb";
 import { ObjectID } from 'mongodb'
+import moment from "moment";
 
 
 export default async (req, res) => {
@@ -15,6 +16,7 @@ export default async (req, res) => {
         $set: {
           username: req.body.username,
           tickets: typeof req.body.tickets == 'object' ? req.body.tickets : parseInt(req.body.tickets),
+          lastUpdated: moment().format(),
         }
       }
     )
