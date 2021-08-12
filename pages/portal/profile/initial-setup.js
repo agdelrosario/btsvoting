@@ -91,7 +91,8 @@ export default function Portal({session, profile, host, teams, countries, apps, 
         return (
           <div>
             <h1>Input voting details</h1>
-            <VotingGrid userId={session.id} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} />
+            {!isInitial && (<span> You can add</span>)}
+            <VotingGrid userId={session.id} validation={validationVoting} setValidation={setValidationVoting} apps={apps} appAccounts={appAccounts} isInitial={true} />
           </div>
         );
       default:

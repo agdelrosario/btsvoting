@@ -5,7 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import AddNewAccount from './AddNewAccount';
 import EditAccount from './EditAccount';
 
-const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempAppAccounts}) => {
+const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempAppAccounts, isInitial}) => {
   const [open, setOpen] = useState(false);
   const [openEditAccount, setOpenEditAccount] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
@@ -107,7 +107,7 @@ const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempA
 
   return (
     <form className="profile-info">
-      <p>You may add in your accounts separately or sum them by yourself into one account. For apps like Fan N Star where the tickets are in levels (Mint, Gold, etc.), you are required to add in each account individually.</p>
+      <p>You may add your accounts separately or sum them by yourself into one account. For apps like Fan N Star where the tickets are in levels (Mint, Gold, etc.), you are required to add each account individually.</p>
       {
         apps && apps.filter((app) => {
           return app.allowCollection

@@ -162,18 +162,18 @@ export default function Users({session, profile, host, apps, admin}) {
 
   }, []);
 
-  // const uploadData = async () => {
-  //   const res = await fetch(`/api/upload`,
-  //   {
-  //     body: JSON.stringify({
-  //       text: "something"
-  //     }),
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     method: 'POST'
-  //   });
-  // }
+  const uploadData = async () => {
+    const res = await fetch(`/api/upload`,
+    {
+      body: JSON.stringify({
+        text: "something"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+  }
 
 
   // console.log("requests", requests)

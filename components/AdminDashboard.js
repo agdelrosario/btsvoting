@@ -121,7 +121,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
               } else {
                 return {
                   ...teamStatistics,
-                  [team.key]: Number(team.total).toLocaleString()
+                  [team.key]: team.total
                 }
               }
             }, {})
@@ -192,7 +192,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
             } else {
               return {
                 ...teamStatistics,
-                [team.key]: Number(team.total).toLocaleString()
+                [team.key]: team.total
               }
             }
           }, {})
