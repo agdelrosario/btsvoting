@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
 import { getSession } from "next-auth/client";
 import PortalLayout from '../../../components/PortalLayout';
+import AddMilestone from '../../../components/AddMilestone';
 import Loading from '../../../components/Loading';
 import Grid from '@material-ui/core/Grid';
 import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
+import { useRouter } from 'next/router';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 40 },
-  { field: 'username', headerName: 'Username', width: 200 },
-  { field: 'team', headerName: 'Team', width: 200 },
-  { field: 'provider', headerName: 'Provider', width: 200 },
-  { field: 'role', headerName: 'Role', width: 200 },
+  { field: 'name', headerName: 'Name', width: 200 },
+  { field: 'appId', headerName: 'App', width: 200 },
+  { field: 'thresholdValue', headerName: 'Value', width: 200 },
+  { field: 'active', headerName: 'Active', width: 200 },
 ];
 
-export default function Users({session, profile, host, apps, admin}) {
-  const [profiles, setProfiles] = useState([]);
+export default function Milestones({session, profile, host, apps, admin}) {
+  const [milestones, setMilestones] = useState([]);
+  const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState([])
   const [requestsLoading, setRequestsLoading] = useState(true)
@@ -25,33 +28,32 @@ export default function Users({session, profile, host, apps, admin}) {
     { field: 'provider', headerName: 'Provider', width: 200 },
     { field: 'role', headerName: 'Role', width: 200 }
   ])
-  // console.log('profiles', profiles)
+  const router = useRouter();
 
-  const fetchUsers = async () => {
-    const profilesRes = await fetch(`/api/profiles`);
-    const profilesJson = await profilesRes.json();
+  const fetchMilestones = async () => {
+    const milestonesRes = await fetch(`/api/milestones`);
+    const milestonesJson = await milestonesRes.json();
 
-    if (profilesJson) {
-      // console.log('profiles', profilesJson)
-      setProfiles(profilesJson.map((profile, index) => {
+    if (milestonesJson) {
+      // console.log('milestones', milestonesJson)
+      setMilestones(milestonesJson.map((milestone, index) => {
         return {
+          _id: milestone._id,
           id: index + 1,
-          username: profile.username,
-          provider: profile.provider,
-          team: profile.teamInfo.name,
-          role: profile.role,
-          // actions: ['allowAdmin']
+          congratulatoryText: milestone.congratulatoryText,
+          appId: milestone.appId,
+          thresholdValue: milestone.thresholdValue,
+          name: milestone.name,
+          active: milestone.active,
         }
       }))
-      // console.log('profiles', profiles)
     } else {
-      setProfiles([])
-      // console.log('profiles', profiles)
+      setMilestones([])
     }
   }
 
   const fetchRequests = async () => {
-    const requestsRes = await fetch(`/api/profiles/requests`);
+    const requestsRes = await fetch(`/api/milestones/requests`);
     const requestsJson = await requestsRes.json();
 
     if (requestsJson && requestsJson.length > 0) {
@@ -71,73 +73,6 @@ export default function Users({session, profile, host, apps, admin}) {
           { field: 'username', headerName: 'Username', width: 200 },
           { field: 'provider', headerName: 'Provider', width: 200 },
           { field: 'role', headerName: 'Role', width: 200 },
-          {
-            field: "actions",
-            headerName: "Actions",
-            sortable: false,
-            filterable: false,
-            disableClickEventBubbling: true,
-            width: 400,
-            renderCell: (params) => {
-              // console.log("params", params.row)
-              return (
-                <Grid container spacing={1}>
-                  {
-                    params.value.map((param) => {
-                      if (param == "accept") {
-                        const onClick = async () => {
-                          const res = await fetch(`/api/whitelist/accept`,
-                          {
-                            body: JSON.stringify({
-                              username: params.row.username,
-                            }),
-                            headers: {
-                              'Content-Type': 'application/json'
-                            },
-                            method: 'POST'
-                          });
-      
-                          const resJson = await res.json()
-      
-                          if (resJson) {
-                            fetchRequests()
-                            // fetchUsers()
-                          }
-                        };
-                  
-                        return <Grid item><Button color="secondary" variant="contained" onClick={onClick}>Accept Member</Button></Grid>;
-                        
-                      } else if (param == "decline") {
-                        const onClick = async () => {
-                          const res = await fetch(`/api/whitelist/decline`,
-                          {
-                            body: JSON.stringify({
-                              username: params.row.username,
-                            }),
-                            headers: {
-                              'Content-Type': 'application/json'
-                            },
-                            method: 'POST'
-                          });
-      
-                          const resJson = await res.json()
-      
-                          if (resJson) {
-                            fetchRequests()
-                          }
-                        };
-                  
-                        return <Grid item><Button color="secondary" variant="contained" onClick={onClick}>Decline Member</Button></Grid>;
-                        
-                      } else {
-                        return <Button>Click</Button>;
-                      }
-                    })
-                  }
-                </Grid>
-              )
-            }
-          }
         ])
     } else {
       setRequests([])
@@ -155,27 +90,98 @@ export default function Users({session, profile, host, apps, admin}) {
       router.push('/portal')
     }
 
-    fetchUsers().then(() => {
+    fetchMilestones().then(() => {
       setLoading(false)
     })
 
-    fetchRequests().then(() => {
-      setRequestsLoading(false) 
-    })
+    // fetchRequests().then(() => {
+    //   setRequestsLoading(false) 
+    // })
 
   }, []);
 
-  const uploadData = async () => {
-    const res = await fetch(`/api/upload`,
+  const addMilestone = async ({
+    name,
+    congratulatoryText,
+    thresholdValue,
+    appId,
+    active,
+  }) => {
+    // if (edit) {
+    //   const res = await fetch(`/api/apps/edit?email=${email}`,
+    //   {
+    //     body: JSON.stringify({
+    //       name,
+    //       categoryType,
+    //       slug,
+    //       key,
+    //       tickets,
+    //       ticketType,
+    //       allowCollection,
+    //       levels,
+    //       _id: apps[editAppData]._id,
+    //     }),
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     method: 'POST'
+    //   });
+  
+      
+    //   const json = await res.json();
+  
+    //   if (json) {
+    //     // fetch apps again
+  
+    //     const appsRes = await fetch(`/api/apps`);
+    //     const appsJson = await appsRes.json();
+    //     setAppsContainer(appsJson)
+    //     setAppsData(appsJson.map((app, index) => {
+    //       return {
+    //         id: index + 1,
+    //         name: app.name,
+    //         tickets: app.tickets,
+    //       }
+    //     }))
+    //   }
+    // } else {
+    //   // Add
+    const res = await fetch(`/api/milestones/new`,
     {
       body: JSON.stringify({
-        text: "something"
+        name,
+        congratulatoryText,
+        thresholdValue,
+        appId,
+        active,
       }),
       headers: {
         'Content-Type': 'application/json'
       },
       method: 'POST'
     });
+
+    
+    const json = await res.json();
+
+    if (json) {
+      fetchMilestones()
+    }
+    // }
+  }
+
+  const closeAppModal = () => {
+    // setEditAppData(null)
+    setAddAppModalOpen(false)
+  }
+
+  const openAddMilestone = () => {
+    setAddAppModalOpen(true)
+  }
+
+  const openMilestonePage = (milestone) => {
+    console.log("openMilestonePage", milestone.row)
+    router.push(`/portal/milestone/${milestone.row._id}`)
   }
 
 
@@ -200,7 +206,7 @@ export default function Users({session, profile, host, apps, admin}) {
         )
       }
       {
-        !loading && !!admin.email && (
+        !loading && (
           <Grid  container style={{marginBottom: 20}}>
             <Grid
               container
@@ -208,10 +214,15 @@ export default function Users({session, profile, host, apps, admin}) {
               className="users"
               direction="column"
             >
-              <Grid item><h1>Existing Users</h1></Grid>
+              <Grid item container>
+                <Grid item xs><h1>Milestones</h1></Grid>
+                <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={openAddMilestone}>Add Milestone</Button></Grid>
+              </Grid>
               
               <Grid item
-              style={{minHeight: 400}}><DataGrid rows={profiles} columns={columns} pageSize={10} disableColumnSelector /></Grid>
+              style={{minHeight: 400}}>
+                <DataGrid rows={milestones} columns={columns} pageSize={10} disableColumnSelector onRowClick={openMilestonePage} />
+              </Grid>
             </Grid>
           </Grid>
         )
@@ -222,7 +233,7 @@ export default function Users({session, profile, host, apps, admin}) {
         )
       }
       {
-        !requestsLoading && !!admin.email && (
+        !requestsLoading && (
           <Grid  container spacing={4}>
             <Grid
               container
@@ -239,6 +250,9 @@ export default function Users({session, profile, host, apps, admin}) {
         )
       }
       {/* <div onClick={uploadData}>Click here to upload data</div> */}
+
+{/* App  loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} */}
+      <AddMilestone open={addAppModalOpen} submit={addMilestone} closeModal={closeAppModal} apps={apps} />
     </PortalLayout>
   );
 }

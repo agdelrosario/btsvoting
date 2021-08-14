@@ -8,7 +8,6 @@ export default async (req, res) => {
   const { db } = await connectToDatabase();
 
   let params = {
-    // email: req.query.email,
     name: req.body.name,
     categoryType: req.body.categoryType,
     slug: req.body.slug,

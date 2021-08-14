@@ -273,7 +273,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
       }
     } else {
       // Add
-      const res = await fetch(`/api/apps/new?email=${email}`,
+      const res = await fetch(`/api/apps/new`,
       {
         body: JSON.stringify({
           name,
