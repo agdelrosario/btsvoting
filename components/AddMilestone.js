@@ -299,7 +299,7 @@ export default function AddMilestone({open, submit, loadedData, closeModal, apps
                 <option aria-label="None" value="" />
                 {
                   apps.map((value) => (
-                    <option value={value.key} key={`app-id-${value.key}`} label={value.name}>{value.name}</option>
+                    <option value={value.slug} key={`app-id-${value.slug}`} label={value.name}>{value.name}</option>
                   ))
                 }
               </Select>

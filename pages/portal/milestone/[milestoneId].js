@@ -8,18 +8,25 @@ import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import { useRouter } from 'next/router';
 
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
+
 const columns = [
   { field: 'id', headerName: 'ID', width: 40 },
-  { field: 'name', headerName: 'Name', width: 200 },
-  { field: 'appId', headerName: 'App', width: 200 },
-  { field: 'thresholdValue', headerName: 'Value', width: 200 },
+  { field: 'username', headerName: 'Username', width: 200 },
+  { field: 'team', headerName: 'Team', width: 200 },
+  { field: 'value', headerName: 'Value', width: 200 },
+  // { field: 'appId', headerName: 'App', width: 200 },
+  // { field: 'thresholdValue', headerName: 'Value', width: 200 },
   // { field: 'role', headerName: 'Role', width: 200 },
 ];
 
 export default function Milestone({session, profile, host, apps, admin}) {
   const [milestones, setMilestones] = useState(null);
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+  const [achievers, setAchievers] = useState([]);
   const router = useRouter();
 
   const fetchMilestones = async () => {
@@ -35,24 +42,70 @@ export default function Milestone({session, profile, host, apps, admin}) {
   }
 
   const fetchAchievers = async () => {
+    // console.log("milestones", milestones)
+    const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${milestones.thresholdValue}`);
+    const achieversJson = await achieversRes.json();
 
+    if (achieversJson) {
+
+      console.log("achieversJson", achieversJson)
+      setAchievers(achieversJson.achievers.map((achiever, index) => {
+        const userProfile = achiever.userProfile.find((profile) => {
+          return !!profile.team
+        })
+
+        return {
+          id: index + 1,
+          username: userProfile.username,
+          team: userProfile.team,
+          value: achiever.value,
+        }
+      }))
+
+    }
+
+    setLoading(false)
+    /*
+,
+      {
+        body: JSON.stringify({
+          id: router.query.milestoneId
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      }
+    */
   }
 
+  // const fetchAchievers = async () => {
+
+  // }
+
   useEffect(() => {
-    console.log("admin", admin, !admin.email)
     if (!admin.email) {
       router.push('/portal')
     }
 
     fetchMilestones().then(() => {
-      setLoading(false)
     })
+
 
     // fetchRequests().then(() => {
     //   setRequestsLoading(false) 
     // })
 
   }, []);
+
+  useEffect(() => {
+    console.log("milestones", milestones)
+
+    if (milestones && milestones.appId) {
+
+      fetchAchievers()
+    }
+  }, [milestones])
 
   const addMilestone = async ({
     name,
@@ -133,20 +186,9 @@ export default function Milestone({session, profile, host, apps, admin}) {
     setAddAppModalOpen(true)
   }
 
-  const collateAchievers = async () => {
-    // const achieversRes = await fetch(`/api/achievers/collate`,
-    // {
-    //   body: JSON.stringify({
-    //     id: router.query.milestoneId
-    //   }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   method: 'POST'
-    // });
-    // const achieversJson = await achieversRes.json();
+  const goBackToHome = () => {
 
-    // console.log("achieversJson", achieversJson)
+    router.push('/portal/milestones')
   }
 
 
@@ -173,19 +215,50 @@ export default function Milestone({session, profile, host, apps, admin}) {
       {
         !loading && !!admin.email && (
           <Grid  container style={{marginBottom: 20}}>
-            <Grid
-              container
-              item
-              className="users"
-              direction="column"
-            >
-              <Grid item container>
-                <Grid item xs><h1>{milestones.name}</h1></Grid>
-                <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid>
+            
+            <Grid container style={{marginBottom: 20}}>
+              <Grid item>
+                <Breadcrumbs maxItems={2} aria-label="breadcrumb">
+                  <Link color="inherit" href="#" onClick={goBackToHome}>
+                    Milestones
+                  </Link>
+                  <Typography color="textPrimary">{milestones.name}</Typography>
+                </Breadcrumbs>
               </Grid>
-              
-              <Grid item style={{minHeight: 400}}>
-                {/* <DataGrid rows={milestones} columns={columns} pageSize={10} disableColumnSelector /> */}
+            </Grid>
+            <Grid container spacing={3}>
+
+              <Grid
+                container
+                item
+                className="users"
+                direction="column"
+                xs={6}
+              >
+                <Grid item container>
+                  <Grid item xs><h1>{milestones.name}</h1></Grid>
+                  {/* <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid> */}
+                </Grid>
+                
+                <Grid item style={{minHeight: 400}}>
+                  <DataGrid rows={achievers} columns={columns} pageSize={10} disableColumnSelector />
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                item
+                className="users"
+                direction="column"
+                xs={6}
+              >
+                <Grid item container>
+                  <Grid item xs><h1>New Millionaires</h1></Grid>
+                  {/* <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid> */}
+                </Grid>
+                
+                <Grid item style={{minHeight: 400}}>
+                  {/* <DataGrid rows={achievers} columns={columns} pageSize={10} disableColumnSelector /> */}
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
