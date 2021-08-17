@@ -27,6 +27,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [achievers, setAchievers] = useState([]);
+  const [newAchievers, setNewAchievers] = useState([]);
   const router = useRouter();
 
   const fetchMilestones = async () => {
@@ -41,15 +42,39 @@ export default function Milestone({session, profile, host, apps, admin}) {
     }
   }
 
-  const fetchAchievers = async () => {
+  const fetchAllAchievers = async () => {
+    const achieversRes = await fetch(`/api/achievers?app=${milestones.appId}&milestoneId=${router.query.milestoneId}&value=${milestones.thresholdValue}`);
+    const achieversJson = await achieversRes.json();
+
+    if (achieversJson) {
+
+      console.log("fetchAllAchievers", achieversJson)
+      setAchievers(achieversJson.map((achiever, index) => {
+        const userProfile = achiever.userProfile.find((profile) => {
+          return !!profile.team
+        })
+
+        return {
+          id: achiever.orderNo,
+          // id: index + 1,
+          username: userProfile.username,
+          team: userProfile.team,
+          value: achiever.value,
+        }
+      }))
+
+    }
+  }
+
+  const fetchNewAchievers = async () => {
     // console.log("milestones", milestones)
     const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${milestones.thresholdValue}`);
     const achieversJson = await achieversRes.json();
 
     if (achieversJson) {
 
-      console.log("achieversJson", achieversJson)
-      setAchievers(achieversJson.achievers.map((achiever, index) => {
+      // console.log("achieversJson", achieversJson)
+      setNewAchievers(achieversJson.achievers.map((achiever, index) => {
         const userProfile = achiever.userProfile.find((profile) => {
           return !!profile.team
         })
@@ -79,7 +104,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
     */
   }
 
-  // const fetchAchievers = async () => {
+  // const fetchNewAchievers = async () => {
 
   // }
 
@@ -99,11 +124,11 @@ export default function Milestone({session, profile, host, apps, admin}) {
   }, []);
 
   useEffect(() => {
-    console.log("milestones", milestones)
+    // console.log("milestones", milestones)
 
     if (milestones && milestones.appId) {
-
-      fetchAchievers()
+      fetchAllAchievers()
+      fetchNewAchievers()
     }
   }, [milestones])
 
@@ -236,12 +261,12 @@ export default function Milestone({session, profile, host, apps, admin}) {
                 xs={6}
               >
                 <Grid item container>
-                  <Grid item xs><h1>{milestones.name}</h1></Grid>
+                  <Grid item xs><h1>New Millionaires</h1></Grid>
                   {/* <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid> */}
                 </Grid>
                 
                 <Grid item style={{minHeight: 400}}>
-                  <DataGrid rows={achievers} columns={columns} pageSize={10} disableColumnSelector />
+                  <DataGrid rows={newAchievers} columns={columns} pageSize={10} disableColumnSelector />
                 </Grid>
               </Grid>
               <Grid
@@ -252,12 +277,12 @@ export default function Milestone({session, profile, host, apps, admin}) {
                 xs={6}
               >
                 <Grid item container>
-                  <Grid item xs><h1>New Millionaires</h1></Grid>
+                  <Grid item xs><h1>{milestones.name}</h1></Grid>
                   {/* <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid> */}
                 </Grid>
                 
                 <Grid item style={{minHeight: 400}}>
-                  {/* <DataGrid rows={achievers} columns={columns} pageSize={10} disableColumnSelector /> */}
+                  <DataGrid rows={achievers} columns={columns} pageSize={10} disableColumnSelector />
                 </Grid>
               </Grid>
             </Grid>

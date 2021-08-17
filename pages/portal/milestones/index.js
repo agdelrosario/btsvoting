@@ -227,12 +227,12 @@ export default function Milestones({session, profile, host, apps, admin}) {
           </Grid>
         )
       }
-      {
+      {/* {
         requestsLoading && (
           <Loading />
         )
-      }
-      {
+      } */}
+      {/* {
         !requestsLoading && (
           <Grid  container spacing={4}>
             <Grid
@@ -248,7 +248,7 @@ export default function Milestones({session, profile, host, apps, admin}) {
             </Grid>
           </Grid>
         )
-      }
+      } */}
       {/* <div onClick={uploadData}>Click here to upload data</div> */}
 
 {/* App  loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} */}

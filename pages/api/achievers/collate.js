@@ -10,6 +10,8 @@ export default async (req, res) => {
   const achievers = await db
     .collection(req.query.app)
     .aggregate([
+
+      { $sort : { lastUpdated: 1 } },
       {
         $project:
         {
@@ -45,6 +47,22 @@ export default async (req, res) => {
             as: "userProfile",
           }
       },
+      {
+        $lookup:
+          {
+            from: "achievers",
+            localField: "_id",
+            foreignField: "userId",
+            as: "P5hrj4w75",
+          }
+      },
+      {
+        $match:
+        {'P5hrj4w75' : { '$size': 0 } }
+      },
+      {
+        $project: {'P5hrj4w75' : 0}
+      }
     ]
   ).toArray()
 

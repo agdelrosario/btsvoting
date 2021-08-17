@@ -7,7 +7,7 @@ import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 40 },
+  { field: 'id', headerName: 'ID', width: 50 },
   { field: 'username', headerName: 'Username', width: 200 },
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'provider', headerName: 'Provider', width: 200 },
@@ -25,14 +25,12 @@ export default function Users({session, profile, host, apps, admin}) {
     { field: 'provider', headerName: 'Provider', width: 200 },
     { field: 'role', headerName: 'Role', width: 200 }
   ])
-  // console.log('profiles', profiles)
 
   const fetchUsers = async () => {
     const profilesRes = await fetch(`/api/profiles`);
     const profilesJson = await profilesRes.json();
 
     if (profilesJson) {
-      // console.log('profiles', profilesJson)
       setProfiles(profilesJson.map((profile, index) => {
         return {
           id: index + 1,
@@ -43,10 +41,8 @@ export default function Users({session, profile, host, apps, admin}) {
           // actions: ['allowAdmin']
         }
       }))
-      // console.log('profiles', profiles)
     } else {
       setProfiles([])
-      // console.log('profiles', profiles)
     }
   }
 
@@ -55,7 +51,6 @@ export default function Users({session, profile, host, apps, admin}) {
     const requestsJson = await requestsRes.json();
 
     if (requestsJson && requestsJson.length > 0) {
-      // console.log('requests', requestsJson)
       setRequests(requestsJson.map((profile, index) => {
         return {
           id: index + 1,
@@ -67,7 +62,7 @@ export default function Users({session, profile, host, apps, admin}) {
       }))
 
       setRequestColumns([
-          { field: 'id', headerName: 'ID', width: 40 },
+          { field: 'id', headerName: 'ID', width: 50 },
           { field: 'username', headerName: 'Username', width: 200 },
           { field: 'provider', headerName: 'Provider', width: 200 },
           { field: 'role', headerName: 'Role', width: 200 },
@@ -79,7 +74,6 @@ export default function Users({session, profile, host, apps, admin}) {
             disableClickEventBubbling: true,
             width: 400,
             renderCell: (params) => {
-              // console.log("params", params.row)
               return (
                 <Grid container spacing={1}>
                   {
@@ -178,9 +172,6 @@ export default function Users({session, profile, host, apps, admin}) {
     });
   }
 
-
-  // console.log("requests", requests)
-  // console.log("requestColumns", requestColumns)
 
   if (!session) {
     return (
