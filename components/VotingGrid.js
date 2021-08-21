@@ -69,6 +69,7 @@ const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempA
     let tempAppAccounts = {...appAccounts}
     tempAppAccounts[app.key] = newAppAccountsJson
     setAppAccounts(tempAppAccounts);
+    checkAchievement(app.slug)
   }
 
   const editAccount = async ({ app, username, tickets }) => {
@@ -91,6 +92,15 @@ const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempA
     let tempAppAccounts = {...appAccounts}
     tempAppAccounts[app.key] = newAppAccountsJson
     setAppAccounts(tempAppAccounts);
+    checkAchievement(app.slug)
+  }
+
+  const checkAchievement = async (app) => {
+
+    const res = await fetch(`/api/achievers/check?app=${app}&userId=${userId}`)
+    const resJson = await res.json();
+
+    console.log("checkAchievement", resJson)
   }
 
   const setVotingAccountData = (appKey, index, appIndex) => {

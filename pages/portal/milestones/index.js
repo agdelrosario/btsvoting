@@ -180,7 +180,7 @@ export default function Milestones({session, profile, host, apps, admin}) {
   }
 
   const openMilestonePage = (milestone) => {
-    console.log("openMilestonePage", milestone.row)
+    // console.log("openMilestonePage", milestone.row)
     router.push(`/portal/milestone/${milestone.row._id}`)
   }
 

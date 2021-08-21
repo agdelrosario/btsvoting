@@ -57,12 +57,11 @@ export default async (req, res) => {
           }
       },
       {
-        $match:
-        {'P5hrj4w75' : { '$size': 0 } }
+        $match: {'P5hrj4w75' : { '$size': 0 } }
       },
       {
         $project: {'P5hrj4w75' : 0}
-      }
+      },
     ]
   ).toArray()
 

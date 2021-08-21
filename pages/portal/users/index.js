@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 50 },
-  { field: 'username', headerName: 'Username', width: 200 },
+  { field: 'username', headerName: 'Username', width: 300 },
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'provider', headerName: 'Provider', width: 200 },
   { field: 'role', headerName: 'Role', width: 200 },
@@ -170,6 +170,8 @@ export default function Users({session, profile, host, apps, admin}) {
       },
       method: 'POST'
     });
+
+    const resJson = await res.json()
   }
 
 
@@ -202,7 +204,7 @@ export default function Users({session, profile, host, apps, admin}) {
               <Grid item><h1>Existing Users</h1></Grid>
               
               <Grid item
-              style={{minHeight: 400}}><DataGrid rows={profiles} columns={columns} pageSize={10} disableColumnSelector /></Grid>
+              style={{minHeight: 600}}><DataGrid rows={profiles} columns={columns} pageSize={10} disableColumnSelector /></Grid>
             </Grid>
           </Grid>
         )

@@ -48,7 +48,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
 
     if (achieversJson) {
 
-      console.log("fetchAllAchievers", achieversJson)
+      // console.log("fetchAllAchievers", achieversJson)
       setAchievers(achieversJson.map((achiever, index) => {
         const userProfile = achiever.userProfile.find((profile) => {
           return !!profile.team
@@ -81,6 +81,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
 
         return {
           id: index + 1,
+          userId: userProfile.userId,
           username: userProfile.username,
           team: userProfile.team,
           value: achiever.value,
@@ -216,6 +217,35 @@ export default function Milestone({session, profile, host, apps, admin}) {
     router.push('/portal/milestones')
   }
 
+  const acceptAchievers = async () => {
+    // console.log("newAchievers", newAchievers)
+    const newAchieversData = newAchievers.map((newAchiever) => {
+      return {
+        userId: newAchiever.userId,
+      }
+    })
+
+    console.log("newAchieversData", newAchieversData)
+
+    const res = await fetch(`/api/achievers/accept-new?milestoneId=${router.query.milestoneId}`,
+    {
+      body: JSON.stringify({
+        achievers: newAchieversData
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+
+    const resJson = res.json()
+
+    if (resJson) {
+      fetchAllAchievers()
+      fetchNewAchievers()
+    }
+  }
+
 
   // console.log("requests", requests)
   // console.log("requestColumns", requestColumns)
@@ -252,29 +282,32 @@ export default function Milestone({session, profile, host, apps, admin}) {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-
+              {
+                newAchievers && newAchievers.length > 0 && (
+                  <Grid
+                    container
+                    item
+                    className="users"
+                    direction="column"
+                    xs={6}
+                  >
+                    <Grid item container>
+                      <Grid item xs><h1>New Millionaires</h1></Grid>
+                      <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={acceptAchievers}>Accept all</Button></Grid>
+                    </Grid>
+                    
+                    <Grid item style={{minHeight: 400}}>
+                      <DataGrid rows={newAchievers} columns={columns} pageSize={10} disableColumnSelector />
+                    </Grid>
+                  </Grid>
+                )
+              }
               <Grid
                 container
                 item
                 className="users"
                 direction="column"
-                xs={6}
-              >
-                <Grid item container>
-                  <Grid item xs><h1>New Millionaires</h1></Grid>
-                  {/* <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid> */}
-                </Grid>
-                
-                <Grid item style={{minHeight: 400}}>
-                  <DataGrid rows={newAchievers} columns={columns} pageSize={10} disableColumnSelector />
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                item
-                className="users"
-                direction="column"
-                xs={6}
+                xs={newAchievers && newAchievers.length > 0 ? 6 : 12}
               >
                 <Grid item container>
                   <Grid item xs><h1>{milestones.name}</h1></Grid>

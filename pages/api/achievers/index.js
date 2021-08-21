@@ -34,6 +34,11 @@ export default async (req, res) => {
 
         }
       },
+      {
+        $sort: {
+          orderNo: 1
+        }
+      }
     ])
     // .collection(req.query.app)
     // .aggregate([
