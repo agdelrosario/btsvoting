@@ -18,6 +18,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FlagIcon from '@material-ui/icons/Flag';
+import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
 import { useRouter } from 'next/router';
 
 const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
@@ -59,6 +60,12 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
           <ListItem button key="milestones" onClick={() => goToLink("/portal/milestones")}>
             <ListItemIcon><FlagIcon /></ListItemIcon>
             <ListItemText primary="Milestones" />
+          </ListItem>
+        )}
+        {session && isProfilePresent && router.pathname != "/portal/monthly-stats" && admin &&  (
+          <ListItem button key="monthly-stats" onClick={() => goToLink("/portal/monthly-stats")}>
+            <ListItemIcon><VerticalSplitIcon /></ListItemIcon>
+            <ListItemText primary="Monthly Stats" />
           </ListItem>
         )}
         {session && isProfilePresent && router.pathname != "/portal/profile" && (
@@ -146,6 +153,11 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
             {session && isProfilePresent && admin && (
               <Grid item className="link">
                 <a href="/portal/milestones">Milestones</a>
+              </Grid>
+            )}
+            {session && isProfilePresent && admin && (
+              <Grid item className="link">
+                <a href="/portal/monthly-stats">Monthly Stats</a>
               </Grid>
             )}
             {session && isProfilePresent && (
