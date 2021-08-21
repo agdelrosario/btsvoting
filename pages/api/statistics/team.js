@@ -4,7 +4,7 @@ export default async (req, res) => {
   const { db } = await connectToDatabase();
   const teams = await db
     .collection("team-statistics")
-    .find({})
+    .find({published: true})
     .sort({ $natural: -1 }).limit(1)
     .toArray();
 

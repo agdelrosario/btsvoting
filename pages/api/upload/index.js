@@ -15,7 +15,7 @@ export default async (req, res) => {
         // {
         //   $match: { 'team': "lejindary"}
         // }
-        {
+        /*{
           $lookup:
           {
             from: "profiles",
@@ -42,7 +42,7 @@ export default async (req, res) => {
             lastUpdateDate: '$lastUpdateDate',
             userId: '$profileData.userId',
           }
-        }
+        }*/
 
         // Member does not exist in the website with the same username
         // {
@@ -57,22 +57,24 @@ export default async (req, res) => {
 
     
 
-    console.log("data", tempData)
+    // console.log("data", tempData)
     // const data = await db.collection("members-existing")
     //   .insertMany(
     //     tempData
     //   )
 
-    const objects = tempData.map((item) => {
-      return ObjectID(item._id)
-    })
-    console.log("objects", objects)
-    const data = db.collection("temp").deleteMany({_id: { $in: objects}});
-    // res.json(tempData.map((d) => {
-    //   return {
-    //     username: d.username,
-    //     team: d.team,
-    //   }
-    // }));
-    res.json(tempData)
+    // const objects = tempData.map((item) => {
+    //   return ObjectID(item._id)
+    // })
+    // console.log("objects", objects)
+    // const data = db.collection("temp").deleteMany({_id: { $in: objects}});
+    res.json(tempData.map((d) => {
+      return {
+        username: d.username,
+        team: d.team,
+        lastUpdate: d.lastUpdateDate,
+        
+      }
+    }));
+    // res.json(tempData)
   };
