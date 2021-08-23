@@ -5,7 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import AddNewAccount from './AddNewAccount';
 import EditAccount from './EditAccount';
 
-const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempAppAccounts, isInitial}) => {
+const VotingGrid = ({userId, validation, setValidation, apps, appAccounts: tempAppAccounts}) => {
   const [open, setOpen] = useState(false);
   const [openEditAccount, setOpenEditAccount] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
