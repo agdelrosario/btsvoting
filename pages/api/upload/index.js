@@ -12,10 +12,7 @@ export default async (req, res) => {
     const tempData = await db
       .collection("temp")
       .aggregate([
-        // {
-        //   $match: { 'team': "lejindary"}
-        // }
-        /*{
+        {
           $lookup:
           {
             from: "profiles",
@@ -37,12 +34,12 @@ export default async (req, res) => {
         },
         {
           $project: {
-            // _id: 0,
+            _id: 0,
             tickets: '$tickets',
             lastUpdateDate: '$lastUpdateDate',
             userId: '$profileData.userId',
           }
-        }*/
+        }
 
         // Member does not exist in the website with the same username
         // {
@@ -57,7 +54,7 @@ export default async (req, res) => {
 
     
 
-    // console.log("data", tempData)
+    console.log("data", tempData.length)
     // const data = await db.collection("members-existing")
     //   .insertMany(
     //     tempData

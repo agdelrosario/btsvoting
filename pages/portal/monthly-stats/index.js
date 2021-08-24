@@ -16,9 +16,17 @@ const columns = [
   { field: 'totalChoeaedolTickets', headerName: 'Total', width: 200 },
 ];
 
+const teamsColumns = [
+  { field: 'id', headerName: 'ID', width: 50 },
+  { field: 'name', headerName: 'Name', width: 300 },
+  { field: 'collected', headerName: 'This month', width: 200 },
+];
+
 export default function Users({session, profile, host, apps, admin}) {
   const [profiles, setProfiles] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true)
+  const [teamsLoading, setTeamsLoading] = useState(true)
 
   const fetchUsers = async () => {
     const profilesRes = await fetch(`/api/statistics/monthly-individual`);
@@ -34,12 +42,27 @@ export default function Users({session, profile, host, apps, admin}) {
           tickets: profile.tickets,
           collected: profile.collected,
           totalChoeaedolTickets: profile.totalChoeaedolTickets,
-          // role: profile.role,
-          // actions: ['allowAdmin']
         }
       }))
     } else {
       setProfiles([])
+    }
+  }
+
+  const fetchTeams = async () => {
+    const profilesRes = await fetch(`/api/statistics/monthly-team`);
+    const profilesJson = await profilesRes.json();
+
+    if (profilesJson) {
+      setTeams(profilesJson.map((profile, index) => {
+        return {
+          id: index + 1,
+          name: profile.name,
+          collected: profile.collected,
+        }
+      }))
+    } else {
+      setTeams([])
     }
   }
 
@@ -50,6 +73,10 @@ export default function Users({session, profile, host, apps, admin}) {
 
     fetchUsers().then(() => {
       setLoading(false)
+    })
+
+    fetchTeams().then(() => {
+      setTeamsLoading(false)
     })
 
   }, []);
@@ -103,6 +130,31 @@ export default function Users({session, profile, host, apps, admin}) {
               
               <Grid item
               style={{minHeight: 600}}><DataGrid rows={profiles} columns={columns} pageSize={10} disableColumnSelector /></Grid>
+            </Grid>
+          </Grid>
+        )
+      }
+      {
+        teamsLoading && (
+          <Loading />
+        )
+      }
+      {
+        !teamsLoading && !!admin.email && (
+          <Grid  container style={{marginBottom: 20}}>
+            <Grid
+              container
+              item
+              className="users"
+              direction="column"
+            >
+              <Grid item container>
+                <Grid item xs><h1>Team Stats</h1></Grid>
+                {/* <Grid item xs align="right">August 2021</Grid> */}
+              </Grid>
+              
+              <Grid item
+              style={{minHeight: 600}}><DataGrid rows={teams} columns={teamsColumns} pageSize={10} disableColumnSelector /></Grid>
             </Grid>
           </Grid>
         )

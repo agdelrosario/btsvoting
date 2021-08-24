@@ -7,75 +7,75 @@ import moment from "moment";
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
+  const aggregateIndividualChoeaedolCollection = [
+    {
+      $group: {
+        _id: "$userId",
+        totalChoeaedolTickets: {$sum: "$tickets"},
+      }
+    },
+    {
+      $lookup:
+      {
+        from: "profiles",
+        localField: "_id",
+        foreignField: "userId",
+        as: "profile",
+      }
+    },
+    {
+      $unwind: `$profile`
+    },
+    {
+      $match: { 'profile.team': { $exists: true }}
+    },
+    {
+      $lookup:
+      {
+        from: "teams",
+        localField: "profile.team",
+        foreignField: "slug",
+        as: "teamInfo",
+      }
+    },
+    {
+      $unwind: `$teamInfo`
+    },
+    {
+      $lookup:
+      {
+        from: "members-existing",
+        localField: "_id",
+        foreignField: "userId",
+        as: "julyData",
+      }
+    },
+    {
+      $unwind: `$julyData`
+    },
+    {
+      $project: {
+        profile: 1,
+        teamInfo: 1,
+        tickets: "$julyData.tickets",
+        totalChoeaedolTickets: 1,
+      }
+    },
+    {
+      $project: {
+        profile: 1,
+        teamInfo: 1,
+        tickets: 1,
+        totalChoeaedolTickets: 1,
+        collected: {$subtract: ["$totalChoeaedolTickets", "$tickets"]}
+      }
+    }
+  ]
 
   const achievers = await db
     .collection("choeaedol")
-    .aggregate([
-      {
-        $group: {
-          _id: "$userId",
-          totalChoeaedolTickets: {$sum: "$tickets"},
-        }
-      },
-      {
-        $lookup:
-        {
-          from: "profiles",
-          localField: "_id",
-          foreignField: "userId",
-          as: "profile",
-        }
-      },
-      {
-        $unwind: `$profile`
-      },
-      {
-        $match: { 'profile.team': { $exists: true }}
-      },
-      {
-        $lookup:
-        {
-          from: "teams",
-          localField: "profile.team",
-          foreignField: "slug",
-          as: "teamInfo",
-        }
-      },
-      {
-        $unwind: `$teamInfo`
-      },
-      {
-        $lookup:
-        {
-          from: "members-existing",
-          localField: "_id",
-          foreignField: "userId",
-          as: "julyData",
-        }
-      },
-      {
-        $unwind: `$julyData`
-      },
-      {
-        $project: {
-          profile: 1,
-          teamInfo: 1,
-          tickets: "$julyData.tickets",
-          totalChoeaedolTickets: 1,
-        }
-      },
-      {
-        $project: {
-          profile: 1,
-          teamInfo: 1,
-          tickets: 1,
-          totalChoeaedolTickets: 1,
-          collected: {$subtract: ["$totalChoeaedolTickets", "$tickets"]}
-        }
-      }
-
-    ]
-  ).toArray()
+    .aggregate(aggregateIndividualChoeaedolCollection)
+    .toArray()
 
   // const achievers = await db
   //   .collection("members-existing")

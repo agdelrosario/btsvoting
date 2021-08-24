@@ -110,14 +110,14 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
       className={`navigation ${lowerThanSm ? 'xs' : ''}`}
       // spacing={1}
     >
-      <Grid item xs={9} sm={6} className="title">
+      <Grid item xs={9} sm={4} className="title">
         <a href="/portal">
           BVO Portal<span className="title-dot">.</span>
         </a>
       </Grid>
       {
         lowerThanSm && (
-          <Grid item xs={3} sm={6} key="top" align="right">
+          <Grid item xs={3} sm={8} key="top" align="right">
             {/* <Button onClick={toggleDrawer(true)}>Top</Button> */}
             <IconButton
               aria-label="delete"
@@ -138,7 +138,7 @@ const PortalNavBar = ({isProfilePresent, lowerThanSm, admin}) => {
             container
             item
             xs={12}
-            sm={6}
+            sm={8}
             className={`links ${lowerThanSm ? 'xs' : ''}`}
             direction="row"
             alignItems="flex-end"
