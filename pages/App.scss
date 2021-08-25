@@ -32,6 +32,13 @@ h1 {
   // font-weight: 500 !important;
 }
 
+h3 {
+  // font-family: 'Bebas Neue', sans-serif;
+  padding: 0px;
+  margin: 0px;
+  margin: 0 0 10px 0;
+}
+
 p {
   line-height: 2em;
 }
@@ -537,7 +544,7 @@ p {
     // min-width: 100%;
     width: 100%;
     border-bottom: 1px solid #414141;
-    height: 100px;
+    height: 70px;
     // display: flex;
     // flex-direction: row;
     // align-items: flex-end;

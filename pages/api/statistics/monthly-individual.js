@@ -69,6 +69,9 @@ export default async (req, res) => {
         totalChoeaedolTickets: 1,
         collected: {$subtract: ["$totalChoeaedolTickets", "$tickets"]}
       }
+    },
+    {
+      $sort: { collected: -1 }
     }
   ]
 

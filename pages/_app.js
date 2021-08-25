@@ -16,7 +16,8 @@ function MyApp({ Component, pageProps }) {
           fontFamily: [
             'Bebas Nueue',
             'Montserrat'
-          ]
+          ],
+          fontSize: 13,
         },
         palette: {
           type: 'dark',

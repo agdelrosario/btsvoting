@@ -71,6 +71,11 @@ export default async (req, res) => {
       }
     },
     {
+      $match: {
+        collected: {$gte: 0}
+      }
+    },
+    {
       $group: {
         _id: "$teamInfo.slug",
         name: { $first: "$teamInfo.name" },
