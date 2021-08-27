@@ -6,64 +6,140 @@ export default async (req, res) => {
   const { db } = await connectToDatabase();
 
 
+  const app = await db
+    .collection("apps")
+    .findOne({slug: req.query.app})
 
-  const achievers = await db
-    .collection(req.query.app)
-    .aggregate([
+  let achievers;
 
-      { $sort : { lastUpdated: 1 } },
-      {
-        $project:
+  if (app.ticketType == 'levels') {
+
+    achievers = await db
+      .collection(req.query.app)
+      .aggregate([
+
+        // { $sort : { lastUpdated: 1 } },
+        // {
+        //   $project:
+        //   {
+        //     _id: 0,
+        //   }
+        // },
+        // {
+        //   $group:
+        //   {
+        //     _id: "$userId",
+        //     value:
+        //     {
+        //       $sum: "$tickets"
+        //     }
+        //   }
+        // },
         {
-          _id: 0,
-        }
-      },
-      {
-        $group:
+          $match: {
+            'tickets.key': req.query.value
+          }
+        },
+        // {
+        //   $addFields: {
+        //     userId: { $toObjectId: "$_id" }
+        //   }
+        // },
         {
-          _id: "$userId",
-          value:
-          {
-            $sum: "$tickets"
+          $lookup:
+            {
+              from: "profiles",
+              localField: "userId",
+              foreignField: "userId",
+              as: "userProfile",
+            }
+        },
+        {
+          $lookup:
+            {
+              from: "achievers",
+              localField: "userId",
+              foreignField: "userId",
+              as: "P5hrj4w75",
+            }
+        },
+        {
+          $match: {'P5hrj4w75' : { '$size': 0 } }
+        },
+        {
+          $project: {
+            'P5hrj4w75' : 0,
+          }
+        },
+        {
+          $set: {
+            'value': req.query.value
           }
         }
-      },
-      {
-        $match: {
-          value: { $gte: parseInt(req.query.value) }
-        }
-      },
-      // {
-      //   $addFields: {
-      //     userId: { $toObjectId: "$_id" }
-      //   }
-      // },
-      {
-        $lookup:
+      ]
+    ).toArray()
+  } else {
+
+
+
+    achievers = await db
+      .collection(req.query.app)
+      .aggregate([
+
+        { $sort : { lastUpdated: 1 } },
+        {
+          $project:
           {
-            from: "profiles",
-            localField: "_id",
-            foreignField: "userId",
-            as: "userProfile",
+            _id: 0,
           }
-      },
-      {
-        $lookup:
+        },
+        {
+          $group:
           {
-            from: "achievers",
-            localField: "_id",
-            foreignField: "userId",
-            as: "P5hrj4w75",
+            _id: "$userId",
+            value:
+            {
+              $sum: "$tickets"
+            }
           }
-      },
-      {
-        $match: {'P5hrj4w75' : { '$size': 0 } }
-      },
-      {
-        $project: {'P5hrj4w75' : 0}
-      },
-    ]
-  ).toArray()
+        },
+        {
+          $match: {
+            value: { $gte: parseInt(req.query.value) }
+          }
+        },
+        // {
+        //   $addFields: {
+        //     userId: { $toObjectId: "$_id" }
+        //   }
+        // },
+        {
+          $lookup:
+            {
+              from: "profiles",
+              localField: "_id",
+              foreignField: "userId",
+              as: "userProfile",
+            }
+        },
+        {
+          $lookup:
+            {
+              from: "achievers",
+              localField: "_id",
+              foreignField: "userId",
+              as: "P5hrj4w75",
+            }
+        },
+        {
+          $match: {'P5hrj4w75' : { '$size': 0 } }
+        },
+        {
+          $project: {'P5hrj4w75' : 0}
+        },
+      ]
+    ).toArray()
+  }
 
   // const milestones = await db
   //   .collection("milestones")

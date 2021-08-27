@@ -13,7 +13,7 @@ const columns = [
   { field: 'name', headerName: 'Name', width: 200 },
   { field: 'appId', headerName: 'App', width: 200 },
   { field: 'thresholdValue', headerName: 'Value', width: 200 },
-  { field: 'active', headerName: 'Active', width: 200 },
+  // { field: 'active', headerName: 'Active', width: 200 },
 ];
 
 export default function Milestones({session, profile, host, apps, admin}) {
@@ -42,7 +42,7 @@ export default function Milestones({session, profile, host, apps, admin}) {
           id: index + 1,
           congratulatoryText: milestone.congratulatoryText,
           appId: milestone.appId,
-          thresholdValue: milestone.thresholdValue,
+          thresholdValue: typeof milestone.thresholdValue == 'object' ? milestone.thresholdValue.name: milestone.thresholdValue,
           name: milestone.name,
           active: milestone.active,
         }

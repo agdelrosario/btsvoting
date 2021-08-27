@@ -223,7 +223,7 @@ export default function AddMilestone({open, submit, loadedData, closeModal, apps
     }
 
     const tempApp = apps.find((app) => {
-      return app.key == val
+      return app.slug == val
     })
 
     setCurrentApp(tempApp)

@@ -3,7 +3,7 @@ import { Provider } from "next-auth/client";
 // import '@zeit-ui/style'
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { grey, yellow, blueGrey } from "@material-ui/core/colors";
+import { grey, yellow, blueGrey, pink } from "@material-ui/core/colors";
 import styles from './App.scss';
 
 function MyApp({ Component, pageProps }) {

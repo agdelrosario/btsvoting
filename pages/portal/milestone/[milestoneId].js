@@ -43,7 +43,9 @@ export default function Milestone({session, profile, host, apps, admin}) {
   }
 
   const fetchAllAchievers = async () => {
-    const achieversRes = await fetch(`/api/achievers?app=${milestones.appId}&milestoneId=${router.query.milestoneId}&value=${milestones.thresholdValue}`);
+
+    const value = typeof milestones.thresholdValue == 'object' ? milestones.thresholdValue.key : milestones.thresholdValue
+    const achieversRes = await fetch(`/api/achievers?app=${milestones.appId}&milestoneId=${router.query.milestoneId}&value=${value}`);
     const achieversJson = await achieversRes.json();
 
     if (achieversJson) {
@@ -54,8 +56,11 @@ export default function Milestone({session, profile, host, apps, admin}) {
           return !!profile.team
         })
 
+
+        console.log("achiever.value", achiever.value)
+
         return {
-          id: achiever.orderNo,
+          id: achiever.orderNo || index + 1,
           // id: index + 1,
           username: userProfile.username,
           team: userProfile.team,
@@ -67,8 +72,9 @@ export default function Milestone({session, profile, host, apps, admin}) {
   }
 
   const fetchNewAchievers = async () => {
-    // console.log("milestones", milestones)
-    const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${milestones.thresholdValue}`);
+    console.log("milestones.thresholdValue", milestones.thresholdValue)
+    const value = typeof milestones.thresholdValue == 'object' ? milestones.thresholdValue.key : milestones.thresholdValue
+    const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${value}`);
     const achieversJson = await achieversRes.json();
 
     if (achieversJson) {
@@ -292,7 +298,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
                     xs={6}
                   >
                     <Grid item container>
-                      <Grid item xs><h1>New Millionaires</h1></Grid>
+                      <Grid item xs><h1>New Members</h1></Grid>
                       <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={acceptAchievers}>Accept all</Button></Grid>
                     </Grid>
                     
