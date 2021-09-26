@@ -55,10 +55,10 @@ export default async (req, res) => {
     
 
     console.log("data", tempData.length)
-    // const data = await db.collection("members-existing")
-    //   .insertMany(
-    //     tempData
-    //   )
+    const data = await db.collection("september-newbies")
+      .insertMany(
+        tempData
+      )
 
     // const objects = tempData.map((item) => {
     //   return ObjectID(item._id)

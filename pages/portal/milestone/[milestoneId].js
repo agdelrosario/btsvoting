@@ -302,7 +302,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
                       <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={acceptAchievers}>Accept all</Button></Grid>
                     </Grid>
                     
-                    <Grid item style={{minHeight: 400}}>
+                    <Grid item style={{minHeight: 500}}>
                       <DataGrid rows={newAchievers} columns={columns} pageSize={10} disableColumnSelector />
                     </Grid>
                   </Grid>
@@ -320,7 +320,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
                   {/* <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={collateAchievers}>Collate Achievers</Button></Grid> */}
                 </Grid>
                 
-                <Grid item style={{minHeight: 400}}>
+                <Grid item style={{minHeight: 700}}>
                   <DataGrid rows={achievers} columns={columns} pageSize={10} disableColumnSelector />
                 </Grid>
               </Grid>

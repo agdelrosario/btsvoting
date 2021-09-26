@@ -54,6 +54,21 @@ export default async (req, res) => {
               as: "userProfile",
             }
         },
+        // {
+        //   "$lookup": {
+        //     from: "achievers",
+        //     let: { "userId": "$userId" },
+        //     "pipeline": [
+        //       {
+        //         "$match": {
+        //           "$expr": { "$eq": [ "$userId", "$$userId" ] },
+        //           "$expr": { "$eq": [ "$milestoneId", req.query.milestoneId ] },
+        //         }
+        //       }
+        //     ],
+        //     "as": "P5hrj4w75"
+        //   }
+        // },
         {
           $lookup:
             {

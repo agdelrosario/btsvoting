@@ -9,16 +9,46 @@ export default async (req, res) => {
 
   const aggregateIndividualChoeaedolCollection = [
     {
-      $group: {
-        _id: "$userId",
-        totalChoeaedolTickets: {$sum: "$tickets"},
+      $match: {
+        month: '8',
+        year: '2021'
+      }
+    },
+    {
+      $unwind: '$statistics'
+    },
+    {
+      $project: {
+        members: '$statistics.members'
+      }
+    },
+    {
+      $unwind: '$members'
+    },
+    {
+      $project: {
+        userId: '$members.userId',
+        tickets: '$members.tickets.choeaedol.tickets',
+        lastUpdateDate: '$members.tickets.choeaedol.lastUpdateDate',
       }
     },
     {
       $lookup:
       {
+        from: "choeaedol",
+        localField: "userId",
+        foreignField: "userId",
+        as: "currentMonthData",
+      }
+    },
+    {
+      $sort: {"currentMonthData.lastUpdated:": 1}
+    },
+    {
+      $lookup:
+      {
         from: "profiles",
-        localField: "_id",
+        localField: "userId",
         foreignField: "userId",
         as: "profile",
       }
@@ -41,44 +71,118 @@ export default async (req, res) => {
     {
       $unwind: `$teamInfo`
     },
-    {
-      $lookup:
-      {
-        from: "members-existing",
-        localField: "_id",
-        foreignField: "userId",
-        as: "julyData",
-      }
-    },
-    {
-      $unwind: `$julyData`
-    },
+
     {
       $project: {
         profile: 1,
         teamInfo: 1,
-        tickets: "$julyData.tickets",
-        totalChoeaedolTickets: 1,
+        userId: 1,
+        currentMonthTickets: {$sum: "$currentMonthData.tickets"},
+        prevMonthTickets: "$tickets",
+        lastUpdatedDate: {$first: "$currentMonthData.lastUpdated"},
       }
     },
     {
       $project: {
         profile: 1,
         teamInfo: 1,
-        tickets: 1,
-        totalChoeaedolTickets: 1,
-        collected: {$subtract: ["$totalChoeaedolTickets", "$tickets"]}
+        userId: 1,
+        currentMonthTickets: 1,
+        prevMonthTickets: 1,
+        lastUpdatedDate: 1,
+        collected: {$subtract: ["$currentMonthTickets", "$prevMonthTickets"]}
+      }
+    },
+    {
+      $match: {
+        "prevMonthTickets": { $ne: 0}
       }
     },
     {
       $sort: { collected: -1 }
     }
+
+    // {
+    //   $group: {
+    //     _id: "$userId",
+    //     totalChoeaedolTickets: {$sum: "$tickets"},
+    //   }
+    // },
+    // {
+    //   $lookup:
+    //   {
+    //     from: "profiles",
+    //     localField: "_id",
+    //     foreignField: "userId",
+    //     as: "profile",
+    //   }
+    // },
+    // {
+    //   $unwind: `$profile`
+    // },
+    // {
+    //   $match: { 'profile.team': { $exists: true }}
+    // },
+    // {
+    //   $lookup:
+    //   {
+    //     from: "teams",
+    //     localField: "profile.team",
+    //     foreignField: "slug",
+    //     as: "teamInfo",
+    //   }
+    // },
+    // {
+    //   $unwind: `$teamInfo`
+    // },
+    // {
+    //   $unwind: `$prevMonthData`
+    // },
+    // {
+    //   $project: {
+    //     profile: 1,
+    //     teamInfo: 1,
+    //     tickets: "$prevMonthData.tickets",
+    //     totalChoeaedolTickets: 1,
+    //   }
+    // },
+    // {
+    //   $project: {
+    //     profile: 1,
+    //     teamInfo: 1,
+    //     tickets: 1,
+    //     totalChoeaedolTickets: 1,
+    //     collected: {$subtract: ["$totalChoeaedolTickets", "$tickets"]}
+    //   }
+    // },
+    // {
+    //   $sort: { collected: -1 }
+    // }
   ]
 
   const achievers = await db
-    .collection("choeaedol")
+    .collection("members-statistics")
     .aggregate(aggregateIndividualChoeaedolCollection)
     .toArray()
+
+
+  /*
+    {
+      $lookup:
+      {
+        from: "member-statistics",
+        "let": { "userId": "$profile.userId", "teamId": "$teamInfo.slug" },
+        // localField: "_id",
+        // foreignField: "userId",
+        "pipeline": [
+          { "$match": {
+            "$expr": { "$eq": ["$$", "$teamId" ] },
+            "$expr": { "$eq": ["$$m_date", "$m_date"] }
+          }}
+        ],
+        as: "prevMonthData",
+      }
+    },*/
 
   // const achievers = await db
   //   .collection("members-existing")

@@ -231,7 +231,7 @@ export default function Users({session, profile, host, apps, admin}) {
           </Grid>
         )
       }
-      {/* <div onClick={uploadData}>Click here to upload data</div> */}
+      <div onClick={uploadData}>Click here to upload data</div>
     </PortalLayout>
   );
 }

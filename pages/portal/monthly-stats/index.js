@@ -12,8 +12,8 @@ const columns = [
   { field: 'username', headerName: 'Username', width: 250 },
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'collected', headerName: 'This month', width: 200 },
-  { field: 'tickets', headerName: 'Previous month', width: 200 },
-  { field: 'totalChoeaedolTickets', headerName: 'Total', width: 200 },
+  { field: 'prevMonthTickets', headerName: 'Previous month', width: 200 },
+  { field: 'currentMonthTickets', headerName: 'Total', width: 200 },
 ];
 
 const columnsTop20 = [
@@ -43,7 +43,7 @@ export default function Users({session, profile, host, apps, admin}) {
   const [teamsTop5, setTeamsTop5] = useState([])
 
   const fetchUsers = async () => {
-    const profilesRes = await fetch(`/api/statistics/monthly-individual`);
+    const profilesRes = await fetch(`/api/statistics/monthly-individual?month=${9}`);
     const profilesJson = await profilesRes.json();
 
     if (profilesJson) {
@@ -53,9 +53,9 @@ export default function Users({session, profile, host, apps, admin}) {
           username: profile.profile.username,
           provider: profile.profile.provider,
           team: profile.teamInfo.name,
-          tickets: profile.tickets,
+          prevMonthTickets: profile.prevMonthTickets,
           collected: profile.collected,
-          totalChoeaedolTickets: profile.totalChoeaedolTickets,
+          currentMonthTickets: profile.currentMonthTickets,
         }
       })
 
@@ -82,8 +82,6 @@ export default function Users({session, profile, host, apps, admin}) {
       setTeams(teamsMap)
 
       setTeamsTop5(teamsMap.slice(0,5))
-
-      console.log("teamsTop5", teamsTop5 )
     } else {
       setTeams([])
     }
@@ -104,8 +102,8 @@ export default function Users({session, profile, host, apps, admin}) {
 
   }, []);
 
-  const uploadData = async () => {
-    const res = await fetch(`/api/upload`,
+  const backupData = async () => {
+    const res = await fetch(`/api/upload/backup-member-statistics-monthly?month=9&&year=2021`,
     {
       body: JSON.stringify({
         text: "something"
@@ -117,6 +115,7 @@ export default function Users({session, profile, host, apps, admin}) {
     });
 
     const resJson = await res.json()
+    console.log("september data", resJson)
   }
 
   const activatePresentationMode = async () => {
@@ -150,12 +149,12 @@ export default function Users({session, profile, host, apps, admin}) {
           </Grid>
           
           <Grid item xs={3}>
-            <h1 style={{"marginBottom": "5px"}}>AUGUST 2021</h1>
+            <h1 style={{"marginBottom": "5px"}}>SEPTEMBER 2021</h1>
           </Grid>
-          <Grid item xs={5} style={{"display": "flex", "alignItems": "flex-end", "justifyContent": "flex-end", "padding": "0 10px 5px 0"}}>
-            Results as of September 1, 2021
+          <Grid item xs={4} style={{"display": "flex", "alignItems": "flex-end", "justifyContent": "flex-end", "padding": "0 10px 5px 0"}}>
+            Results as of October 1, 2021
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
 
           </Grid>
 
@@ -177,7 +176,7 @@ export default function Users({session, profile, host, apps, admin}) {
                 >
                   <Grid item container>
                     <Grid item xs><h3>Top Performing Teams</h3></Grid>
-                    {/* <Grid item xs align="right">August 2021</Grid> */}
+                    {/* <Grid item xs align="right">September 2021</Grid> */}
                   </Grid>
                   
                   <Grid item style={{minHeight: 170}}>
@@ -191,6 +190,13 @@ export default function Users({session, profile, host, apps, admin}) {
                       headerHeight={30}
                     />
                   </Grid>
+
+
+                  <Grid item style={{marginTop: 20, fontSize: '13px'}}>
+                    Congratulations! <br /><br />
+
+                    Results are from September 2021 collection of Choeaedol Ever Hearts. Keep collecting and update your collections in the website regularly.
+                  </Grid>
                 </Grid>
               </Grid>
             )
@@ -202,7 +208,7 @@ export default function Users({session, profile, host, apps, admin}) {
           }
           {
             !loading && !!admin.email && (
-              <Grid  container item xs={5} style={{marginBottom: 20}}>
+              <Grid  container item xs={4} style={{marginBottom: 20}}>
                 <Grid
                   container
                   item
@@ -228,8 +234,9 @@ export default function Users({session, profile, host, apps, admin}) {
         mode == "table" && (
           <Grid container>
                     
-            <Grid item xs align="right" style={{"marginBottom": "20px"}}>
-              <Button color="secondary" variant="contained" onClick={activatePresentationMode}>Activate Presentation Mode</Button>
+            <Grid container item xs justify="flex-end" style={{"marginBottom": "20px"}} spacing={2}>
+              <Grid item><Button color="secondary" variant="contained" onClick={activatePresentationMode}>Activate Presentation Mode</Button></Grid>
+              <Grid item><Button color="secondary" variant="contained" onClick={backupData}>Backup September Data</Button></Grid>
             </Grid>
             {
               loading && (
@@ -249,7 +256,8 @@ export default function Users({session, profile, host, apps, admin}) {
                     <Grid item container>
                       <Grid item xs><h1>Monthly Stats</h1></Grid>
                       <Grid item xs align="right">
-                        August 2021
+                        <span>September 2021</span>
+
                       </Grid>
                     </Grid>
                     
@@ -276,7 +284,7 @@ export default function Users({session, profile, host, apps, admin}) {
                   >
                     <Grid item container>
                       <Grid item xs><h1>Team Stats</h1></Grid>
-                      {/* <Grid item xs align="right">August 2021</Grid> */}
+                      {/* <Grid item xs align="right">September 2021</Grid> */}
                     </Grid>
                     
                     <Grid item style={{minHeight: 400}}>
@@ -290,7 +298,6 @@ export default function Users({session, profile, host, apps, admin}) {
         )
       }
       
-      {/* <div onClick={uploadData}>Click here to upload data</div> */}
     </PortalLayout>
   );
 }
