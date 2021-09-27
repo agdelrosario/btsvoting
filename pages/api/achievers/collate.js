@@ -1,5 +1,6 @@
 // import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../util/mongodb";
+import { ObjectID, ObjectId } from "mongodb";
 
 
 export default async (req, res) => {
@@ -40,11 +41,6 @@ export default async (req, res) => {
             'tickets.key': req.query.value
           }
         },
-        // {
-        //   $addFields: {
-        //     userId: { $toObjectId: "$_id" }
-        //   }
-        // },
         {
           $lookup:
             {
@@ -54,38 +50,32 @@ export default async (req, res) => {
               as: "userProfile",
             }
         },
-        // {
-        //   "$lookup": {
-        //     from: "achievers",
-        //     let: { "userId": "$userId" },
-        //     "pipeline": [
-        //       {
-        //         "$match": {
-        //           "$expr": { "$eq": [ "$userId", "$$userId" ] },
-        //           "$expr": { "$eq": [ "$milestoneId", req.query.milestoneId ] },
-        //         }
-        //       }
-        //     ],
-        //     "as": "P5hrj4w75"
-        //   }
-        // },
+        {
+          $set: {
+            'milestoneId': ObjectID(req.query.milestoneId)
+          }
+        },
         {
           $lookup:
             {
               from: "achievers",
-              localField: "userId",
-              foreignField: "userId",
+              "let": { "userId": "$userId", "milestoneId": "$milestoneId"  },
+              "pipeline": [
+                { "$match": {
+                  "$expr": {
+                    "$and": [
+                      { "$eq" : ["$$milestoneId", "$milestoneId"] },
+                      { "$eq": ["$$userId", "$userId"] }
+                    ]
+                  }
+                }}
+              ],
               as: "P5hrj4w75",
             }
         },
         {
           $match: {'P5hrj4w75' : { '$size': 0 } }
         },
-        // {
-        //   $project: {
-        //     'P5hrj4w75' : 0,
-        //   }
-        // },
         {
           $set: {
             'value': req.query.value
@@ -138,11 +128,25 @@ export default async (req, res) => {
             }
         },
         {
+          $set: {
+            'milestoneId': ObjectID(req.query.milestoneId)
+          }
+        },
+        {
           $lookup:
             {
               from: "achievers",
-              localField: "_id",
-              foreignField: "userId",
+              "let": { "userId": "$_id", "milestoneId": "$milestoneId"  },
+              "pipeline": [
+                { "$match": {
+                  "$expr": {
+                    "$and": [
+                      { "$eq" : ["$$milestoneId", "$milestoneId"] },
+                      { "$eq": ["$$userId", "$userId"] }
+                    ]
+                  }
+                }}
+              ],
               as: "P5hrj4w75",
             }
         },
@@ -155,8 +159,6 @@ export default async (req, res) => {
       ]
     ).toArray()
   }
-
-  // console.log("achievers", achievers[0])
 
   // const milestones = await db
   //   .collection("milestones")

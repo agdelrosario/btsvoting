@@ -121,7 +121,7 @@ export default function Users({session, profile, host, apps, admin}) {
                           }
                         };
                   
-                        return <Grid item><Button color="secondary" variant="contained" onClick={onClick}>Accept Member</Button></Grid>;
+                        return <Grid item key={`accept-${params.row.userId}`}><Button color="secondary" variant="contained" onClick={onClick}>Accept Member</Button></Grid>;
                         
                       } else if (param == "decline") {
                         const onClick = async () => {
@@ -143,7 +143,7 @@ export default function Users({session, profile, host, apps, admin}) {
                           }
                         };
                   
-                        return <Grid item><Button color="secondary" variant="contained" onClick={onClick}>Decline Member</Button></Grid>;
+                        return <Grid item key={`decline-${params.row.userId}`}><Button color="secondary" variant="contained" onClick={onClick}>Decline Member</Button></Grid>;
                         
                       } else {
                         return <Button>Click</Button>;

@@ -112,7 +112,6 @@ export default function Profile({session, profile, host, apps, admin}) {
           container
           className="profile"
         >
-          <p>Note: The information in this page can also be viewed by the admins.</p>
           {/* <div> */}
             <Grid
               container
@@ -122,11 +121,6 @@ export default function Profile({session, profile, host, apps, admin}) {
               alignItems="flex-end"
             >
               <Grid item xs={12} sm={6}><h1>Profile</h1></Grid>
-              <Grid
-                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}
-              >
-                <span>Please talk to an admin to modify.</span>
-              </Grid>
             </Grid>
             <div className="profile-info">
               <Grid 

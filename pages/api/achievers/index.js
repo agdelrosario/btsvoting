@@ -58,11 +58,11 @@ export default async (req, res) => {
               as: "userProfile",
             }
         },
-        // {
-        //   $sort: {
-        //     orderNo: 1
-        //   }
-        // }
+        {
+          $sort: {
+            value: -1
+          }
+        }
       ])
       // .collection(req.query.app)
       // .aggregate([

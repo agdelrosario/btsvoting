@@ -73,7 +73,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
   const fetchNewAchievers = async () => {
     // console.log("milestones.thresholdValue", milestones.thresholdValue)
     const value = typeof milestones.thresholdValue == 'object' ? milestones.thresholdValue.key : milestones.thresholdValue
-    const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${value}`);
+    const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${value}&milestoneId=${router.query.milestoneId}`);
     const achieversJson = await achieversRes.json();
 
     if (achieversJson) {
