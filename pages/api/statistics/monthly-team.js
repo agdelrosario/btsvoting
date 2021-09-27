@@ -193,7 +193,7 @@ export default async (req, res) => {
 
 
 
-  console.log(achievers[0])
+  // console.log(achievers[0])
 
   res.json(achievers);
 };

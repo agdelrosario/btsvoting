@@ -81,11 +81,11 @@ export default async (req, res) => {
         {
           $match: {'P5hrj4w75' : { '$size': 0 } }
         },
-        {
-          $project: {
-            'P5hrj4w75' : 0,
-          }
-        },
+        // {
+        //   $project: {
+        //     'P5hrj4w75' : 0,
+        //   }
+        // },
         {
           $set: {
             'value': req.query.value
@@ -149,12 +149,14 @@ export default async (req, res) => {
         {
           $match: {'P5hrj4w75' : { '$size': 0 } }
         },
-        {
-          $project: {'P5hrj4w75' : 0}
-        },
+        // {
+        //   $project: {'P5hrj4w75' : 0}
+        // },
       ]
     ).toArray()
   }
+
+  // console.log("achievers", achievers[0])
 
   // const milestones = await db
   //   .collection("milestones")

@@ -17,7 +17,6 @@ const columns = [
   { field: 'username', headerName: 'Username', width: 200 },
   { field: 'team', headerName: 'Team', width: 200 },
   { field: 'value', headerName: 'Value', width: 200 },
-  // { field: 'appId', headerName: 'App', width: 200 },
   // { field: 'thresholdValue', headerName: 'Value', width: 200 },
   // { field: 'role', headerName: 'Role', width: 200 },
 ];
@@ -57,7 +56,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
         })
 
 
-        console.log("achiever.value", achiever.value)
+        // console.log("achiever.value", achiever.value)
 
         return {
           id: achiever.orderNo || index + 1,
@@ -72,7 +71,7 @@ export default function Milestone({session, profile, host, apps, admin}) {
   }
 
   const fetchNewAchievers = async () => {
-    console.log("milestones.thresholdValue", milestones.thresholdValue)
+    // console.log("milestones.thresholdValue", milestones.thresholdValue)
     const value = typeof milestones.thresholdValue == 'object' ? milestones.thresholdValue.key : milestones.thresholdValue
     const achieversRes = await fetch(`/api/achievers/collate?app=${milestones.appId}&value=${value}`);
     const achieversJson = await achieversRes.json();

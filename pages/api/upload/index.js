@@ -54,7 +54,7 @@ export default async (req, res) => {
 
     
 
-    console.log("data", tempData.length)
+    // console.log("data", tempData.length)
     const data = await db.collection("september-newbies")
       .insertMany(
         tempData

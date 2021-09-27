@@ -115,7 +115,7 @@ export default function Users({session, profile, host, apps, admin}) {
     });
 
     const resJson = await res.json()
-    console.log("september data", resJson)
+    // console.log("september data", resJson)
   }
 
   const activatePresentationMode = async () => {

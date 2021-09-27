@@ -5,16 +5,11 @@ import Loading from '../../../components/Loading';
 import Grid from '@material-ui/core/Grid';
 import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
+import { useRouter } from 'next/router';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 50 },
-  { field: 'username', headerName: 'Username', width: 300 },
-  { field: 'team', headerName: 'Team', width: 200 },
-  { field: 'provider', headerName: 'Provider', width: 200 },
-  { field: 'role', headerName: 'Role', width: 200 },
-];
 
 export default function Users({session, profile, host, apps, admin}) {
+  const router = useRouter();
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState([])
@@ -25,6 +20,32 @@ export default function Users({session, profile, host, apps, admin}) {
     { field: 'provider', headerName: 'Provider', width: 200 },
     { field: 'role', headerName: 'Role', width: 200 }
   ])
+  const [columns] = useState([
+    { field: 'id', headerName: 'ID', width: 50 },
+    { field: 'username', headerName: 'Username', width: 300 },
+    { field: 'team', headerName: 'Team', width: 200 },
+    { field: 'provider', headerName: 'Provider', width: 200 },
+    { field: 'role', headerName: 'Role', width: 200 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      filterable: false,
+      disableClickEventBubbling: true,
+      width: 400,
+      renderCell: (params) => {
+        const onClick = async () => {
+          router.push(`/portal/user/${params.row.userId}`)
+        };
+  
+        return (
+          <Grid container spacing={1}>
+            <Grid item><Button color="secondary" variant="contained" onClick={onClick}>View User Profile</Button></Grid>
+          </Grid>
+        )
+      }
+    }
+  ]);
 
   const fetchUsers = async () => {
     const profilesRes = await fetch(`/api/profiles`);
@@ -38,6 +59,7 @@ export default function Users({session, profile, host, apps, admin}) {
           provider: profile.provider,
           team: profile.teamInfo.name,
           role: profile.role,
+          userId: profile.userId,
           // actions: ['allowAdmin']
         }
       }))
@@ -231,7 +253,7 @@ export default function Users({session, profile, host, apps, admin}) {
           </Grid>
         )
       }
-      <div onClick={uploadData}>Click here to upload data</div>
+      {/* <div onClick={uploadData}>Click here to upload data</div> */}
     </PortalLayout>
   );
 }

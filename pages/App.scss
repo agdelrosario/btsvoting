@@ -457,6 +457,11 @@ p {
                 font-size: 13px;
                 margin: 3px 0 5px 0;
                 color: #AAAAAA;
+                text-overflow:ellipsis;
+                overflow:hidden; 
+                width:100%;
+                // display:inline-block; 
+                white-space: nowrap;
               }
 
               &.add-new-account {

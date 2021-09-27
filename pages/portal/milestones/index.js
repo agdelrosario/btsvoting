@@ -8,15 +8,8 @@ import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import { useRouter } from 'next/router';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 40 },
-  { field: 'name', headerName: 'Name', width: 200 },
-  { field: 'appId', headerName: 'App', width: 200 },
-  { field: 'thresholdValue', headerName: 'Value', width: 200 },
-  // { field: 'active', headerName: 'Active', width: 200 },
-];
-
 export default function Milestones({session, profile, host, apps, admin}) {
+  const router = useRouter();
   const [milestones, setMilestones] = useState([]);
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [loading, setLoading] = useState(true)
@@ -28,7 +21,33 @@ export default function Milestones({session, profile, host, apps, admin}) {
     { field: 'provider', headerName: 'Provider', width: 200 },
     { field: 'role', headerName: 'Role', width: 200 }
   ])
-  const router = useRouter();
+
+  const [columns, setColumns] = useState([
+      { field: 'id', headerName: 'ID', width: 40 },
+      { field: 'name', headerName: 'Name', width: 200 },
+      { field: 'appId', headerName: 'App', width: 200 },
+      { field: 'thresholdValue', headerName: 'Value', width: 200 },
+      {
+        field: "actions",
+        headerName: "Actions",
+        sortable: false,
+        filterable: false,
+        disableClickEventBubbling: true,
+        width: 400,
+        renderCell: (params) => {
+          const onClick = async () => {
+            router.push(`/portal/milestone/${params.row._id}`)
+          };
+    
+          return (
+            <Grid container spacing={1}>
+              <Grid item><Button color="secondary" variant="contained" onClick={onClick}>View Milestone</Button></Grid>
+            </Grid>
+          )
+        }
+      }
+      // { field: 'active', headerName: 'Active', width: 200 },
+    ])
 
   const fetchMilestones = async () => {
     const milestonesRes = await fetch(`/api/milestones`);
@@ -179,10 +198,10 @@ export default function Milestones({session, profile, host, apps, admin}) {
     setAddAppModalOpen(true)
   }
 
-  const openMilestonePage = (milestone) => {
-    // console.log("openMilestonePage", milestone.row)
-    router.push(`/portal/milestone/${milestone.row._id}`)
-  }
+  // const openMilestonePage = (milestone) => {
+  //   // console.log("openMilestonePage", milestone.row)
+  //   router.push(`/portal/milestone/${milestone.row._id}`)
+  // }
 
 
   // console.log("requests", requests)
@@ -219,9 +238,9 @@ export default function Milestones({session, profile, host, apps, admin}) {
                 <Grid item xs align="right"><Button color="secondary" variant="contained" onClick={openAddMilestone}>Add Milestone</Button></Grid>
               </Grid>
               
-              <Grid item
-              style={{minHeight: 400}}>
-                <DataGrid rows={milestones} columns={columns} pageSize={10} disableColumnSelector onRowClick={openMilestonePage} />
+              <Grid item style={{minHeight: 400}}>
+                {/* onRowClick={openMilestonePage}  */}
+                <DataGrid rows={milestones} columns={columns} pageSize={10} disableColumnSelector />
               </Grid>
             </Grid>
           </Grid>
