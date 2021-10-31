@@ -7,10 +7,12 @@ import moment from "moment";
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
+  const month = parseInt(req.query.month) - 1
+
   const aggregateIndividualChoeaedolCollection = [
     {
       $match: {
-        month: '8',
+        month: `${month}`,
         year: '2021'
       }
     },

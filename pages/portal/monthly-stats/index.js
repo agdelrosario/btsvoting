@@ -6,6 +6,9 @@ import Grid from '@material-ui/core/Grid';
 import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import moment from "moment";
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 const columns = [
   { field: 'id', headerName: 'ID', type: 'number', width: 50 },
@@ -33,6 +36,17 @@ const teamsColumnsTop5 = [
   { field: 'name', headerName: 'Name', width: 200 },
 ];
 
+const startMonth = "July"
+const startYear = "2021"
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    // margin: 0,
+    // width: "100%",
+    height: "40px",
+  },
+}));
+
 export default function Users({session, profile, host, apps, admin}) {
   const [profiles, setProfiles] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -41,9 +55,18 @@ export default function Users({session, profile, host, apps, admin}) {
   const [mode, setMode] = useState("table")
   const [profilesTop20, setProfilesTop20] = useState([])
   const [teamsTop5, setTeamsTop5] = useState([])
+  const [currentMonthDigit, setCurrentMonthDigit] = useState(10)
+  const [currentMonth, setCurrentMonth] = useState(moment.months(currentMonthDigit - 1))
+  const [currentYear, setCurrentYear] = useState(2021)
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthDigit)
+  const [selectedYear, setSelectedYear] = useState(null)
+  const [monthsList] = useState([7, 8, 9, 10])
+  const [yearsList] = useState([2021])
+  const classes = useStyles();
+
 
   const fetchUsers = async () => {
-    const profilesRes = await fetch(`/api/statistics/monthly-individual?month=${9}`);
+    const profilesRes = await fetch(`/api/statistics/monthly-individual?month=${selectedMonth}`);
     const profilesJson = await profilesRes.json();
 
     if (profilesJson) {
@@ -68,7 +91,7 @@ export default function Users({session, profile, host, apps, admin}) {
   }
 
   const fetchTeams = async () => {
-    const profilesRes = await fetch(`/api/statistics/monthly-team`);
+    const profilesRes = await fetch(`/api/statistics/monthly-team?month=${selectedMonth}`);
     const teamsJson = await profilesRes.json();
 
     if (teamsJson) {
@@ -102,8 +125,21 @@ export default function Users({session, profile, host, apps, admin}) {
 
   }, []);
 
+
+
+  useEffect(() => {
+    fetchUsers().then(() => {
+      setLoading(false)
+    })
+
+    fetchTeams().then(() => {
+      setTeamsLoading(false)
+    })
+
+  }, [selectedMonth]);
+
   const backupData = async () => {
-    const res = await fetch(`/api/upload/backup-member-statistics-monthly?month=9&&year=2021`,
+    const res = await fetch(`/api/upload/backup-member-statistics-monthly?month=${currentMonth}&&year=${currentYear}`,
     {
       body: JSON.stringify({
         text: "something"
@@ -115,7 +151,6 @@ export default function Users({session, profile, host, apps, admin}) {
     });
 
     const resJson = await res.json()
-    // console.log("september data", resJson)
   }
 
   const activatePresentationMode = async () => {
@@ -124,6 +159,12 @@ export default function Users({session, profile, host, apps, admin}) {
 
   const deactivatePresentationMode = async () => {
     setMode("table")
+  }
+
+  const handleSelectedMonthChange = (event) => {
+    let val = event.target.value
+
+    setSelectedMonth(val)
   }
 
 
@@ -149,10 +190,10 @@ export default function Users({session, profile, host, apps, admin}) {
           </Grid>
           
           <Grid item xs={3}>
-            <h1 style={{"marginBottom": "5px"}}>SEPTEMBER 2021</h1>
+            <h1 style={{"marginBottom": "5px", "textTransform": "uppercase"}}>{currentMonth} {currentYear}</h1>
           </Grid>
           <Grid item xs={4} style={{"display": "flex", "alignItems": "flex-end", "justifyContent": "flex-end", "padding": "0 10px 5px 0"}}>
-            Results as of October 1, 2021
+            Results as of {currentMonth} 1, {currentYear}
           </Grid>
           <Grid item xs={5}>
 
@@ -195,7 +236,7 @@ export default function Users({session, profile, host, apps, admin}) {
                   <Grid item style={{marginTop: 20, fontSize: '13px'}}>
                     Congratulations! <br /><br />
 
-                    Results are from September 2021 collection of Choeaedol Ever Hearts. Keep collecting and update your collections in the website regularly.
+                    Results are from {currentMonth} {currentYear} collection of Choeaedol Ever Hearts. Keep collecting and update your collections in the website regularly.
                   </Grid>
                 </Grid>
               </Grid>
@@ -236,7 +277,7 @@ export default function Users({session, profile, host, apps, admin}) {
                     
             <Grid container item xs justify="flex-end" style={{"marginBottom": "20px"}} spacing={2}>
               <Grid item><Button color="secondary" variant="contained" onClick={activatePresentationMode}>Activate Presentation Mode</Button></Grid>
-              <Grid item><Button color="secondary" variant="contained" onClick={backupData}>Backup September Data</Button></Grid>
+              <Grid item><Button color="secondary" variant="contained" onClick={backupData}>Backup {currentMonth} Data</Button></Grid>
             </Grid>
             {
               loading && (
@@ -256,7 +297,32 @@ export default function Users({session, profile, host, apps, admin}) {
                     <Grid item container>
                       <Grid item xs><h1>Monthly Stats</h1></Grid>
                       <Grid item xs align="right">
-                        <span>September 2021</span>
+                        {/* variant="outlined"  */}
+                        <FormControl className={classes.formControl}>
+
+                          <Select
+                            native
+                            value={selectedMonth}
+                            onChange={handleSelectedMonthChange}
+                            // label="Ticket Type *"
+                            inputProps={{
+                              name: 'age',
+                              id: 'outlined-age-native-simple',
+                            }}
+                            // defaultValue={currentMonthDigit}
+                            // error={validation.ticketType}
+                          >
+                            <option aria-label="None" value="" />
+                            {
+                              monthsList.map((value) => {
+                                const month = moment.months(parseInt(value) - 1)
+
+                                return (<option value={value} key={`month-${value}`} label={value.name}>{month} {currentYear}</option>)
+                              })
+                            }
+                          </Select>
+                        </FormControl>
+                        {/* <span>{currentMonth} 2021</span> */}
 
                       </Grid>
                     </Grid>

@@ -230,8 +230,6 @@ export default function Milestone({session, profile, host, apps, admin}) {
       }
     })
 
-    console.log("newAchieversData", newAchieversData)
-
     const res = await fetch(`/api/achievers/accept-new?milestoneId=${router.query.milestoneId}`,
     {
       body: JSON.stringify({
