@@ -33,7 +33,7 @@ const teamsColumns = [
 
 const teamsColumnsTop5 = [
   { field: 'id', headerName: 'ID', type: 'number', width: 50 },
-  { field: 'name', headerName: 'Name', width: 200 },
+  { field: 'name', headerName: 'Name', width: 170 },
 ];
 
 const startMonth = "July"
@@ -192,12 +192,12 @@ export default function Users({session, profile, host, apps, admin}) {
           <Grid item xs={3}>
             <h1 style={{"marginBottom": "5px", "textTransform": "uppercase"}}>{currentMonth} {currentYear}</h1>
           </Grid>
-          <Grid item xs={4} style={{"display": "flex", "alignItems": "flex-end", "justifyContent": "flex-end", "padding": "0 10px 5px 0"}}>
-            Results as of {currentMonth} 1, {currentYear}
+          <Grid item xs={9} style={{"display": "flex", "alignItems": "flex-end", "justifyContent": "flex-end", "padding": "0 10px 5px 0", maxWidth: 520}}>
+              Results as of {moment.months(currentMonthDigit)} 1, {currentYear}
           </Grid>
-          <Grid item xs={5}>
+          {/* <Grid item xs={5}>
 
-          </Grid>
+          </Grid> */}
 
           <Grid container spacing={3}>
           {
@@ -220,7 +220,7 @@ export default function Users({session, profile, host, apps, admin}) {
                     {/* <Grid item xs align="right">September 2021</Grid> */}
                   </Grid>
                   
-                  <Grid item style={{minHeight: 170}}>
+                  <Grid item style={{minHeight: 180}}>
                     <DataGrid
                       rows={teamsTop5}
                       columns={teamsColumnsTop5}
@@ -249,21 +249,21 @@ export default function Users({session, profile, host, apps, admin}) {
           }
           {
             !loading && !!admin.email && (
-              <Grid  container item xs={4} style={{marginBottom: 20}}>
-                <Grid
-                  container
-                  item
-                  className="users"
-                  direction="column"
-                >
-                  <Grid item container>
-                    <Grid item xs><h3>Top 20 EH Collectors</h3></Grid>
+              <Grid  container item xs={9} style={{marginBottom: 20}}>
+                  <Grid
+                    container
+                    item
+                    className="users"
+                    direction="column"
+                  >
+                    <Grid item container>
+                      <Grid item xs><h3>Top 20 EH Collectors</h3></Grid>
+                    </Grid>
+                    
+                    <Grid item style={{minHeight: 550, maxWidth: 510}}>
+                      <DataGrid rows={profilesTop20} columns={columnsTop20} pageSize={20} hideFooter disableColumnSelector rowHeight={25} headerHeight={30} />
+                    </Grid>
                   </Grid>
-                  
-                  <Grid item style={{minHeight: 550}}>
-                    <DataGrid rows={profilesTop20} columns={columnsTop20} pageSize={20} hideFooter disableColumnSelector rowHeight={25} headerHeight={30} />
-                  </Grid>
-                </Grid>
               </Grid>
             )
           }
