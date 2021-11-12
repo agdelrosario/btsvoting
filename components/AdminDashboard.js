@@ -22,7 +22,7 @@ const columns = [
   // },
 ];
 
-const AdminDashboard = ({ host, teams, apps, email }) => {
+const AdminDashboard = ({ teams, apps, email }) => {
   const [appsContainer, setAppsContainer] = useState(apps)
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [appsData, setAppsData] = useState(apps.map((app, index) => {
@@ -209,7 +209,7 @@ const AdminDashboard = ({ host, teams, apps, email }) => {
   }
 
   const triggerCollationPerApp = async () => {
-    const res = await fetch(`${host}/api/statistics/aggregate-apps`);
+    const res = await fetch(`/api/statistics/aggregate-apps`);
     const json = await res.json();
 
     if (json) {

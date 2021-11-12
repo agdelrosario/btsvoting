@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { getSession } from "next-auth/client"
+import { getSession, useSession } from "next-auth/client"
 import { useRouter } from 'next/router';
 import PortalLayout from '../../components/PortalLayout';
 import MemberDashboard from '../../components/MemberDashboard';
@@ -8,61 +8,105 @@ import AdminDashboard from '../../components/AdminDashboard';
 import Loading from '../../components/Loading';
 
 
-export default function Portal({ profile, session, admin, teams, apps, host }) {
+export default function Portal({ session }) {
   // const [admin, setAdmin] = useState();
   const router = useRouter();
   const [loading, setLoading] = useState(true)
+  const [admin, setAdmin] = useState(null)
+  const [teams, setTeams] = useState(null)
+  const [apps, setApps] = useState(null)
+  const [profile, setProfile] = useState(null)
+  
 
-  useEffect(() => {
-    // console.log('profile', profile)
+  useEffect(async () => {
+    const retrieveAdmins = async () => {
+      const adminRes = await fetch(`/api/admin?email=${session.user.email}`);
+      setAdmin(await adminRes.json());
+    }
+
+    const retrieveApps = async () => {
+      const appsRes = await fetch(`/api/apps`);
+      setApps(await appsRes.json());
+    }
+
+    const retrieveProfile = async () => {
+      // console.log("session", session)
+      if (session.id) {
+        const profileRes = await fetch(`/api/profiles/single?userId=${session.id}`);
+        const profile = await profileRes.json();
+        console.debug("profile", profile)
+        if (!profile || (!!profile && (!profile.teamInfo || !profile.teamInfo.name))) {
+          console.log("move to initial setup")
+          router.push('/portal/profile/initial-setup')
+        } 
+  
+        setProfile(profile)
+      }
+    }
+
+
+    console.debug('session', useSession)
     if (!session) {
       router.push('/login')
-    } else if (!profile || !profile.team) {
-      router.push('/portal/profile/initial-setup')
+    } else {
+      retrieveAdmins()
+      retrieveProfile()
+      retrieveApps()
+    }
+  }, [session]);
+
+  useEffect(async () => {
+    const retrieveTeams = async () => {
+      const teamsRes = await fetch(`/api/teams`);
+      setTeams(await teamsRes.json());
+      setLoading(false);
+    }
+
+    if (!!admin && !!admin.email) {
+      retrieveTeams()
     } else {
       setLoading(false);
     }
-  }, [session, profile]);
+  }, [admin])
+
+  useEffect(async() => {
+    // console.debug("apps", apps)
+    // console.debug("profile", profile)
+    if (!(!!admin && loading) && !!apps && !!profile) {
+      setLoading(false);
+    }
+  }, [apps, profile])
 
   return (
-    <PortalLayout profile={profile} session={session} admin={!!admin.email}>
+
+    <>
       {
         loading && (
           <Loading />
         )
       }
       {
-        !loading && !admin.email && <MemberDashboard profile={profile} apps={apps} />
+        !loading && (
+          <PortalLayout profile={profile} session={session} admin={!!admin ? admin.email : null}>
+            {
+              ((!admin || !admin.email) && !!profile && !!profile.teamInfo && !!apps) && <MemberDashboard profile={profile} apps={apps} />
+            }
+            {
+              (!!admin && !!admin.email && !!teams && !!apps) && <AdminDashboard teams={teams} apps={apps} email={session.user.email} />
+            }
+          </PortalLayout>
+        )
       }
-      {
-        !loading && !!admin.email && <AdminDashboard host={host} teams={teams} apps={apps} email={session.user.email} />
-      }
-    </PortalLayout>
+    </>
   );
 }
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
-  const profileRes = await fetch(`${process.env.HOST}/api/profiles/single?userId=${session.id}`);
-  const profile = await profileRes.json();
-
-  const adminRes = await fetch(`${process.env.HOST}/api/admin?email=${session.user.email}`);
-  const admin = await adminRes.json();
-
-  const teamsRes = await fetch(`${process.env.HOST}/api/teams`);
-  const teams = await teamsRes.json();
-
-  const appsRes = await fetch(`${process.env.HOST}/api/apps`);
-  const apps = await appsRes.json();
 
   return {
     props: {
       session,
-      profile,
-      admin,
-      teams,
-      apps,
-      host: process.env.HOST,
     }
   }
 }

@@ -47,7 +47,7 @@ const MemberDashboard = ({profile, apps}) => {
           </Grid>
           <Grid container className="statistics" spacing={2}>
             {
-              apps.map((app) => {
+              apps.map((app, index) => {
                 if (teamStats) {
                   const statisticsIndex = teamStats.statistics.findIndex((appStatistic) => {
                     return appStatistic.key == app.key
@@ -78,7 +78,7 @@ const MemberDashboard = ({profile, apps}) => {
                         })
 
                         return (
-                          <Grid item>
+                          <Grid item key={`multi-statistics-card-${index}`}>
                             <MultiStatisticsCard
                               title="Fan n Star"
                               isEnableMultiple
@@ -92,7 +92,7 @@ const MemberDashboard = ({profile, apps}) => {
                       let points = teamStats.statistics[statisticsIndex].total || 0
 
                       return (
-                        <Grid item>
+                        <Grid item key={`multi-statistics-card-${index}`}>
                           <StatisticsCard
                             title={app.name}
                             pointsValue={points}

@@ -3,9 +3,9 @@ import Grid from '@material-ui/core/Grid';
 const MultiStatisticsCard = (props) => {
   return (
     <div className="card multiple">
-      <div item className="card-nav">
+      <div className="card-nav">
         <h2>{ props.title }</h2>
-        <div className="rightNavigation" />
+        <div className="rightNavigation"></div>
       </div>
       <Grid container>
         {
