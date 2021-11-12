@@ -154,7 +154,7 @@ export default function Home({enableFrontpage}) {
 
           <footer>
               BTS Voting Org 2021<br />
-              Developed and maintained by <a href="https://twitter.com/taeyasshibb">@taeyasshibb</a>
+              Developed and maintained by <a href="https://twitter.com/taeyadelune">@taeyadelune</a>
             </footer>
           </div>
         )

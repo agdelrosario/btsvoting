@@ -103,6 +103,7 @@ export default function Portal({ session }) {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
+  console.log("session", session)
 
   return {
     props: {

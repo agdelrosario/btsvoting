@@ -36,7 +36,7 @@ const PortalLayout = props => {
             <main className={`portal ${lowerThanSm ? 'xs' : ''}`}>
               {props.children}
               <div className="footer">
-                <p>Designed, developed, and maintained by <a href="https://twitter.com/taeyasshibb">Theia</a> (BVO Laserpointer) for BTS Voting Organization.</p>
+                <p>Designed, developed, and maintained by <a href="https://twitter.com/taeyadelune">Theia</a> (BVO Laserpointer) for BTS Voting Organization.</p>
                 <p className="smaller">For inquiries, issues, and suggestions, please contact Theia or admin.</p>
               </div>
             </main>
