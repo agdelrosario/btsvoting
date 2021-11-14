@@ -55,58 +55,61 @@ const MemberDashboard = ({profile, apps}) => {
               teamStats && teamStats.statistics &&
               apps.map((app, index) => {
 
-                const statisticsIndex = teamStats.statistics.findIndex((appStatistic) => {
-                  return appStatistic.key == app.key
-                })
+                if (app.allowCollection) {
 
-
-                if (statisticsIndex > -1) {
-                  if (app.ticketType == 'levels') {
-                    let levelArray = []
-
-                    if (app.levels && app.levels.length > 0) {
-                      levelArray = app.levels.map((level) => {
-                        let count = 0
-
-
-                        const levelIndex = teamStats.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
-                          return totalPerLevel.key == level
+                  const statisticsIndex = teamStats.statistics.findIndex((appStatistic) => {
+                    return appStatistic.key == app.key
+                  })
+  
+  
+                  if (statisticsIndex > -1) {
+                    if (app.ticketType == 'levels') {
+                      let levelArray = []
+  
+                      if (app.levels && app.levels.length > 0) {
+                        levelArray = app.levels.map((level) => {
+                          let count = 0
+  
+  
+                          const levelIndex = teamStats.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
+                            return totalPerLevel.key == level
+                          })
+  
+                          if (levelIndex > -1) {
+                            count = teamStats.statistics[statisticsIndex].total[levelIndex].total || 0
+                          }
+  
+                          return {
+                            pointsValue: count,
+                            pointsType: level,
+                          }
                         })
-
-                        if (levelIndex > -1) {
-                          count = teamStats.statistics[statisticsIndex].total[levelIndex].total || 0
-                        }
-
-                        return {
-                          pointsValue: count,
-                          pointsType: level,
-                        }
-                      })
-
+  
+                        return (
+                          <Grid item key={`multi-statistics-card-${index}`}>
+                            <MultiStatisticsCard
+                              title="Fan n Star"
+                              isEnableMultiple
+                              pointsArray={levelArray}
+                            />
+                          </Grid>
+                        )
+                      }
+  
+                    } else {
+                      let points = teamStats.statistics[statisticsIndex].total || 0
+  
                       return (
                         <Grid item key={`multi-statistics-card-${index}`}>
-                          <MultiStatisticsCard
-                            title="Fan n Star"
-                            isEnableMultiple
-                            pointsArray={levelArray}
+                          <StatisticsCard
+                            title={app.name}
+                            pointsValue={points}
+                            pointsType={app.tickets}
                           />
                         </Grid>
                       )
+  
                     }
-
-                  } else {
-                    let points = teamStats.statistics[statisticsIndex].total || 0
-
-                    return (
-                      <Grid item key={`multi-statistics-card-${index}`}>
-                        <StatisticsCard
-                          title={app.name}
-                          pointsValue={points}
-                          pointsType={app.tickets}
-                        />
-                      </Grid>
-                    )
-
                   }
                 }
               })

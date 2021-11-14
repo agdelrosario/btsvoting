@@ -2,7 +2,7 @@ const StatisticsCard = (props) => {
   return (
     <div className="card">
       <div className="card-nav">
-        <h2>{ props.title }</h2>
+        <h2>{ props.title }{props.allowCollection == false && (<span> *</span>)}</h2>
         <div className="rightNavigation" />
       </div>
       <div className="points">

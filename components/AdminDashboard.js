@@ -394,8 +394,9 @@ const AdminDashboard = ({ teams, apps, email }) => {
                       return (
                         <Grid item>
                           <MultiStatisticsCard
-                            title="Fan n Star"
+                            title={app.name}
                             isEnableMultiple
+                            allowCollection={app.allowCollection}
                             pointsArray={levelArray}
                           />
                         </Grid>
@@ -411,6 +412,7 @@ const AdminDashboard = ({ teams, apps, email }) => {
                           title={app.name}
                           pointsValue={points}
                           pointsType={app.tickets}
+                          allowCollection={app.allowCollection}
                         />
                       </Grid>
                     )
@@ -420,6 +422,12 @@ const AdminDashboard = ({ teams, apps, email }) => {
               }
             })
           }
+        </Grid>
+        <Grid container>
+
+          <div className="statistics-date">
+            * <em>Not currently active for collection</em>
+          </div>
         </Grid>
       </div>
       <div className="dashboard-section">
