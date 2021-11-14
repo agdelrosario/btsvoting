@@ -8,8 +8,9 @@ import AdminDashboard from '../../components/AdminDashboard';
 import Loading from '../../components/Loading';
 
 
-export default function Portal({ session }) {
+export default function Portal({session}) {
   // const [admin, setAdmin] = useState();
+  // const session = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true)
   const [admin, setAdmin] = useState(null)
@@ -20,6 +21,10 @@ export default function Portal({ session }) {
 
   useEffect(async () => {
     const retrieveAdmins = async () => {
+      if (!session || !session.user || !session.user.email) {
+        return null;
+      }
+
       const adminRes = await fetch(`/api/admin?email=${session.user.email}`);
       setAdmin(await adminRes.json());
     }
@@ -30,13 +35,10 @@ export default function Portal({ session }) {
     }
 
     const retrieveProfile = async () => {
-      // console.log("session", session)
       if (session.id) {
         const profileRes = await fetch(`/api/profiles/single?userId=${session.id}`);
         const profile = await profileRes.json();
-        console.debug("profile", profile)
         if (!profile || (!!profile && (!profile.teamInfo || !profile.teamInfo.name))) {
-          console.log("move to initial setup")
           router.push('/portal/profile/initial-setup')
         } 
   
@@ -45,7 +47,7 @@ export default function Portal({ session }) {
     }
 
 
-    console.debug('session', useSession)
+    console.debug('session', session)
     if (!session) {
       router.push('/login')
     } else {
@@ -103,7 +105,6 @@ export default function Portal({ session }) {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
-  console.log("session", session)
 
   return {
     props: {

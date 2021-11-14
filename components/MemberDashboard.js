@@ -40,68 +40,73 @@ const MemberDashboard = ({profile, apps}) => {
             {
               teamStats && (
                 <Grid item className="statistics-date">
-                  Team Statistics last updated at { moment(teamStats.publishedDate).format("MMMM Do YYYY, h:mm:ss a") }
+                  {
+                    !!teamStats.statistics && (<>Team Statistics last updated at { moment(teamStats.publishedDate).format("MMMM Do YYYY, h:mm:ss a") }</>)
+                  }
+                  {
+                    !teamStats.statistics && (<>Sorry, there are no statistics computed yet. Wait until next computation cycle for the data to reflect.</>)
+                  }
                 </Grid>
               )
             }
           </Grid>
           <Grid container className="statistics" spacing={2}>
             {
+              teamStats && teamStats.statistics &&
               apps.map((app, index) => {
-                if (teamStats) {
-                  const statisticsIndex = teamStats.statistics.findIndex((appStatistic) => {
-                    return appStatistic.key == app.key
-                  })
+
+                const statisticsIndex = teamStats.statistics.findIndex((appStatistic) => {
+                  return appStatistic.key == app.key
+                })
 
 
-                  if (statisticsIndex > -1) {
-                    if (app.ticketType == 'levels') {
-                      let levelArray = []
+                if (statisticsIndex > -1) {
+                  if (app.ticketType == 'levels') {
+                    let levelArray = []
 
-                      if (app.levels && app.levels.length > 0) {
-                        levelArray = app.levels.map((level) => {
-                          let count = 0
+                    if (app.levels && app.levels.length > 0) {
+                      levelArray = app.levels.map((level) => {
+                        let count = 0
 
 
-                          const levelIndex = teamStats.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
-                            return totalPerLevel.key == level
-                          })
-
-                          if (levelIndex > -1) {
-                            count = teamStats.statistics[statisticsIndex].total[levelIndex].total || 0
-                          }
-
-                          return {
-                            pointsValue: count,
-                            pointsType: level,
-                          }
+                        const levelIndex = teamStats.statistics[statisticsIndex].total.findIndex((totalPerLevel) => {
+                          return totalPerLevel.key == level
                         })
 
-                        return (
-                          <Grid item key={`multi-statistics-card-${index}`}>
-                            <MultiStatisticsCard
-                              title="Fan n Star"
-                              isEnableMultiple
-                              pointsArray={levelArray}
-                            />
-                          </Grid>
-                        )
-                      }
+                        if (levelIndex > -1) {
+                          count = teamStats.statistics[statisticsIndex].total[levelIndex].total || 0
+                        }
 
-                    } else {
-                      let points = teamStats.statistics[statisticsIndex].total || 0
+                        return {
+                          pointsValue: count,
+                          pointsType: level,
+                        }
+                      })
 
                       return (
                         <Grid item key={`multi-statistics-card-${index}`}>
-                          <StatisticsCard
-                            title={app.name}
-                            pointsValue={points}
-                            pointsType={app.tickets}
+                          <MultiStatisticsCard
+                            title="Fan n Star"
+                            isEnableMultiple
+                            pointsArray={levelArray}
                           />
                         </Grid>
                       )
-
                     }
+
+                  } else {
+                    let points = teamStats.statistics[statisticsIndex].total || 0
+
+                    return (
+                      <Grid item key={`multi-statistics-card-${index}`}>
+                        <StatisticsCard
+                          title={app.name}
+                          pointsValue={points}
+                          pointsType={app.tickets}
+                        />
+                      </Grid>
+                    )
+
                   }
                 }
               })
