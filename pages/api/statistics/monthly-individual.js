@@ -9,6 +9,8 @@ export default async (req, res) => {
 
   const month = parseInt(req.query.month) - 1
 
+  console.log("month", month)
+
   const aggregateIndividualChoeaedolCollection = [
     {
       $match: {
@@ -103,6 +105,8 @@ export default async (req, res) => {
     {
       $sort: { collected: -1 }
     }
+
+    // IT ENDS HERE
 
     // {
     //   $group: {

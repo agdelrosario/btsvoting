@@ -55,12 +55,12 @@ export default function Users({session, profile, host, apps, admin}) {
   const [mode, setMode] = useState("table")
   const [profilesTop20, setProfilesTop20] = useState([])
   const [teamsTop5, setTeamsTop5] = useState([])
-  const [currentMonthDigit, setCurrentMonthDigit] = useState(10)
+  const [currentMonthDigit, setCurrentMonthDigit] = useState(11)
   const [currentMonth, setCurrentMonth] = useState(moment.months(currentMonthDigit - 1))
   const [currentYear, setCurrentYear] = useState(2021)
   const [selectedMonth, setSelectedMonth] = useState(currentMonthDigit)
   const [selectedYear, setSelectedYear] = useState(null)
-  const [monthsList] = useState([7, 8, 9, 10])
+  const [monthsList] = useState([7, 8, 9, 10, 11])
   const [yearsList] = useState([2021])
   const classes = useStyles();
 
@@ -139,7 +139,7 @@ export default function Users({session, profile, host, apps, admin}) {
   }, [selectedMonth]);
 
   const backupData = async () => {
-    const res = await fetch(`/api/upload/backup-member-statistics-monthly?month=${currentMonth}&&year=${currentYear}`,
+    const res = await fetch(`/api/upload/backup-member-statistics-monthly?month=${currentMonthDigit}&&year=${currentYear}`,
     {
       body: JSON.stringify({
         text: "something"
