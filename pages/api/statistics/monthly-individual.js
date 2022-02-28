@@ -6,8 +6,10 @@ import moment from "moment";
 // Check per milestone and add to achievers when confirmed
 export default async (req, res) => {
   const { db } = await connectToDatabase();
+  const currentMonth = parseInt(req.query.month) 
 
-  const month = parseInt(req.query.month) - 1
+  const month = currentMonth == 1 ? 12 : currentMonth - 1
+  
 
   console.log("month", month)
 

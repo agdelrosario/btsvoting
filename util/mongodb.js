@@ -37,8 +37,8 @@ export async function connectToDatabase() {
       useUnifiedTopology: true,
     }
 
-    console.debug('DATABASE_URL', DATABASE_URL)
-    console.debug('DATABASE_DB', DATABASE_DB)
+    // console.debug('DATABASE_URL', DATABASE_URL)
+    // console.debug('DATABASE_DB', DATABASE_DB)
     cached.promise = MongoClient.connect(DATABASE_URL, opts).then((client) => {
       return {
         client,
@@ -46,7 +46,7 @@ export async function connectToDatabase() {
       }
     })
 
-    console.debug("cached.promise", cached.promise)
+    // console.debug("cached.promise", cached.promise)
   }
   cached.conn = await cached.promise
   return cached.conn

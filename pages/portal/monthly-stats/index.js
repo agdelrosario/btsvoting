@@ -55,13 +55,15 @@ export default function Users({session, profile, host, apps, admin}) {
   const [mode, setMode] = useState("table")
   const [profilesTop20, setProfilesTop20] = useState([])
   const [teamsTop5, setTeamsTop5] = useState([])
-  const [currentMonthDigit, setCurrentMonthDigit] = useState(11)
+  const [currentMonthDigit, setCurrentMonthDigit] = useState(1)
   const [currentMonth, setCurrentMonth] = useState(moment.months(currentMonthDigit - 1))
-  const [currentYear, setCurrentYear] = useState(2021)
+  const [currentYear, setCurrentYear] = useState(2022)
   const [selectedMonth, setSelectedMonth] = useState(currentMonthDigit)
   const [selectedYear, setSelectedYear] = useState(null)
-  const [monthsList] = useState([7, 8, 9, 10, 11])
-  const [yearsList] = useState([2021])
+  const [start] = useState({month: 7, year: 2021})
+  const [monthsList] = useState([1])
+  const [yearsList] = useState([2021, 2022])
+  const maxNumOfProfiles = 13;
   const classes = useStyles();
 
 
@@ -84,7 +86,7 @@ export default function Users({session, profile, host, apps, admin}) {
 
       setProfiles(profilesMap)
 
-      setProfilesTop20(profilesMap.slice(0, 20))
+      setProfilesTop20(profilesMap.slice(0, maxNumOfProfiles))
     } else {
       setProfiles([])
     }
@@ -193,7 +195,8 @@ export default function Users({session, profile, host, apps, admin}) {
             <h1 style={{"marginBottom": "5px", "textTransform": "uppercase"}}>{currentMonth} {currentYear}</h1>
           </Grid>
           <Grid item xs={9} style={{"display": "flex", "alignItems": "flex-end", "justifyContent": "flex-end", "padding": "0 10px 5px 0", maxWidth: 520}}>
-              Results as of {moment.months(currentMonthDigit)} 1, {currentYear}
+              Results as of {moment(`01-${currentMonth}-${currentYear}`).add(1, "M").startOf('month').format("MMMM D, YYYY")}
+              {/* {moment.months(currentMonthDigit)} 1, {currentYear} */}
           </Grid>
           {/* <Grid item xs={5}>
 
@@ -257,7 +260,7 @@ export default function Users({session, profile, host, apps, admin}) {
                     direction="column"
                   >
                     <Grid item container>
-                      <Grid item xs><h3>Top 20 EH Collectors</h3></Grid>
+                      <Grid item xs><h3>Top {maxNumOfProfiles} EH Collectors</h3></Grid>
                     </Grid>
                     
                     <Grid item style={{minHeight: 550, maxWidth: 510}}>
