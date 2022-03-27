@@ -49,6 +49,10 @@ export default function Profile({session, profile, host, apps, admin}) {
   useEffect(() => {
     
     const fetchTeam = async () => {
+      if (!profile) {
+        return null;
+      }
+
       const res = await fetch(`/api/teams/single?slug=${profile.team}`);
       const json = await res.json();
 
@@ -58,6 +62,10 @@ export default function Profile({session, profile, host, apps, admin}) {
     };
 
     const fetchAppAccounts = async () => {
+      if (!session || !app) {
+        return null;
+      }
+
       return Promise.all(apps.map(async (app) => {
         const res = await fetch(`/api/accounts/${app.slug}?userId=${session.id}`)
         const resJson = await res.json()

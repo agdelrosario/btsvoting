@@ -20,18 +20,34 @@ export default function Portal({session}) {
   
 
   useEffect(async () => {
-    const retrieveAdmins = async () => {
-      if (!session || !session.user || !session.user.email) {
-        return null;
-      }
+    if (!session || (session && !session.user) || (session && session.user && !session.user.email)) {
+      router.push('/login')
+      return;
+    }
 
+    const retrieveAdmins = async () => {
       const adminRes = await fetch(`/api/admin?email=${session.user.email}`);
       setAdmin(await adminRes.json());
     }
 
+    retrieveAdmins()
+  }, []);
+
+
+  useEffect(async () => {
     const retrieveApps = async () => {
       const appsRes = await fetch(`/api/apps`);
       setApps(await appsRes.json());
+    }
+
+    console.debug('session', session)
+    retrieveApps()
+  }, [admin])
+
+  useEffect(async () => {
+    if (!session || (session && !session.user) || (session && session.user && !session.user.email)) {
+      router.push('/login')
+      return;
     }
 
     const retrieveProfile = async () => {
@@ -46,16 +62,8 @@ export default function Portal({session}) {
       }
     }
 
-
-    console.debug('session', session)
-    if (!session) {
-      router.push('/login')
-    } else {
-      retrieveAdmins()
-      retrieveProfile()
-      retrieveApps()
-    }
-  }, [session]);
+    retrieveProfile()
+  }, [apps])
 
   useEffect(async () => {
     const retrieveTeams = async () => {
@@ -66,21 +74,16 @@ export default function Portal({session}) {
 
     if (!!admin && !!admin.email) {
       retrieveTeams()
-    } else {
-      setLoading(false);
     }
-  }, [admin])
+  }, [profile])
 
   useEffect(async() => {
-    // console.debug("apps", apps)
-    // console.debug("profile", profile)
     if (!(!!admin && loading) && !!apps && !!profile) {
       setLoading(false);
     }
-  }, [apps, profile])
+  }, [apps, profile, admin, loading])
 
   return (
-
     <>
       {
         loading && (
