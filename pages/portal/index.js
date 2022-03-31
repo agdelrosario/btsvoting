@@ -29,6 +29,8 @@ export default function Portal({session}) {
       if (!(session && session.user && !session.user.email)) {
         const adminRes = await fetch(`/api/admin?email=${session.user.email}`);
         setAdmin(await adminRes.json());
+      } else {
+        setAdmin({})
       }
     }
 
@@ -77,6 +79,10 @@ export default function Portal({session}) {
   }, [profile])
 
   useEffect(async() => {
+    // console.log("admin", admin)
+    // console.log("loading", loading)
+    // console.log("apps", apps)
+    // console.log("profile", profile)
     if ((!!admin && loading) && !!apps && !!profile) {
       setLoading(false);
     }
