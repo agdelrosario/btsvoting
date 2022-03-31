@@ -20,14 +20,16 @@ export default function Portal({session}) {
   
 
   useEffect(async () => {
-    if (!session || (session && !session.user) || (session && session.user && !session.user.email)) {
+    if (!session) {
       router.push('/login')
       return;
     }
 
     const retrieveAdmins = async () => {
-      const adminRes = await fetch(`/api/admin?email=${session.user.email}`);
-      setAdmin(await adminRes.json());
+      if (!(session && session.user && !session.user.email)) {
+        const adminRes = await fetch(`/api/admin?email=${session.user.email}`);
+        setAdmin(await adminRes.json());
+      }
     }
 
     retrieveAdmins()
@@ -42,7 +44,7 @@ export default function Portal({session}) {
   }, []);
 
   useEffect(async () => {
-    if (!session || (session && !session.user) || (session && session.user && !session.user.email)) {
+    if (!session) {
       router.push('/login')
       return;
     }
