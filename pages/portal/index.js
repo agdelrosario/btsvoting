@@ -31,10 +31,7 @@ export default function Portal({session}) {
     }
 
     retrieveAdmins()
-  }, []);
 
-
-  useEffect(async () => {
     const retrieveApps = async () => {
       const appsRes = await fetch(`/api/apps`);
       setApps(await appsRes.json());
@@ -42,7 +39,7 @@ export default function Portal({session}) {
 
     console.debug('session', session)
     retrieveApps()
-  }, [admin])
+  }, []);
 
   useEffect(async () => {
     if (!session || (session && !session.user) || (session && session.user && !session.user.email)) {
@@ -78,7 +75,7 @@ export default function Portal({session}) {
   }, [profile])
 
   useEffect(async() => {
-    if (!(!!admin && loading) && !!apps && !!profile) {
+    if ((!!admin && loading) && !!apps && !!profile) {
       setLoading(false);
     }
   }, [apps, profile, admin, loading])
