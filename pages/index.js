@@ -40,70 +40,179 @@ export default function Home({enableFrontpage}) {
             <main>
             {
               !lowerThanSm && (
-                <Grid container>
+                <Grid container xs={12} >
         
-                  <Grid item xs={12} lg={2} className="sidebar">
+                  {/* <Grid item xs={12} lg={2} className="sidebar">
                     <h1>Voting Updates</h1>
                     <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
-                  </Grid>
-                  <Grid item xs={12} lg={10} className="timeline">
+                  </Grid> */}
+                  <Grid item xs={12} lg={12} className="timeline">
                     <h1>Voting Timeline</h1>
                     <div className="future">
-                      <div className="future-arrow">
-                        <div className="icon-arrow-up" />
+                      <div className="future-direction">
+                        <div className="future-heading"><a>See more of the future</a></div>
+                        <div className="future-arrow">
+                          <div className="icon-arrow-up" />
+                        </div>
                       </div>
                       <div className="cards">
                         <div className="card">
                           <div className="node">
         
                           </div>
-                          <div className="details">
-                            <h2>Soribada Awards</h2>
-                            <div className="categories">
-                              <div className="category">
-                                <span>Korea</span>
+                          <div className="content">
+                            <div className="date">
+                              July 2021 to August 2022
+                            </div>
+                            <div className="details">
+                              <h2>Soribada Awards</h2>
+                              <div className="categories">
+                                <div className="category">
+                                  <span>Korea</span>
+                                </div>
+                                <div className="category">
+                                  <div className="icon icon-music"></div>
+                                  <span>Yet to Come</span>
+                                </div>
+                              </div> 
+                              <div className="app-link">
+                                <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
                               </div>
-                              <div className="category">
-                                <div className="icon icon-music"></div>
-                                <span>Butter</span>
-                              </div>
-                            </div> 
-                            <div className="app-link">
-                              <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
                             </div>
                           </div>
-                          
                         </div>
                         <div className="card">
                           <div className="node">
         
                           </div>
-                          <div className="details">
-                            <h2>Soribada Awards</h2>
-                            <div className="categories">
-                              <div className="category">
-                                <span>Korea</span>
+                          <div className="content">
+                            <div className="date">
+                              July 2021 to August 2022
+                            </div>
+                            <div className="details">
+                              <h2>Soribada Awards</h2>
+                              <div className="categories">
+                                <div className="category">
+                                  <span>Korea</span>
+                                </div>
+                                <div className="category">
+                                  <div className="icon icon-music"></div>
+                                  <span>Yet to Come</span>
+                                </div>
+                              </div> 
+                              <div className="app-link">
+                                <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
                               </div>
-                              <div className="category">
-                                <div className="icon icon-music"></div>
-                                <span>Butter</span>
-                              </div>
-                            </div> 
-                            <div className="app-link">
-                              <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
                             </div>
                           </div>
-                          
                         </div>
                       </div>
                     </div>
                     <div className="present">
-                      <div className="present-node">
+                      <div className="present-node node-heading">
+                        <div className="node-title">
+                          On-going
+                        </div>
+                        <div className="node-description">
+                          Current votings
+                        </div>
+                      </div>
+                      <div className="cards">
+                        <div className="card">
+                          <div className="node">
         
+                          </div>
+                          <div className="node-line">
+                            &nbsp;
+                          </div>
+                          <div className="content">
+                            <div className="date">
+                              July 2021 to August 2022
+                            </div>
+                            <div className="details">
+                              <div className="categories">
+                                <div className="category">
+                                  <span>Korea</span>
+                                </div>
+                                <div className="category">
+                                  <div className="icon icon-music"></div>
+                                  <span>Yet to Come</span>
+                                </div>
+                              </div> 
+                              <h1>Show Champion Ep 1002 Pre-Voting</h1>
+                              <div className="app-link">
+                                Vote daily on <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card">
+                          <div className="node">
+        
+                          </div>
+                          <div className="node-line">
+                            &nbsp;
+                          </div>
+                          <div className="content">
+                            <div className="date">
+                              July 2021 to August 2022
+                            </div>
+                            <div className="details">
+                              <div className="categories">
+                                <div className="category">
+                                  <span>Korea</span>
+                                </div>
+                                <div className="category">
+                                  <div className="icon icon-music"></div>
+                                  <span>Yet to Come</span>
+                                </div>
+                              </div> 
+                              <h1>Show Champion Ep 1002 Pre-Voting</h1>
+                              <div className="app-link">
+                                Vote daily on <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card">
+                          <div className="node">
+        
+                          </div>
+                          <div className="node-line">
+                            &nbsp;
+                          </div>
+                          <div className="content">
+                            <div className="date">
+                              July 2021 to August 2022
+                            </div>
+                            <div className="details">
+                              <div className="categories">
+                                <div className="category">
+                                  <span>Korea</span>
+                                </div>
+                                <div className="category">
+                                  <div className="icon icon-music"></div>
+                                  <span>Yet to Come</span>
+                                </div>
+                              </div> 
+                              <h1>Billboard Music Awards BBMA Very Long Title Right Need to Get to the Next Line Okay</h1>
+                              <div className="app-link">
+                                Vote daily on <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="past">
-                      
+                      <div className="past-node node-heading">
+                        <div className="node-title">
+                          Previous
+                        </div>
+                        <div className="node-description">
+                          Past votings and rankings
+                        </div>
+                      </div>
                     </div>
                   </Grid>
                 </Grid>
@@ -153,10 +262,10 @@ export default function Home({enableFrontpage}) {
           
 
           <footer>
-              BTS Voting Org 2021<br />
-              Developed and maintained by <a href="https://twitter.com/taeyadelune">@taeyadelune</a>
-            </footer>
-          </div>
+            <div>BTS Voting Org 2021</div>
+            <div>Developed and maintained by <a href="https://twitter.com/taeyadelune">@taeyadelune</a> &nbsp;&#9900;&nbsp; Content by BVO members</div>
+          </footer>
+        </div>
         )
       }
 
