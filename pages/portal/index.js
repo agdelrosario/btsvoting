@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSession, useSession } from "next-auth/client"
 import { useRouter } from 'next/router';
 import PortalLayout from '../../components/PortalLayout';
@@ -17,6 +17,8 @@ export default function Portal({session}) {
   const [teams, setTeams] = useState(null)
   const [apps, setApps] = useState(null)
   const [profile, setProfile] = useState(null)
+  const [category, setCategory] = useState(null)
+  const componentMounted = useRef(true);
   
 
   useEffect(async () => {
@@ -69,12 +71,26 @@ export default function Portal({session}) {
   useEffect(async () => {
     const retrieveTeams = async () => {
       const teamsRes = await fetch(`/api/teams`);
-      setTeams(await teamsRes.json());
-      setLoading(false);
+      let teamsJson = await teamsRes.json();
+
+      if (componentMounted.current && !!teamsJson) {
+        setTeams(teamsJson);
+        setLoading(false);
+      }
+    }
+    const retrieveCategory = async () => {
+      const categoriesRes = await fetch(`/api/categories`);
+      let categoriesJson = await categoriesRes.json()
+
+      if (componentMounted.current && !!categoriesJson) {
+        setCategory(categoriesJson);
+      }
+      // setLoading(false);
     }
 
     if (!!admin && !!admin.email) {
       retrieveTeams()
+      retrieveCategory()
     }
   }, [profile])
 
@@ -99,10 +115,10 @@ export default function Portal({session}) {
         !loading && (
           <PortalLayout profile={profile} session={session} admin={!!admin ? admin.email : null}>
             {
-              ((!admin || !admin.email) && !!profile && !!profile.teamInfo && !!apps) && <MemberDashboard profile={profile} apps={apps} />
+              ((!admin || !admin.email) && !!profile && !!profile.teamInfo && !!apps) && <MemberDashboard profile={profile} apps={apps} category={category} />
             }
             {
-              (!!admin && !!admin.email && !!teams && !!apps) && <AdminDashboard teams={teams} apps={apps} email={session.user.email} />
+              (!!admin && !!admin.email && !!teams && !!apps) && <AdminDashboard teams={teams} apps={apps} email={session.user.email} category={category} />
             }
           </PortalLayout>
         )

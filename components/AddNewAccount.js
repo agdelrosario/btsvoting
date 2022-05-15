@@ -129,7 +129,7 @@ export default function AddNewAccount({open, setOpen, currentApp, submit}) {
     <div style={modalStyle} className="modal-style">
       <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
         <Grid item xs><h2 id="simple-modal-title">New { currentApp ? currentApp.name + ' ' : '' }Account</h2></Grid>
-        <Grid item align="right" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
+        <Grid item align="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
       </Grid>
       {/* <p id="simple-modal-description">
         Note: The username do not need to be the same is in the app. You can put a nickname for the account as you wish in the username field, to help you identify each account in the future as you update.

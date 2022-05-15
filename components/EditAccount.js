@@ -130,7 +130,7 @@ export default function EditAccount({open, setOpen, currentApp, submit, currentA
     <div style={modalStyle} className="modal-style">
       <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
         <Grid item xs><h2 id="simple-modal-title">Edit { currentApp ? currentApp.name + ' ' : '' }Account</h2></Grid>
-        <Grid item alignItems="flex-end" justify="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
+        <Grid item alignItems="flex-end" width="unset"><div className="close" onClick={handleClose}></div></Grid>
       </Grid>
       {/* <p id="simple-modal-description">
         Duis mollis, est non commodo luctus, nisi erat porttitor ligula.

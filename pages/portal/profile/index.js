@@ -131,7 +131,7 @@ export default function Profile({session, profile, host, apps, admin}) {
             >
               <Grid item xs={12} sm={6}><h1>Profile</h1></Grid>
               <Grid
-                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}
+                item xs={12} sm={6} alignItems="flex-end" align={lowerThanSm ? "left" : "right"}
               >
                 <span>Please talk to an admin to modify.</span>
               </Grid>
@@ -186,7 +186,7 @@ export default function Profile({session, profile, host, apps, admin}) {
             >
               <Grid item xs={12} sm={6}><h1>Voting Profile</h1></Grid>
               <Grid
-                item xs={12} sm={6} alignItems="flex-end" justify="flex-end" align={lowerThanSm ? "left" : "right"}
+                item xs={12} sm={6} alignItems="flex-end" align={lowerThanSm ? "left" : "right"}
               >
                 <span>Monthly stats are collated every end of the month. Please update as often as you can.</span>
               </Grid>

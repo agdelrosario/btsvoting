@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const categories = [
-  "app",
+  "Votings",
   "website",
 ]
 
@@ -96,7 +96,7 @@ function getStyles(name, categoryType, theme) {
 //   },
 // };
 
-export default function AddApp({open, submit, loadedData, closeModal}) {
+export default function AddVotings({open, submit, loadedData, closeModal}) {
   const labelRef = useRef()
   const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
   const classes = useStyles();
@@ -109,12 +109,14 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
 
   const [categoryType, setCategoryType] = useState(loadedData?.categoryType || []);
   const [tickets, setTickets] = useState(loadedData?.tickets || null);
+  const [description, setDescription] = useState(loadedData?.tickets || null);
   const [ticketType, setTicketType] = useState(loadedData?.ticketType || null);
   const [allowCollection, setAllowCollection] = useState(loadedData ? loadedData.allowCollection : true);
   const [validation, setValidation] = useState({
     name: null,
     categoryType: null,
-    tickets: null,
+    // tickets: null,
+    description: null,
     ticketType: null,
     allowCollection: null,
   });
@@ -125,7 +127,8 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
 
   useEffect(() => {
     setName(loadedData?.name || null)
-    setTickets(loadedData?.tickets || null)
+    // setTickets(loadedData?.tickets || null)
+    setDescription(loadedData?.description || null)
     setCategoryType(loadedData?.categoryType || [])
     setAllowCollection(loadedData? loadedData.allowCollection : true)
     setTicketType(loadedData?.ticketType || null)
@@ -141,12 +144,14 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
     setCategoryType([]);
     setName(null);
     setTicketType(null);
-    setTickets(null);
+    // setTickets(null);
+    setDescription(null);
     setAllowCollection(true);
     setValidation({
       name: null,
       categoryType: null,
-      tickets: null,
+      // tickets: null,
+      description: null,
       ticketType: null,
       allowCollection: null,
     });
@@ -159,17 +164,31 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
     setModalStyle(getModalStyle(lowerThanSm))
   }, [lowerThanSm])
 
-  const handleTicketInput = (name) => {
+  // const handleTicketInput = (name) => {
+  //   let val = name.target.value
+  //   setTickets(val);
+  //   let error = validation.tickets
+  //   if (error && val != null && val != '') {
+  //     error = false
+  //   }
+
+  //   setValidation({
+  //     ...validation,
+  //     tickets: error
+  //   });
+  // }
+
+  const handleDescriptionInput = (name) => {
     let val = name.target.value
-    setTickets(val);
-    let error = validation.tickets
+    setDescription(val);
+    let error = validation.description
     if (error && val != null && val != '') {
       error = false
     }
 
     setValidation({
       ...validation,
-      tickets: error
+      description: error
     });
   }
 
@@ -206,7 +225,8 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
     let tempValidation = {
       name: null,
       categoryType: null,
-      tickets: null,
+      // tickets: null,
+      description: null,
       ticketType: null,
       allowCollection: null,
     }
@@ -217,8 +237,11 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
     if (categoryType == null || categoryType.length == 0) {
       tempValidation.categoryType = true
     }
-    if (tickets == null || tickets == '') {
-      tempValidation.tickets = true
+    // if (tickets == null || tickets == '') {
+    //   tempValidation.tickets = true
+    // }
+    if (description == null || description == '') {
+      tempValidation.description = true
     }
     if (ticketType == null || ticketType.length == 0) {
       tempValidation.ticketType = true
@@ -229,7 +252,7 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
 
     setValidation(tempValidation);
 
-    if (tempValidation.name || tempValidation.categoryType || tempValidation.tickets || tempValidation.ticketType || tempValidation.allowCollection) {
+    if (tempValidation.name || tempValidation.categoryType || tempValidation.description || tempValidation.ticketType || tempValidation.allowCollection) {
       return null;
     }
 
@@ -243,7 +266,7 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
         categoryType,
         slug: slugify(name),
         key: keyify(name),
-        tickets,
+        description,
         ticketType,
         allowCollection,
         edit: !!loadedData
@@ -372,7 +395,7 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
         categoryType,
         slug: slugify(name),
         key: keyify(name),
-        tickets,
+        description,
         ticketType,
         allowCollection,
         levels,
@@ -475,13 +498,13 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
         !openLevelStep && (
           <div className="modal-main">
           <Grid container alignItems="flex-end" style={{marginBottom: '20px'}}>
-            <Grid item xs><h2 id="simple-modal-title">New app or website</h2></Grid>
+            <Grid item xs><h2 id="simple-modal-title">New Voting</h2></Grid>
             <Grid item align="right" width="unset"><div className="close" onClick={handleClose}></div></Grid>
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} lg={4}>
               <TextField
-                className="ticket"
+                className="text"
                 label="Name"
                 variant="outlined"
                 error={validation.name}
@@ -492,15 +515,15 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
               <TextField
-                className="ticket"
-                label="Tickets"
+                className="text"
+                label="Description"
                 variant="outlined"
-                error={validation.tickets}
+                error={validation.description}
                 // onChange={(event, val) => { handleNameInput(val)}}
-                onChange={handleTicketInput}
-                value={tickets}
+                onChange={handleDescriptionInput}
+                value={description}
                 required
-                helperText="e.g. Ever Hearts, GPoint Level"
+                // helperText="e.g. Ever Hearts, GPoint Level"
               />
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
@@ -571,7 +594,7 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
                     ))
                   }
                 </Select>
-                <FormHelperText id="my-helper-text">Where voting and collection happens, can be multiple</FormHelperText>
+                <FormHelperText id="my-helper-text">Where voting and collection hVotingsens, can be multiple</FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6} lg={4}>
@@ -597,7 +620,7 @@ export default function AddApp({open, submit, loadedData, closeModal}) {
           </div>
         )
       }
-      {/* <AddApp /> */}
+      {/* <AddVotings /> */}
     </div>
   );
 

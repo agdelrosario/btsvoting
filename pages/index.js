@@ -40,7 +40,7 @@ export default function Home({enableFrontpage}) {
             <main>
             {
               !lowerThanSm && (
-                <Grid container xs={12} >
+                <Grid container>
         
                   {/* <Grid item xs={12} lg={2} className="sidebar">
                     <h1>Voting Updates</h1>

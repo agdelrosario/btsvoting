@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import moment from "moment";
 import { DataGrid } from '@material-ui/data-grid';
+import AddVotings from "./AddVotings";
+import AddCategory from "./AddCategory";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 30 },
@@ -22,9 +24,18 @@ const columns = [
   // },
 ];
 
-const AdminDashboard = ({ teams, apps, email }) => {
+const categoryColumns = [
+  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'name', headerName: 'Name', width: 200 },
+  { field: 'categoryType', headerName: 'Category Type', width: 200 },
+]
+
+const AdminDashboard = ({ teams, apps, email, category }) => {
   const [appsContainer, setAppsContainer] = useState(apps)
+  const [categoryContainer, setCategoryContainer] = useState(category)
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
+  const [addVotingsModalOpen, setAddVotingsModalOpen] = useState(false);
+  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [appsData, setAppsData] = useState(apps.map((app, index) => {
     return {
       id: index + 1,
@@ -39,7 +50,25 @@ const AdminDashboard = ({ teams, apps, email }) => {
       // }, "")
     }
   }))
+  const [categoryData, setCategoryData] = useState(!!category ? category.map((category, index) => {
+    // console.log("category", category)
+    return {
+      id: index + 1,
+      name: category.name,
+      categoryType: category.categoryType,
+      categoryTypeKey: category.categoryTypeKey,
+      // categories: app.categories.reduce((previous, current, index) => {
+      //   if (index == 0) {
+      //     return current;
+      //   } else {
+      //     return `${previous}, ${current}`;
+      //   }
+      // }, "")
+    }
+  }) : null)
   const [editAppData, setEditAppData] = useState(null);
+  const [editVotingsData, setEditVotingsData] = useState(null);
+  const [editCategoryData, setEditCategoryData] = useState(null);
   const [overallAppStatistics, setOverAllAppStatistics] = useState(null);
   const [teamStatistics, setTeamStatistics] = useState([]);
   const [teamStatsColumns, setTeamStatsColumns] = useState([
@@ -233,6 +262,28 @@ const AdminDashboard = ({ teams, apps, email }) => {
     setAddAppModalOpen(true);
   }
 
+  const openAddVotings = () => {
+    // setEditVotingsData(null);
+    setAddVotingsModalOpen(true);
+  }
+
+  const openEditVotings = (data, event) => {
+    const index = parseInt(data.id) - 1
+    setEditVotingsData(index)
+    setAddVotingsModalOpen(true);
+  }
+
+  const openAddCategory = () => {
+    // setEditCategoryData(null);
+    setAddCategoryModalOpen(true);
+  }
+
+  const openEditCategory = (data, event) => {
+    const index = parseInt(data.id) - 1
+    setEditCategoryData(index)
+    setAddCategoryModalOpen(true);
+  }
+
   const addApp = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
     if (edit) {
       const res = await fetch(`/api/apps/edit?email=${email}`,
@@ -315,6 +366,90 @@ const AdminDashboard = ({ teams, apps, email }) => {
     setEditAppData(null)
     setAddAppModalOpen(false)
   }
+
+
+  const addVotings = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
+
+  }
+
+  const closeVotingsModal = () => {
+    setEditVotingsData(null)
+    setAddVotingsModalOpen(false)
+  }
+
+  const addCategory = async ({name, categoryType, edit}) => {
+
+    if (edit) {
+      const res = await fetch(`/api/categories/edit`,
+      {
+        body: JSON.stringify({
+          name,
+          categoryType,
+          _id: category[editCategoryData]._id,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch categories again
+  
+        const categoriesRes = await fetch(`/api/categories`);
+        const categoriesJson = await categoriesRes.json();
+        setCategoryContainer(categoriesJson)
+        setCategoryData(categoriesJson.map((category, index) => {
+          return {
+            id: index + 1,
+            name: category.name,
+            categoryType: category.categoryType,
+            categoryTypeKey: category.categoryTypeKey,
+          }
+        }))
+      }
+    } else {
+      // Add
+      const res = await fetch(`/api/categories/new`,
+      {
+        body: JSON.stringify({
+          name,
+          categoryType,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+  
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch apps again
+  
+        const categoriesRes = await fetch(`/api/categories`);
+        const categoriesJson = await categoriesRes.json();
+        setCategoryContainer(categoriesJson)
+        setCategoryData(categoriesJson.map((category, index) => {
+          return {
+            id: index + 1,
+            name: category.name,
+            categoryType: category.categoryType,
+            categoryTypeKey: category.categoryTypeKey,
+          }
+        }))
+      }
+    }
+  }
+
+  const closeCategoryModal = () => {
+    setEditCategoryData(null)
+    setAddCategoryModalOpen(false)
+  }
+
 
   const publishTeamStats = async () => {
     const res = await fetch(`/api/statistics/publish-teams`,
@@ -433,7 +568,7 @@ const AdminDashboard = ({ teams, apps, email }) => {
       <div className="dashboard-section">
         <Grid container spacing={3}>
           <Grid item xs>
-            <Grid container xs>
+            <Grid container>
               <Grid item xs>
                 <h1>Team Statistics</h1>
               </Grid>
@@ -458,25 +593,25 @@ const AdminDashboard = ({ teams, apps, email }) => {
           </Grid>
         </Grid>
       </div>
-      <div className="dashboard-section">
+      <Grid container className="dashboard-section">
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
-            <Grid container xs>
+            <Grid container>
               <Grid item xs>
                 <h1>Votings</h1>
               </Grid>
-              {/* <Grid item xs align="right">
-                <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
+              <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={openAddVotings} className="button">
                   Add Voting
                 </Button>
-              </Grid> */}
+              </Grid>
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid rows={[]} columns={columns} pageSize={5} />
             </div>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Grid container xs>
+            <Grid container>
               <Grid item xs>
                 <h1>Apps / Websites</h1>
               </Grid>
@@ -490,12 +625,42 @@ const AdminDashboard = ({ teams, apps, email }) => {
               <DataGrid rows={appsData} columns={columns} pageSize={5} onRowClick={openEditApp} />
             </div>
           </Grid>
-            {/* <Grid item xs>
-              <h1>Apps</h1>
-            </Grid> */}
+          <Grid item xs={12} md={8}>
+            <Grid container>
+              <Grid item xs>
+                <h1>Awards</h1>
+              </Grid>
+              {/* <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
+                  Add Voting
+                </Button>
+              </Grid> */}
+            </Grid>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid rows={[]} columns={columns} pageSize={5} />
+            </div>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Grid container>
+              <Grid item xs>
+                <h1>Categories</h1>
+              </Grid>
+              <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={openAddCategory} className="button">
+                  Add Category
+                </Button>
+              </Grid>
+            </Grid>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid rows={categoryData} columns={categoryColumns} pageSize={5} onRowClick={openEditCategory} />
+            </div>
+          </Grid>
         </Grid>
-      </div>
+      </Grid>
       <AddApp open={addAppModalOpen} submit={addApp} closeModal={closeAppModal} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
+
+      <AddVotings open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} />
+      <AddCategory open={addCategoryModalOpen} submit={addCategory} closeModal={closeCategoryModal} loadedData={editCategoryData !== null && editCategoryData !== undefined ? categoryContainer[editCategoryData] : null} />
     </div>
   )
 };
