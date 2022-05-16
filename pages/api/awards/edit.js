@@ -6,11 +6,11 @@ export default async (req, res) => {
 
   let params = {
     name: req.body.name,
-    categoryTypeId: req.body.categoryType,
+    awardTypeId: req.body.awardType,
   }
-
+  
   const data = await db
-    .collection("categories")
+    .collection("awards")
     .updateOne(
       { _id: ObjectID(req.body._id) },
       { $set: params },

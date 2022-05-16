@@ -1,20 +1,16 @@
 import { connectToDatabase } from "../../../util/mongodb";
-import { ObjectID } from 'mongodb'
 
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
-  let params = {
+  const params = {
     name: req.body.name,
-    categoryTypeId: req.body.categoryType,
+    awardTypeId: req.body.awardType,
   }
 
   const data = await db
-    .collection("categories")
-    .updateOne(
-      { _id: ObjectID(req.body._id) },
-      { $set: params },
-    )
+    .collection("awards")
+    .insertOne(params)
 
   res.json(data.result);
 };

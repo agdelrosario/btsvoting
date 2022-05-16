@@ -9,6 +9,7 @@ import moment from "moment";
 import { DataGrid } from '@material-ui/data-grid';
 import AddVotings from "./AddVotings";
 import AddCategory from "./AddCategory";
+import AddAward from "./AddAward";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 30 },
@@ -30,12 +31,20 @@ const categoryColumns = [
   { field: 'categoryType', headerName: 'Category Type', width: 200 },
 ]
 
-const AdminDashboard = ({ teams, apps, email, category }) => {
+const awardsColumns = [
+  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'name', headerName: 'Name', width: 200 },
+  { field: 'awardType', headerName: 'Award Type', width: 200 },
+]
+
+const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
   const [appsContainer, setAppsContainer] = useState(apps)
   const [categoryContainer, setCategoryContainer] = useState(category)
+  const [awardsContainer, setAwardsContainer] = useState(awards)
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [addVotingsModalOpen, setAddVotingsModalOpen] = useState(false);
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const [addAwardsModalOpen, setAddAwardsModalOpen] = useState(false);
   const [appsData, setAppsData] = useState(apps.map((app, index) => {
     return {
       id: index + 1,
@@ -65,10 +74,19 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
       //   }
       // }, "")
     }
-  }) : null)
+  }) : [])
+  const [awardsData, setAwardsData] = useState(!!awards ? awards.map((award, index) => {
+    return {
+      id: index + 1,
+      name: award.name,
+      awardType: award.awardType,
+      awardTypeKey: award.awardTypeKey,
+    }
+  }) : [])
   const [editAppData, setEditAppData] = useState(null);
   const [editVotingsData, setEditVotingsData] = useState(null);
   const [editCategoryData, setEditCategoryData] = useState(null);
+  const [editAwardsData, setEditAwardsData] = useState(null);
   const [overallAppStatistics, setOverAllAppStatistics] = useState(null);
   const [teamStatistics, setTeamStatistics] = useState([]);
   const [teamStatsColumns, setTeamStatsColumns] = useState([
@@ -77,6 +95,8 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
   ])
   const [insertedId, setInsertedId] = useState(null);
   const [teamStatsPublishedDate, setTeamStatsPublishedDate] = useState(null);
+
+  console.log("awardsData", awardsData)
 
   useEffect(() => {
     // Get statistics
@@ -284,6 +304,17 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
     setAddCategoryModalOpen(true);
   }
 
+  const openAddAwards = () => {
+    // setEditAwardsData(null);
+    setAddAwardsModalOpen(true);
+  }
+
+  const openEditAwards = (data, event) => {
+    const index = parseInt(data.id) - 1
+    setEditAwardsData(index)
+    setAddAwardsModalOpen(true);
+  }
+
   const addApp = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
     if (edit) {
       const res = await fetch(`/api/apps/edit?email=${email}`,
@@ -378,7 +409,6 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
   }
 
   const addCategory = async ({name, categoryType, edit}) => {
-
     if (edit) {
       const res = await fetch(`/api/categories/edit`,
       {
@@ -448,6 +478,92 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
   const closeCategoryModal = () => {
     setEditCategoryData(null)
     setAddCategoryModalOpen(false)
+  }
+
+
+  const addAwards = async ({name, awardType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
+
+    if (edit) {
+      const res = await fetch(`/api/awards/edit`,
+      {
+        body: JSON.stringify({
+          name,
+          awardType,
+          _id: awards[editAwardsData]._id,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch categories again
+  
+        const awardsRes = await fetch(`/api/awards`);
+        const awardsJson = await awardsRes.json();
+        setAwardsContainer(awardsJson)
+        setAwardsData(awardsJson.map((award, index) => {
+          return {
+            id: index + 1,
+            name: award.name,
+            awardType: award.awardType,
+            awardTypeKey: award.awardTypeKey,
+          }
+        }))
+      }
+    } else {
+      // Add
+      const res = await fetch(`/api/awards/new`,
+      {
+        body: JSON.stringify({
+          name,
+          awardType,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+  
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch apps again
+  
+        // const categoriesRes = await fetch(`/api/categories`);
+        // const categoriesJson = await categoriesRes.json();
+        // setCategoryContainer(categoriesJson)
+        // setCategoryData(categoriesJson.map((category, index) => {
+        //   return {
+        //     id: index + 1,
+        //     name: category.name,
+        //     categoryType: category.categoryType,
+        //     categoryTypeKey: category.categoryTypeKey,
+        //   }
+        // }))
+  
+        const awardsRes = await fetch(`/api/awards`);
+        const awardsJson = await awardsRes.json();
+        setAwardsContainer(awardsJson)
+        setAwardsData(awardsJson.map((award, index) => {
+          return {
+            id: index + 1,
+            name: award.name,
+            awardType: award.awardType,
+            awardTypeKey: award.awardTypeKey,
+          }
+        }))
+      }
+    }
+  }
+
+  const closeAwardsModal = () => {
+    setEditAwardsData(null)
+    setAddAwardsModalOpen(false)
   }
 
 
@@ -630,14 +746,15 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
               <Grid item xs>
                 <h1>Awards</h1>
               </Grid>
-              {/* <Grid item xs align="right">
-                <Button variant="contained" color="secondary" onClick={openAddApp} className="button">
-                  Add Voting
+              <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={openAddAwards} className="button">
+                  Add Award
                 </Button>
-              </Grid> */}
+              </Grid>
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
-              <DataGrid rows={[]} columns={columns} pageSize={5} />
+              {/* <DataGrid rows={[]} columns={columns} pageSize={5} /> */}
+              <DataGrid rows={awardsData} columns={awardsColumns} pageSize={5} onRowClick={openEditAwards} />
             </div>
           </Grid>
           <Grid item xs={12} md={4}>
@@ -659,8 +776,9 @@ const AdminDashboard = ({ teams, apps, email, category }) => {
       </Grid>
       <AddApp open={addAppModalOpen} submit={addApp} closeModal={closeAppModal} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
 
-      <AddVotings open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} />
+      {/* <AddVotings open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} /> */}
       <AddCategory open={addCategoryModalOpen} submit={addCategory} closeModal={closeCategoryModal} loadedData={editCategoryData !== null && editCategoryData !== undefined ? categoryContainer[editCategoryData] : null} />
+      <AddAward open={addAwardsModalOpen} submit={addAwards} closeModal={closeAwardsModal} loadedData={editAwardsData !== null && editAwardsData !== undefined ? awardsContainer[editAwardsData] : null} />
     </div>
   )
 };
