@@ -25,10 +25,10 @@ const columns = [
   // },
 ];
 
-const categoryColumns = [
+const categoriesColumns = [
   { field: 'id', headerName: 'ID', width: 30 },
   { field: 'name', headerName: 'Name', width: 200 },
-  { field: 'categoryType', headerName: 'Category Type', width: 200 },
+  { field: 'categoriesType', headerName: 'Categories Type', width: 200 },
 ]
 
 const awardsColumns = [
@@ -37,13 +37,22 @@ const awardsColumns = [
   { field: 'awardType', headerName: 'Award Type', width: 200 },
 ]
 
-const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
+const votingsColumns = [
+  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'name', headerName: 'Name', width: 200 },
+  { field: 'award', headerName: 'Award', width: 200 },
+  { field: 'category', headerName: 'Category', width: 200 },
+  { field: 'app', headerName: 'App', width: 200 },
+]
+
+const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], votings = [] }) => {
   const [appsContainer, setAppsContainer] = useState(apps)
-  const [categoryContainer, setCategoryContainer] = useState(category)
+  const [categoriesContainer, setCategoriesContainer] = useState(categories)
   const [awardsContainer, setAwardsContainer] = useState(awards)
+  const [votingsContainer, setVotingsContainer] = useState(votings)
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [addVotingsModalOpen, setAddVotingsModalOpen] = useState(false);
-  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const [addCategoriesModalOpen, setAddCategoriesModalOpen] = useState(false);
   const [addAwardsModalOpen, setAddAwardsModalOpen] = useState(false);
   const [appsData, setAppsData] = useState(apps.map((app, index) => {
     return {
@@ -59,13 +68,13 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
       // }, "")
     }
   }))
-  const [categoryData, setCategoryData] = useState(!!category ? category.map((category, index) => {
-    // console.log("category", category)
+  const [categoriesData, setCategoriesData] = useState(!!categories ? categories.map((categories, index) => {
+    // console.log("categories", categories)
     return {
       id: index + 1,
-      name: category.name,
-      categoryType: category.categoryType,
-      categoryTypeKey: category.categoryTypeKey,
+      name: categories.name,
+      categoriesType: categories.categoriesType,
+      categoriesTypeKey: categories.categoriesTypeKey,
       // categories: app.categories.reduce((previous, current, index) => {
       //   if (index == 0) {
       //     return current;
@@ -83,9 +92,20 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
       awardTypeKey: award.awardTypeKey,
     }
   }) : [])
+  const [votingsData, setVotingsData] = useState(!!votings ? votings.map((voting, index) => {
+    return {
+      id: index + 1,
+      name: voting.name,
+      award: voting.award,
+      category: voting.category,
+      app: voting.app,
+      description: voting.description,
+      tutorialURL: voting.tutorialURL,
+    }
+  }) : [])
   const [editAppData, setEditAppData] = useState(null);
   const [editVotingsData, setEditVotingsData] = useState(null);
-  const [editCategoryData, setEditCategoryData] = useState(null);
+  const [editCategoriesData, setEditCategoriesData] = useState(null);
   const [editAwardsData, setEditAwardsData] = useState(null);
   const [overallAppStatistics, setOverAllAppStatistics] = useState(null);
   const [teamStatistics, setTeamStatistics] = useState([]);
@@ -95,8 +115,6 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
   ])
   const [insertedId, setInsertedId] = useState(null);
   const [teamStatsPublishedDate, setTeamStatsPublishedDate] = useState(null);
-
-  console.log("awardsData", awardsData)
 
   useEffect(() => {
     // Get statistics
@@ -293,15 +311,15 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
     setAddVotingsModalOpen(true);
   }
 
-  const openAddCategory = () => {
-    // setEditCategoryData(null);
-    setAddCategoryModalOpen(true);
+  const openAddCategories = () => {
+    // setEditCategoriesData(null);
+    setAddCategoriesModalOpen(true);
   }
 
-  const openEditCategory = (data, event) => {
+  const openEditCategories = (data, event) => {
     const index = parseInt(data.id) - 1
-    setEditCategoryData(index)
-    setAddCategoryModalOpen(true);
+    setEditCategoriesData(index)
+    setAddCategoriesModalOpen(true);
   }
 
   const openAddAwards = () => {
@@ -315,13 +333,13 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
     setAddAwardsModalOpen(true);
   }
 
-  const addApp = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
+  const addApp = async ({name, categoriesType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
     if (edit) {
       const res = await fetch(`/api/apps/edit?email=${email}`,
       {
         body: JSON.stringify({
           name,
-          categoryType,
+          categoriesType,
           slug,
           key,
           tickets,
@@ -359,7 +377,7 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
       {
         body: JSON.stringify({
           name,
-          categoryType,
+          categoriesType,
           slug,
           key,
           tickets,
@@ -399,7 +417,88 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
   }
 
 
-  const addVotings = async ({name, categoryType, slug, key, tickets, ticketType, allowCollection, levels, edit}) => {
+  const addVotings = async ({name, category, app, description, award, tutorialURL, edit}) => {
+    if (edit) {
+      const res = await fetch(`/api/votings/edit`,
+      {
+        body: JSON.stringify({
+          name,
+          categories,
+          app,
+          description,
+          award,
+          category,
+          tutorialURL,
+          _id: votings[editVotingsData]._id,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+  
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch apps again
+  
+        const votingsRes = await fetch(`/api/votings`);
+        const votingsJson = await votingsRes.json();
+        setVotingsContainer(votingsJson)
+        setVotingsData(votingsJson.map((voting, index) => {
+          return {
+            id: index + 1,
+            name: voting.name,
+            award: voting.award,
+            description: voting.description,
+            category: voting.category,
+            app: voting.app,
+            tutorialURL: voting.tutorialURL,
+          }
+        }))
+      }
+    } else {
+      // Add
+      const res = await fetch(`/api/votings/new`,
+      {
+        body: JSON.stringify({
+          name,
+          categories,
+          app,
+          description,
+          award,
+          category,
+          tutorialURL,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+  
+      
+      const json = await res.json();
+  
+      if (json) {
+        // fetch apps again
+  
+        const votingsRes = await fetch(`/api/votings`);
+        const votingsJson = await votingsRes.json();
+        setVotingsContainer(votingsJson)
+        setVotingsData(votingsJson.map((voting, index) => {
+          return {
+            id: index + 1,
+            name: voting.name,
+            award: voting.award,
+            description: voting.description,
+            category: voting.category,
+            app: voting.app,
+            tutorialURL: voting.tutorialURL,
+          }
+        }))
+      }
+    }
 
   }
 
@@ -408,14 +507,14 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
     setAddVotingsModalOpen(false)
   }
 
-  const addCategory = async ({name, categoryType, edit}) => {
+  const addCategories = async ({name, categoriesType, edit}) => {
     if (edit) {
       const res = await fetch(`/api/categories/edit`,
       {
         body: JSON.stringify({
           name,
-          categoryType,
-          _id: category[editCategoryData]._id,
+          categoriesType,
+          _id: categories[editCategoriesData]._id,
         }),
         headers: {
           'Content-Type': 'application/json'
@@ -430,13 +529,13 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
   
         const categoriesRes = await fetch(`/api/categories`);
         const categoriesJson = await categoriesRes.json();
-        setCategoryContainer(categoriesJson)
-        setCategoryData(categoriesJson.map((category, index) => {
+        setCategoriesContainer(categoriesJson)
+        setCategoriesData(categoriesJson.map((categories, index) => {
           return {
             id: index + 1,
-            name: category.name,
-            categoryType: category.categoryType,
-            categoryTypeKey: category.categoryTypeKey,
+            name: categories.name,
+            categoriesType: categories.categoriesType,
+            categoriesTypeKey: categories.categoriesTypeKey,
           }
         }))
       }
@@ -446,7 +545,7 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
       {
         body: JSON.stringify({
           name,
-          categoryType,
+          categoriesType,
         }),
         headers: {
           'Content-Type': 'application/json'
@@ -462,22 +561,22 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
   
         const categoriesRes = await fetch(`/api/categories`);
         const categoriesJson = await categoriesRes.json();
-        setCategoryContainer(categoriesJson)
-        setCategoryData(categoriesJson.map((category, index) => {
+        setCategoriesContainer(categoriesJson)
+        setCategoriesData(categoriesJson.map((categories, index) => {
           return {
             id: index + 1,
-            name: category.name,
-            categoryType: category.categoryType,
-            categoryTypeKey: category.categoryTypeKey,
+            name: categories.name,
+            categoriesType: categories.categoriesType,
+            categoriesTypeKey: categories.categoriesTypeKey,
           }
         }))
       }
     }
   }
 
-  const closeCategoryModal = () => {
-    setEditCategoryData(null)
-    setAddCategoryModalOpen(false)
+  const closeCategoriesModal = () => {
+    setEditCategoriesData(null)
+    setAddCategoriesModalOpen(false)
   }
 
 
@@ -536,13 +635,13 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
   
         // const categoriesRes = await fetch(`/api/categories`);
         // const categoriesJson = await categoriesRes.json();
-        // setCategoryContainer(categoriesJson)
-        // setCategoryData(categoriesJson.map((category, index) => {
+        // setCategoriesContainer(categoriesJson)
+        // setCategoriesData(categoriesJson.map((categories, index) => {
         //   return {
         //     id: index + 1,
-        //     name: category.name,
-        //     categoryType: category.categoryType,
-        //     categoryTypeKey: category.categoryTypeKey,
+        //     name: categories.name,
+        //     categoriesType: categories.categoriesType,
+        //     categoriesTypeKey: categories.categoriesTypeKey,
         //   }
         // }))
   
@@ -723,7 +822,7 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
               </Grid>
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
-              <DataGrid rows={[]} columns={columns} pageSize={5} />
+              <DataGrid rows={votingsData} columns={votingsColumns} pageSize={5} onRowClick={openEditVotings} />
             </div>
           </Grid>
           <Grid item xs={12} md={4}>
@@ -763,21 +862,21 @@ const AdminDashboard = ({ teams, apps, email, category = [], awards = [] }) => {
                 <h1>Categories</h1>
               </Grid>
               <Grid item xs align="right">
-                <Button variant="contained" color="secondary" onClick={openAddCategory} className="button">
-                  Add Category
+                <Button variant="contained" color="secondary" onClick={openAddCategories} className="button">
+                  Add Categories
                 </Button>
               </Grid>
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
-              <DataGrid rows={categoryData} columns={categoryColumns} pageSize={5} onRowClick={openEditCategory} />
+              <DataGrid rows={categoriesData} columns={categoriesColumns} pageSize={5} onRowClick={openEditCategories} />
             </div>
           </Grid>
         </Grid>
       </Grid>
       <AddApp open={addAppModalOpen} submit={addApp} closeModal={closeAppModal} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
 
-      {/* <AddVotings open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} /> */}
-      <AddCategory open={addCategoryModalOpen} submit={addCategory} closeModal={closeCategoryModal} loadedData={editCategoryData !== null && editCategoryData !== undefined ? categoryContainer[editCategoryData] : null} />
+      <AddVotings apps={apps} awards={awards} categories={categories} open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} />
+      <AddCategory open={addCategoriesModalOpen} submit={addCategories} closeModal={closeCategoriesModal} loadedData={editCategoriesData !== null && editCategoriesData !== undefined ? categoriesContainer[editCategoriesData] : null} />
       <AddAward open={addAwardsModalOpen} submit={addAwards} closeModal={closeAwardsModal} loadedData={editAwardsData !== null && editAwardsData !== undefined ? awardsContainer[editAwardsData] : null} />
     </div>
   )

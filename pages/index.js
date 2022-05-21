@@ -12,6 +12,7 @@ export default function Home({enableFrontpage}) {
 
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
+  const lowerThanMd = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <>
@@ -20,7 +21,7 @@ export default function Home({enableFrontpage}) {
       {
         enableFrontpage && (
 
-          <div className={`container${lowerThanSm ? " mobile" : ""}`}>
+          <div className={`container${lowerThanSm || lowerThanMd ? " mobile" : ""}`}>
             <Head>
               <title>BTS Voting Organization</title>
               <link rel="icon" href="/favicon.ico" />
@@ -29,24 +30,24 @@ export default function Home({enableFrontpage}) {
             <NavBar lowerThanSm={lowerThanSm} />
 
             <Grid container className={`slogan`} spacing={1}>
-              <Grid container item xs={12} className="description" alignItem="flex-end" justify="flex-start" align="flex-end" alignContent="flex-end">
+              <Grid container item xs={12} className="description" alignItems="flex-end" justify="flex-start" align="flex-end" alignContent="flex-end">
                 <span>The #1 source of BTS voting information and updates since 2017</span>
               </Grid>
-              <Grid container item xs={12}  className="sub-description" alignItem="flex-start" align="flex-start">
+              <Grid container item xs={12}  className="sub-description" alignItems="flex-start" align="flex-start">
                 <Grid item>Posting credible awards and voting events only</Grid>
               </Grid>
             </Grid>
 
             <main>
-            {
-              !lowerThanSm && (
+            {/* {
+              !lowerThanSm && ( */}
                 <Grid container>
         
                   {/* <Grid item xs={12} lg={2} className="sidebar">
                     <h1>Voting Updates</h1>
                     <a className="twitter-timeline" data-lang="en" data-width="400" data-height="500" data-dnt="true" data-theme="dark" href="https://twitter.com/btsvotingorg?ref_src=twsrc%5Etfw">Tweets by btsvotingorg</a> <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
                   </Grid> */}
-                  <Grid item xs={12} lg={12} className="timeline">
+                  <Grid item xs={12} lg={12} className={`timeline${lowerThanSm ? ` xs` : ``}${lowerThanMd ? ` sm` : ``}`}>
                     <h1>Voting Timeline</h1>
                     <div className="future">
                       <div className="future-direction">
@@ -204,7 +205,7 @@ export default function Home({enableFrontpage}) {
                         </div>
                       </div>
                     </div>
-                    <div className="past">
+                    {/* <div className="past">
                       <div className="past-node node-heading">
                         <div className="node-title">
                           Previous
@@ -213,10 +214,10 @@ export default function Home({enableFrontpage}) {
                           Past votings and rankings
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </Grid>
                 </Grid>
-              )
+              {/* )
             }
             {
               lowerThanSm && (
@@ -224,7 +225,7 @@ export default function Home({enableFrontpage}) {
     
                 </Grid>
               )
-            }
+            } */}
     
     
             {/* 

@@ -17,8 +17,9 @@ export default function Portal({session}) {
   const [teams, setTeams] = useState(null)
   const [apps, setApps] = useState(null)
   const [profile, setProfile] = useState(null)
-  const [category, setCategory] = useState(null)
+  const [categories, setCategories] = useState(null)
   const [awards, setAwards] = useState(null)
+  const [votings, setVotings] = useState(null)
   const componentMounted = useRef(true);
   
 
@@ -79,12 +80,14 @@ export default function Portal({session}) {
         setLoading(false);
       }
     }
-    const retrieveCategory = async () => {
+    const retrieveCategories = async () => {
       const categoriesRes = await fetch(`/api/categories`);
       let categoriesJson = await categoriesRes.json()
 
       if (!!categoriesJson) {
-        setCategory(categoriesJson);
+        setCategories(categoriesJson);
+      } else {
+        setCategories([])
       }
       // setLoading(false);
     }
@@ -94,14 +97,29 @@ export default function Portal({session}) {
 
       if (!!awardsJson) {
         setAwards(awardsJson);
+      } else {
+        setAwards([])
+      }
+      // setLoading(false);
+    }
+
+    const retrieveVotings = async () => {
+      const votingsRes = await fetch(`/api/votings`);
+      let votingsJson = await votingsRes.json()
+
+      if (!!votingsJson) {
+        setVotings(votingsJson);
+      } else {
+        setVotings([])
       }
       // setLoading(false);
     }
 
     if (!!admin && !!admin.email) {
       retrieveTeams()
-      retrieveCategory()
+      retrieveCategories()
       retrieveAwards()
+      retrieveVotings()
     }
   }, [profile])
 
@@ -129,7 +147,7 @@ export default function Portal({session}) {
               ((!admin || !admin.email) && !!profile && !!profile.teamInfo && !!apps) && <MemberDashboard profile={profile} apps={apps} />
             }
             {
-              (!!admin && !!admin.email && !!teams && !!apps) && <AdminDashboard teams={teams} apps={apps} email={session.user.email} category={category} awards={awards} />
+              (!!admin && !!admin.email && !!teams && !!apps && !!categories && !!awards && !!votings) && <AdminDashboard teams={teams} apps={apps} email={session.user.email} categories={categories} awards={awards} votings={votings} />
             }
           </PortalLayout>
         )

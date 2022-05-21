@@ -31,6 +31,5 @@ export default async (req, res) => {
     // .limit(20)
     // .toArray();
 
-    console.log("awards", awards)
   res.json(awards);
 };

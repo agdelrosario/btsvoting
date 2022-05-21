@@ -670,6 +670,8 @@ p {
 
   &.mobile {
     .slogan {
+      box-sizing: border-box;
+      max-width: 100%;
       padding: 0 30px !important;
     }
   }
@@ -922,8 +924,10 @@ p {
         margin-left: -10px;
         padding-top: 10px;
         // display: inline-block;
+      }
 
-        &:hover {
+      &:hover {
+        .present-node {
           box-shadow: 0px 0px 0px 5px rgba(255, 240, 50, 0.3);
 
           .node-title {
@@ -1149,8 +1153,146 @@ p {
         }
       }
     }
+
+
+
+    &.xs, &.sm {
+      padding: 20px 30px;
+
+      .future {
+
+        .future-direction {
+          .future-heading {
+            margin-left: 50px;
+            margin-bottom: -18px;
+          }
+    
+          .future-arrow {
+            margin-left: 10px;
+          }
+        }
+        .cards {
+          margin-left: 20px;
+
+          .card {
+            padding-left: 35px;
+            .content {
+              margin-left: 0px;
+              flex-direction: column;
+
+              .date {
+                text-align: left;
+                margin-right: 0px;
+                width: 100%;
+              }
+
+              .details {
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                width: 100%;
+
+                h2 {
+                  margin-top: 5px;
+                }
+
+                .categories {
+                  margin-left: 0px;
+                  margin-top: 10px;
+                }
+
+                .app-link {
+                  margin-left: 0px;
+                  margin-top: 25px;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .present {
+        margin-left: 20px;
+
+        .present-node {
+            margin-left: -10px;
+
+            .node-title {
+              margin-left: 30px;
+            }
+
+            .node-description {
+              margin-left: 200px;
+              width: 120px;
+            }
+
+          // .future-heading {
+          //   margin-left: 50px;
+          //   margin-bottom: -18px;
+          // }
+    
+          // .future-arrow {
+          //   margin-left: 10px;
+          // }
+        }
+        .cards {
+          margin-left: -51px;
+          padding-left: 0px;
+          width: calc(100% + 81px);
+          padding-right: 0px;
+          box-sizing: unset;
+
+          .card {
+            padding-left: 35px;
+            width: 100%;
+            padding-right: 35px;
+
+            .node {
+              margin-left: -20px;
+            }
+
+            .node-line {
+              margin-left: 15px;
+            }
+
+            .content {
+              margin-left: 50px;
+              flex-direction: column;
+
+              .date {
+                text-align: left;
+                margin-right: 0px;
+                width: 100%;
+              }
+
+              .details {
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                max-width: 100%;
+
+                h1 {
+                  margin-top: 5px;
+                }
+
+                .categories {
+                  margin-left: 0px;
+                  margin-top: 10px;
+                }
+
+                .app-link {
+                  margin-left: 0px;
+                  margin-top: 25px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
+
 
 ::-moz-selection { background: yellow; color: grey; }
 ::selection { background: yellow; color: grey; }
