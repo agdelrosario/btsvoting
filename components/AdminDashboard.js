@@ -417,7 +417,26 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
   }
 
 
-  const addVotings = async ({name, category, app, description, award, tutorialURL, edit}) => {
+  const fetchNewVotings = async () => {
+    const votingsRes = await fetch(`/api/votings`);
+    const votingsJson = await votingsRes.json();
+    setVotingsContainer(votingsJson)
+    setVotingsData(votingsJson.map((voting, index) => {
+      return {
+        id: index + 1,
+        name: voting.name,
+        award: voting.award,
+        description: voting.description,
+        category: voting.category,
+        app: voting.app,
+        tutorialURL: voting.tutorialURL,
+        startDate: voting.startDate,
+        endDate: voting.endDate,
+      }
+    }))
+  }
+
+  const addVotings = async ({name, category, app, description, award, tutorialURL, startDate, endDate, edit}) => {
     if (edit) {
       const res = await fetch(`/api/votings/edit`,
       {
@@ -429,6 +448,8 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
           award,
           category,
           tutorialURL,
+          startDate,
+          endDate,
           _id: votings[editVotingsData]._id,
         }),
         headers: {
@@ -442,21 +463,7 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
   
       if (json) {
         // fetch apps again
-  
-        const votingsRes = await fetch(`/api/votings`);
-        const votingsJson = await votingsRes.json();
-        setVotingsContainer(votingsJson)
-        setVotingsData(votingsJson.map((voting, index) => {
-          return {
-            id: index + 1,
-            name: voting.name,
-            award: voting.award,
-            description: voting.description,
-            category: voting.category,
-            app: voting.app,
-            tutorialURL: voting.tutorialURL,
-          }
-        }))
+        fetchNewVotings()
       }
     } else {
       // Add
@@ -470,6 +477,8 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
           award,
           category,
           tutorialURL,
+          startDate,
+          endDate,
         }),
         headers: {
           'Content-Type': 'application/json'
@@ -482,21 +491,7 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
   
       if (json) {
         // fetch apps again
-  
-        const votingsRes = await fetch(`/api/votings`);
-        const votingsJson = await votingsRes.json();
-        setVotingsContainer(votingsJson)
-        setVotingsData(votingsJson.map((voting, index) => {
-          return {
-            id: index + 1,
-            name: voting.name,
-            award: voting.award,
-            description: voting.description,
-            category: voting.category,
-            app: voting.app,
-            tutorialURL: voting.tutorialURL,
-          }
-        }))
+        fetchNewVotings()
       }
     }
 
@@ -505,6 +500,10 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
   const closeVotingsModal = () => {
     setEditVotingsData(null)
     setAddVotingsModalOpen(false)
+  }
+
+  const handleDelete = () => {
+    fetchNewVotings()
   }
 
   const addCategories = async ({name, categoriesType, edit}) => {
@@ -875,7 +874,7 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
       </Grid>
       <AddApp open={addAppModalOpen} submit={addApp} closeModal={closeAppModal} loadedData={editAppData !== null && editAppData !== undefined ? appsContainer[editAppData] : null} />
 
-      <AddVotings apps={apps} awards={awards} categories={categories} open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} />
+      <AddVotings apps={apps} awards={awards} categories={categories} open={addVotingsModalOpen} submit={addVotings} closeModal={closeVotingsModal} loadedData={editVotingsData !== null && editVotingsData !== undefined ? votingsContainer[editVotingsData] : null} handleDelete={handleDelete} />
       <AddCategory open={addCategoriesModalOpen} submit={addCategories} closeModal={closeCategoriesModal} loadedData={editCategoriesData !== null && editCategoriesData !== undefined ? categoriesContainer[editCategoriesData] : null} />
       <AddAward open={addAwardsModalOpen} submit={addAwards} closeModal={closeAwardsModal} loadedData={editAwardsData !== null && editAwardsData !== undefined ? awardsContainer[editAwardsData] : null} />
     </div>

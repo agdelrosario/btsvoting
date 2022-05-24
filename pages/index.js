@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
 // import {signIn, signOut, useSession} from "next-auth/client"
 import NavBar from '../components/NavBar';
@@ -9,10 +9,29 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function Home({enableFrontpage}) {
   // const [session, loading] = useSession();
+  const [presentVotings, setPresentVotings] = useState()
 
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   const lowerThanMd = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    const retrieveVotings = async () => {
+      const votingsRes = await fetch(`/api/votings/present`);
+      let votingsJson = await votingsRes.json()
+      console.log("votingsJson", votingsJson)
+
+      if (!!votingsJson) {
+        setPresentVotings(votingsJson);
+      } else {
+        setPresentVotings([])
+      }
+      // setLoading(false);
+    }
+
+    retrieveVotings()
+  }, [])
+
 
   return (
     <>

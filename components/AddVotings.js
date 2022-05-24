@@ -18,6 +18,14 @@ import AddIcon from '@material-ui/icons/Add';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from '@material-ui/core/IconButton';
+import MomentUtils from '@date-io/moment';
+import {
+  MuiPickersUtilsProvider,
+  // KeyboardDatePicker,
+  KeyboardDateTimePicker,
+} from '@material-ui/pickers';
+// import moment from "moment";
+import moment from "moment-timezone";
 
 
 function getModalStyle(lowerThanSm) {
@@ -64,10 +72,14 @@ const useStyles = makeStyles((theme) => ({
 // ]
 
 
-function getStyles(name, award, theme) {
+function getStyles(name, category, theme) {
+  if (!category) {
+    return;
+  }
+
   return {
     fontWeight:
-      award.indexOf(name) === -1
+      category.indexOf(name) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -85,7 +97,7 @@ function getStyles(name, award, theme) {
 //   },
 // };
 
-export default function AddVotings({open, submit, loadedData, closeModal, apps, awards, categories}) {
+export default function AddVotings({open, submit, loadedData, closeModal, apps, awards, categories, handleDelete}) {
   const labelRef = useRef()
   const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
   const classes = useStyles();
@@ -105,12 +117,16 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     category: null,
     description: null,
     tutorialURL: null,
+    startDate: null,
+    endDate: null,
   });
   // const [awards, setAwards] = useState(null)
   const [app, setApp] = useState(loadedData?.app || null);
-  const [category, setCategory] = useState(loadedData?.category || null);
+  // const [category, setCategory] = useState(loadedData?.category || null);
+  const [category, setCategory] = useState(loadedData?.categories || [])
   const [tutorialURL, setTutorialURL] = useState(loadedData?.tutorialURL || null);
-  
+  const [startDate, setStartDate] = useState(loadedData?.startDate || null);
+  const [endDate, setEndDate] = useState(loadedData?.endDate || null);
 
   useEffect(() => {
     setName(loadedData?.name || null)
@@ -119,6 +135,20 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     setCategory(loadedData?.category || null)
     setDescription(loadedData?.description || null)
     setTutorialURL(loadedData?.tutorialURL || null)
+    setCategory(loadedData?.category || [])
+
+    console.log("category", loadedData?.category)
+
+
+    const start = !!loadedData?.startDate ? moment.tz(loadedData?.startDate, "Asia/Seoul").format("YYYY-MM-DD hh:mm:ss") : null
+    
+    setStartDate(start)
+
+    const end = !!loadedData?.endDate ? moment.tz(loadedData?.endDate, "Asia/Seoul").format("YYYY-MM-DD hh:mm:ss") : null
+    setEndDate(end)
+
+    console.log("categories", categories)
+
     // setAwardType(loadedData?.awardKey || null)
 
 
@@ -133,6 +163,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     // };
 
     // fetchAwardTypes();
+    moment.tz.setDefault("Asia/Seoul");
 
     
   },[open, loadedData]);
@@ -141,7 +172,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     // setOpen(false);
     setName(null);
     setAward(null);
-    setCategory(null);
+    // setCategory(null);
     setDescription(null);
     setApp(null);
     setTutorialURL(null);
@@ -153,6 +184,8 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
       tutorialURL: null,
       app: null,
     });
+    setStartDate(null);
+    setEndDate(null);
     closeModal();
   };
 
@@ -228,6 +261,14 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
       tempValidation.description = true
     }
 
+    if (startDate == null || name == '') {
+      tempValidation.startDate = true
+    }
+
+    if (endDate == null || endDate == '') {
+      tempValidation.endDate = true
+    }
+
     // if (tutorialURL == null || tutorialURL.length == 0) {
     //   tempValidation.tutorialURL = true
     // }
@@ -242,9 +283,12 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
       name,
       award,
       app,
-      category,
+      // category,
       description,
       tutorialURL,
+      startDate,
+      endDate,
+      category,
       edit: !!loadedData
     });
     
@@ -295,6 +339,59 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
       category: error
     });
   };
+  
+  const handleStartDateChange = (date) => {
+    // console.log("MOMENT TZ", moment.tz)
+
+    let val = moment.tz(date, "Asia/Seoul").utc().format()//.format("YYYY-MM-DD hh:mm:ss")
+    setStartDate(val);
+
+    let error = validation.startDate
+    if (error && date != null) {
+      error = false
+    }
+    
+
+    setValidation({
+      ...validation,
+      startDate: error
+    });
+  };
+  
+  const handleEndDateChange = (date) => {
+    let val = moment.tz(date, "Asia/Seoul").utc().format()//.format("YYYY-MM-DD hh:mm:ss")
+    setEndDate(val);
+
+    let error = validation.endDate
+    if (error && date != null) {
+      error = false
+    }
+    
+
+    setValidation({
+      ...validation,
+      endDate: error
+    });
+  };
+
+  const deleteVoting = async () => {
+    const res = await fetch(`/api/votings/delete`,
+    {
+      body: JSON.stringify({
+        _id: loadedData._id,
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'DELETE'
+    });
+    const resJson = await res.json();
+
+    if (resJson) {
+      handleDelete();
+      handleClose();
+    }
+  }
 
 
   const body = (
@@ -312,7 +409,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
               variant="outlined"
               error={validation.name}
               onChange={handleNameInput}
-              value={name}
+              value={name || ""}
               required
             />
           </Grid>
@@ -321,20 +418,20 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
               <InputLabel ref={labelRef} htmlFor="my-input" error={validation.award}>Award *</InputLabel>
               <Select
                 native
-                value={award}
+                value={award || "Award"}
                 onChange={handleAwardChange}
                 label="Award *"
                 inputProps={{
                   name: 'age',
                   id: 'outlined-age-native-simple',
                 }}
-                defaultValue="Award"
+                // defaultValue="Award"
                 error={validation.award}
               >
                 <option aria-label="None" value="" />
                 {
                   !!awards && awards.map((value) => (
-                    <option value={value.key} key={`award-type-${value.key}`} label={value.name}>{value.name}</option>
+                    <option value={value.name} key={`award-type-${value.name}`} label={value.name}>{value.name}</option>
                   ))
                 }
               </Select>
@@ -345,48 +442,101 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
               <InputLabel ref={labelRef} htmlFor="my-input" error={validation.award}>App *</InputLabel>
               <Select
                 native
-                value={app}
+                value={app || "App"}
                 onChange={handleAppChange}
                 label="App *"
                 inputProps={{
                   name: 'age',
                   id: 'outlined-age-native-simple',
                 }}
-                defaultValue="App"
+                // defaultValue="App"
                 error={validation.app}
               >
                 <option aria-label="None" value="" />
                 {
                   !!apps && apps.map((value) => (
-                    <option value={value.key} key={`app-type-${value.key}`} label={value.name}>{value.name}</option>
+                    <option value={value.slug} key={`app-type-${value.slug}`} label={value.name}>{value.name}</option>
                   ))
                 }
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} lg={4}>
-            <FormControl variant="outlined" className={classes.formControl}>
+            {/* <FormControl variant="outlined" className={classes.formControl}>
               <InputLabel ref={labelRef} htmlFor="my-input" error={validation.award}>Category *</InputLabel>
               <Select
                 native
-                value={category}
+                value={category || "Category"}
                 onChange={handleCategoryChange}
                 label="Category *"
                 inputProps={{
                   name: 'age',
                   id: 'outlined-age-native-simple',
                 }}
-                defaultValue="Category"
+                // defaultValue="Category"
                 error={validation.category}
               >
                 <option aria-label="None" value="" />
                 {
                   !!categories && categories.map((value) => (
-                    <option value={value.key} key={`app-type-${value.key}`} label={value.name}>{value.name}</option>
+                    <option value={value.name} key={`category-type-${value.name}`} label={value.name}>{value.name}</option>
                   ))
                 }
               </Select>
-            </FormControl>
+            </FormControl> */}
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel ref={labelRef} htmlFor="my-input" error={validation.category}>Categories *</InputLabel>
+                <Select
+                  labelId="demo-mutiple-chip-label"
+                  id="demo-mutiple-chip"
+                  multiple
+                  labelWidth={labelWidth}
+                  label="Categories *"
+                  required={true}
+                  value={category || "Categories"}
+                  // value={category || "Category"}
+                  onChange={handleCategoryChange}
+                  input={
+                    <OutlinedInput
+                      id="select-multiple-chip"
+                      labelWidth={labelWidth}
+                      label="Categories *"
+                      required={true}
+                      className={classes.outlinedInput}
+                      error={validation.category}
+                    />
+                  }
+                  variant="outlined"
+                  renderValue={(selected) => {
+                    console.log("selected", selected, Array.isArray(selected))
+                    return (
+                      <div className={classes.chips}>
+                        {
+                          Array.isArray(selected)  && selected.map((value) => {
+                            console.log("VALUE", value)
+                              return (
+                              <Chip key={value} label={value} className={classes.chip} size="small" />
+                              )
+                            }
+                          )
+                        }
+                      </div>
+                    )
+                  }
+                }
+
+                >
+                  {/*  style={getStyles(name, category, theme)} */}
+                  {
+                    categories.map(({name}) => (
+                      <MenuItem key={name} value={name} style={getStyles(name, category, theme)}>
+                        {name}
+                      </MenuItem>
+                    ))
+                  }
+                </Select>
+                <FormHelperText id="my-helper-text">Where voting and collection happens, can be multiple</FormHelperText>
+                </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} lg={12}>
             <TextField
@@ -395,7 +545,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
               variant="outlined"
               error={validation.description}
               onChange={handleDescriptionInput}
-              value={description}
+              value={description || ""}
               required
             />
           </Grid>
@@ -406,15 +556,106 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
               variant="outlined"
               error={validation.tutorialURL}
               onChange={handleTutorialURLInput}
-              value={tutorialURL}
+              value={tutorialURL || ""}
               // required
             />
+          </Grid>
+          <Grid item xs={12} sm={6} lg={6}>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <KeyboardDateTimePicker
+                id="date-picker-dialog"
+                views={['year','month','date','hours', 'minutes' ]}
+                label="Start Date and Time"
+                format="YYYY-MM-DD hh:mm:ss"
+                value={startDate}
+                error={validation.startDate}
+                onChange={handleStartDateChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                // maxDate={new Date()}
+                minDate={new Date('January 1, 1940')}
+                invalidDateMessage="Invalid date format. Should be YYYY-MM-DD."
+                inputVariant="outlined"
+                onError={
+                  (error) => {
+                    if (error && error != '' && validation.startDate.error == false) {
+                      setValidation({
+                        ...validation,
+                        startDate: {
+                          error: true,
+                          value: validation.startDate.value
+                        }
+                      })
+                    }
+                  }
+                }
+                style={{width:"100%"}}
+                required
+              />
+
+              <FormHelperText id="my-helper-text">Tip: Tap on the year to pick out from the month.</FormHelperText>
+            </MuiPickersUtilsProvider>
+          </Grid>
+          <Grid item xs={12} sm={6} lg={6}>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <KeyboardDateTimePicker
+                id="date-picker-dialog"
+                views={['year','month','date','hours', 'minutes' ]}
+                label="End Date"
+                format="YYYY-MM-DD hh:mm:ss"
+                value={endDate}
+                error={validation.endDate}
+                onChange={handleEndDateChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                // maxDate={new Date()}
+                minDate={new Date('January 1, 1940')}
+                invalidDateMessage="Invalid date format. Should be YYYY-MM-DD."
+                inputVariant="outlined"
+                onError={
+                  (error) => {
+                    if (error && error != '' && validation.endDate.error == false) {
+                      setValidation({
+                        ...validation,
+                        startDate: {
+                          error: true,
+                          value: validation.endDate.value
+                        }
+                      })
+                    }
+                  }
+                }
+                style={{width:"100%"}}
+                required
+              />
+
+              <FormHelperText id="my-helper-text">Tip: Tap on the year to pick out from the month.</FormHelperText>
+            </MuiPickersUtilsProvider>
           </Grid>
           <Grid item xs={12} sm={6} lg={4}>
             <Button variant="contained" color="secondary" onClick={handleSubmit} className="button">
               Submit
             </Button>
           </Grid>
+          {
+            !!loadedData && (
+
+              <Grid item xs={12} sm={6} lg={4}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  // className={classes.button}
+                  onClick={deleteVoting}
+                  startIcon={<DeleteForeverIcon />}
+                  className="button"
+                >
+                  Delete Voting
+                </Button>
+              </Grid>
+            )
+          }
         </Grid>
       </div>
     </div>

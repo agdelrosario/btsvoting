@@ -62,7 +62,7 @@ export default function Profile({session, profile, host, apps, admin}) {
     };
 
     const fetchAppAccounts = async () => {
-      if (!session || !app) {
+      if (!session || !apps) {
         return null;
       }
 

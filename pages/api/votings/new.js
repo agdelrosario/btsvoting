@@ -10,6 +10,8 @@ export default async (req, res) => {
     award: req.body.award,
     description: req.body.description,
     tutorialURL: req.body.tutorialURL,
+    startDate: new Date(req.body.startDate),
+    endDate: new Date(req.body.endDate),
   }
 
   const data = await db
