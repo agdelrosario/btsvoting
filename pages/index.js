@@ -6,31 +6,100 @@ import NavBar from '../components/NavBar';
 import Grid from '@material-ui/core/Grid';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import moment from "moment-timezone";
+import { format } from 'date-fns';
+import AlbumIcon from '@mui/icons-material/Album';
+import PublicIcon from '@mui/icons-material/Public';
+import { Public } from '@material-ui/icons';
 
 export default function Home({enableFrontpage}) {
   // const [session, loading] = useSession();
+  const [pastVotings, setPastVotings] = useState()
   const [presentVotings, setPresentVotings] = useState()
+  const [futureVotings, setFutureVotings] = useState()
+  const [categories, setCategories] = useState()
 
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   const lowerThanMd = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    const retrieveVotings = async () => {
+    const retrievePastVotings = async () => {
+      const votingsRes = await fetch(`/api/votings/past`);
+      let votingsJson = await votingsRes.json()
+      console.log("PAST", votingsJson)
+
+      if (!!votingsJson) {
+        setPastVotings(votingsJson);
+      } else {
+        setPastVotings([])
+      }
+    }
+
+    const retrievePresentVotings = async () => {
       const votingsRes = await fetch(`/api/votings/present`);
       let votingsJson = await votingsRes.json()
-      console.log("votingsJson", votingsJson)
+      // console.log("votingsJson", votingsJson)
 
       if (!!votingsJson) {
         setPresentVotings(votingsJson);
       } else {
         setPresentVotings([])
       }
-      // setLoading(false);
     }
 
-    retrieveVotings()
+    const retrieveCategory = async () => {
+      const categoryRes = await fetch(`/api/categories`);
+      let categoryJson = await categoryRes.json()
+
+      if (!!categoryJson) {
+        setCategories(categoryJson.reduce((categories, category, index) => {
+          return {
+            ...categories,
+            [category.name]: {
+              type: category.categoryTypeKey,
+            }
+          }
+        }, {}));
+        // setCategory(categoryJson)
+      } else {
+        setCategories([])
+      }
+    }
+    const retrieveFutureVotings = async () => {
+      const votingsRes = await fetch(`/api/votings/future`);
+      let votingsJson = await votingsRes.json()
+      console.log("FUTURE", votingsJson)
+
+      if (!!votingsJson) {
+        setFutureVotings(votingsJson);
+      } else {
+        setFutureVotings([])
+      }
+    }
+
+
+
+    moment.tz.setDefault("Asia/Seoul")
+    retrievePresentVotings()
+    retrievePastVotings()
+    retrieveFutureVotings()
+    retrieveCategory()
   }, [])
+
+  const formatDateRange = (startDate, endDate) => {
+
+    const start = moment.tz(startDate, "Asia/Seoul")
+    const end = moment.tz(endDate, "Asia/Seoul")
+
+    let dateRange = start.format('MMM D')
+
+    if (start.get('year') !== end.get('year')) {
+      dateRange = `${dateRange}, ${start.format('YYYY')}`
+    }
+
+    return `${dateRange} - ${end.format('MMM D, YYYY')}`
+  }
 
 
   return (
@@ -76,56 +145,44 @@ export default function Home({enableFrontpage}) {
                         </div>
                       </div>
                       <div className="cards">
-                        <div className="card">
-                          <div className="node">
-        
-                          </div>
-                          <div className="content">
-                            <div className="date">
-                              July 2021 to August 2022
-                            </div>
-                            <div className="details">
-                              <h2>Soribada Awards</h2>
-                              <div className="categories">
-                                <div className="category">
-                                  <span>Korea</span>
+                        {
+                          !!futureVotings && futureVotings.map((voting) => {
+                            const dateRange = formatDateRange(voting.startDate, voting.endDate)
+
+                            return (
+                              <div className="card" key={voting.oid}>
+                                <div className="node">
+              
                                 </div>
-                                <div className="category">
-                                  <div className="icon icon-music"></div>
-                                  <span>Yet to Come</span>
+                                <div className="content">
+                                  <div className="date">
+                                    { dateRange }
+                                  </div>
+                                  <div className="details">
+                                    <h2>{ voting.name }</h2>
+                                    <div className="categories">
+                                      {
+                                        !!categories && !!voting.category && voting.category.map((category) => {
+                                          return (
+                                            <div className="category" key={category}>
+                                              { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
+                                              { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                              { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                              <span>{ category }</span>
+                                            </div>
+                                          )
+                                        })
+                                      }
+                                    </div> 
+                                    <div className="app-link">
+                                      <span>{ voting.app}</span><span className="tooltip" alt="Not yet announced">*</span>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div> 
-                              <div className="app-link">
-                                <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
                               </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card">
-                          <div className="node">
-        
-                          </div>
-                          <div className="content">
-                            <div className="date">
-                              July 2021 to August 2022
-                            </div>
-                            <div className="details">
-                              <h2>Soribada Awards</h2>
-                              <div className="categories">
-                                <div className="category">
-                                  <span>Korea</span>
-                                </div>
-                                <div className="category">
-                                  <div className="icon icon-music"></div>
-                                  <span>Yet to Come</span>
-                                </div>
-                              </div> 
-                              <div className="app-link">
-                                <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                            )
+                          })
+                        }
                       </div>
                     </div>
                     <div className="present">
@@ -138,90 +195,49 @@ export default function Home({enableFrontpage}) {
                         </div>
                       </div>
                       <div className="cards">
-                        <div className="card">
-                          <div className="node">
-        
-                          </div>
-                          <div className="node-line">
-                            &nbsp;
-                          </div>
-                          <div className="content">
-                            <div className="date">
-                              July 2021 to August 2022
-                            </div>
-                            <div className="details">
-                              <div className="categories">
-                                <div className="category">
-                                  <span>Korea</span>
+                        {
+                          !!presentVotings && presentVotings.map((voting) => {
+                            const dateRange = formatDateRange(voting.startDate, voting.endDate)
+
+                            
+
+                            return (
+                              <div className="card" key={voting.oid}>
+                                <div className="node">
+              
                                 </div>
-                                <div className="category">
-                                  <div className="icon icon-music"></div>
-                                  <span>Yet to Come</span>
+                                <div className="node-line">
+                                  &nbsp;
                                 </div>
-                              </div> 
-                              <h1>Show Champion Ep 1002 Pre-Voting</h1>
-                              <div className="app-link">
-                                Vote daily on <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
+                                <div className="content">
+                                  <div className="date">
+                                    { dateRange }
+                                  </div>
+                                  <div className="details">
+                                    <div className="categories">
+                                      {
+                                        !!categories && !!voting.category && voting.category.map((category) => {
+                                          return (
+                                            <div className="category" key={category}>
+                                              { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
+                                              { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                              { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                              <span>{ category }</span>
+                                            </div>
+                                          )
+                                        })
+                                      }
+                                    </div> 
+                                    <h1>{ voting.name }</h1>
+                                    <div className="app-link">
+                                      Vote daily on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card">
-                          <div className="node">
-        
-                          </div>
-                          <div className="node-line">
-                            &nbsp;
-                          </div>
-                          <div className="content">
-                            <div className="date">
-                              July 2021 to August 2022
-                            </div>
-                            <div className="details">
-                              <div className="categories">
-                                <div className="category">
-                                  <span>Korea</span>
-                                </div>
-                                <div className="category">
-                                  <div className="icon icon-music"></div>
-                                  <span>Yet to Come</span>
-                                </div>
-                              </div> 
-                              <h1>Show Champion Ep 1002 Pre-Voting</h1>
-                              <div className="app-link">
-                                Vote daily on <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card">
-                          <div className="node">
-        
-                          </div>
-                          <div className="node-line">
-                            &nbsp;
-                          </div>
-                          <div className="content">
-                            <div className="date">
-                              July 2021 to August 2022
-                            </div>
-                            <div className="details">
-                              <div className="categories">
-                                <div className="category">
-                                  <span>Korea</span>
-                                </div>
-                                <div className="category">
-                                  <div className="icon icon-music"></div>
-                                  <span>Yet to Come</span>
-                                </div>
-                              </div> 
-                              <h1>Billboard Music Awards BBMA Very Long Title Right Need to Get to the Next Line Okay</h1>
-                              <div className="app-link">
-                                Vote daily on <span>Choeaedol</span><span className="tooltip" alt="Not yet announced">*</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                            )
+                          })
+                        }
                       </div>
                     </div>
                     {/* <div className="past">
