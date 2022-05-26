@@ -10,7 +10,8 @@ import moment from "moment-timezone";
 import { format } from 'date-fns';
 import AlbumIcon from '@mui/icons-material/Album';
 import PublicIcon from '@mui/icons-material/Public';
-import { Public } from '@material-ui/icons';
+// import { Public } from '@material-ui/icons';
+import StarIcon from '@mui/icons-material/Star';
 
 export default function Home({enableFrontpage}) {
   // const [session, loading] = useSession();
@@ -27,7 +28,6 @@ export default function Home({enableFrontpage}) {
     const retrievePastVotings = async () => {
       const votingsRes = await fetch(`/api/votings/past`);
       let votingsJson = await votingsRes.json()
-      console.log("PAST", votingsJson)
 
       if (!!votingsJson) {
         setPastVotings(votingsJson);
@@ -42,7 +42,7 @@ export default function Home({enableFrontpage}) {
       // console.log("votingsJson", votingsJson)
 
       if (!!votingsJson) {
-        setPresentVotings(votingsJson);
+        setPresentVotings(votingsJson.concat(votingsJson).concat(votingsJson));
       } else {
         setPresentVotings([])
       }
@@ -93,12 +93,20 @@ export default function Home({enableFrontpage}) {
     const end = moment.tz(endDate, "Asia/Seoul")
 
     let dateRange = start.format('MMM D')
+    let sameYear = true;
 
     if (start.get('year') !== end.get('year')) {
       dateRange = `${dateRange}, ${start.format('YYYY')}`
+      sameYear = false;
     }
 
-    return `${dateRange} - ${end.format('MMM D, YYYY')}`
+    dateRange = `${dateRange} - `
+
+    if (!(sameYear && start.get('month') === end.get('month'))) {
+      dateRange = `${dateRange}${end.format('MMM ')}`
+    }
+
+    return `${dateRange}${end.format('D, YYYY')}`
   }
 
 
@@ -160,20 +168,20 @@ export default function Home({enableFrontpage}) {
                                   </div>
                                   <div className="details">
                                     <h2>{ voting.name }</h2>
-                                    <div className="categories">
+                                    <Grid container className="categories">
                                       {
                                         !!categories && !!voting.category && voting.category.map((category) => {
                                           return (
-                                            <div className="category" key={category}>
+                                            <Grid item className="category" key={category}>
                                               { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
                                               { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
                                               { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
                                               <span>{ category }</span>
-                                            </div>
+                                            </Grid>
                                           )
                                         })
                                       }
-                                    </div> 
+                                    </Grid> 
                                     <div className="app-link">
                                       <span>{ voting.app}</span><span className="tooltip" alt="Not yet announced">*</span>
                                     </div>
@@ -187,6 +195,9 @@ export default function Home({enableFrontpage}) {
                     </div>
                     <div className="present">
                       <div className="present-node node-heading">
+                        <div className="node">
+                          
+                        </div>
                         <div className="node-title">
                           On-going
                         </div>
@@ -214,24 +225,29 @@ export default function Home({enableFrontpage}) {
                                     { dateRange }
                                   </div>
                                   <div className="details">
-                                    <div className="categories">
+                                    <Grid container className="categories">
                                       {
                                         !!categories && !!voting.category && voting.category.map((category) => {
                                           return (
-                                            <div className="category" key={category}>
+                                            <Grid item className="category" key={category}>
                                               { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
                                               { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
                                               { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
                                               <span>{ category }</span>
-                                            </div>
+                                            </Grid>
                                           )
                                         })
                                       }
-                                    </div> 
+                                    </Grid> 
                                     <h1>{ voting.name }</h1>
-                                    <div className="app-link">
-                                      Vote daily on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
-                                    </div>
+                                    <Grid container className="app-link">
+                                      <Grid item xs={12} sm={6}>
+                                        Vote daily on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
+                                      </Grid>
+                                      <Grid item xs={12} sm={6}>
+                                        Current ranking: <strong>#10</strong> (1,509,326)
+                                      </Grid>
+                                    </Grid>
                                   </div>
                                 </div>
                               </div>
@@ -240,8 +256,11 @@ export default function Home({enableFrontpage}) {
                         }
                       </div>
                     </div>
-                    {/* <div className="past">
+                    <div className="past">
                       <div className="past-node node-heading">
+                        <div className="node">
+        
+                        </div>
                         <div className="node-title">
                           Previous
                         </div>
@@ -249,7 +268,61 @@ export default function Home({enableFrontpage}) {
                           Past votings and rankings
                         </div>
                       </div>
-                    </div> */}
+
+                      <div className="cards">
+                        {
+                          !!pastVotings && pastVotings.map((voting) => {
+                            const dateRange = formatDateRange(voting.startDate, voting.endDate)
+
+                            
+
+                            return (
+                          <div className="card" key={voting.oid}>
+                            <div className="node">
+          
+                            </div>
+                            <div className="node-line">
+                              &nbsp;
+                            </div>
+                            <div className="content">
+                              <div className="date">
+                                { dateRange }
+                              </div>
+                              {/* <div className="main-content"> */}
+                                <div className="rank">
+                                  <div className="rank-star"><StarIcon style={{color: "#C1C1C1"}} /></div>
+                                  <span className="rank-title">RANK</span>
+                                  <span className="rank-position">#1</span>
+                                </div>
+                                <div className="details">
+                                  <div className="categories">
+                                    {
+                                      !!categories && !!voting.category && voting.category.map((category) => {
+                                        return (
+                                          <div className="category" key={category}>
+                                            { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
+                                            { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                            { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                            <span>{ category }</span>
+                                          </div>
+                                        )
+                                      })
+                                    }
+                                  </div> 
+                                  <h1>{ voting.name }</h1>
+                                  <Grid container className="app-link">
+                                    <Grid item xs={12} sm={6}>
+                                      Voted on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
+                                    </Grid>
+                                  </Grid>
+                                </div>
+                              {/* </div> */}
+                            </div>
+                          </div>
+                            )})
+                        }
+                        </div>
+                    </div>
                   </Grid>
                 </Grid>
               {/* )
