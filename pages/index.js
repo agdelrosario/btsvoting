@@ -158,36 +158,38 @@ export default function Home({enableFrontpage}) {
                             const dateRange = formatDateRange(voting.startDate, voting.endDate)
 
                             return (
-                              <div className="card" key={voting.oid}>
-                                <div className="node">
-              
-                                </div>
-                                <div className="content">
-                                  <div className="date">
-                                    { dateRange }
+                              <a href={`/voting/${voting._id}`}>
+                                <div className="card" key={voting._id}>
+                                  <div className="node">
+                
                                   </div>
-                                  <div className="details">
-                                    <h2>{ voting.name }</h2>
-                                    <Grid container className="categories">
-                                      {
-                                        !!categories && !!voting.category && voting.category.map((category) => {
-                                          return (
-                                            <Grid item className="category" key={category}>
-                                              { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
-                                              { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
-                                              { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
-                                              <span>{ category }</span>
-                                            </Grid>
-                                          )
-                                        })
-                                      }
-                                    </Grid> 
-                                    <div className="app-link">
-                                      <span>{ voting.app}</span><span className="tooltip" alt="Not yet announced">*</span>
+                                  <div className="content">
+                                    <div className="date">
+                                      { dateRange }
+                                    </div>
+                                    <div className="details">
+                                      <h2>{ voting.name }</h2>
+                                    {/* <div className="categories">
+                                        
+                                          !!categories && !!voting.category && voting.category.map((category) => {
+                                            return (
+                                              <div className="category" key={category}>
+                                                { categories[category].type == 'song' && (<div className="icon icon-music"></div>) }
+                                                { categories[category].type == 'album' && (<AlbumIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                                { categories[category].type == 'location' && category === 'Global' && (<PublicIcon style={{fontSize: 14}} className="mui-icon" />) }
+                                                <span>{ category }</span>
+                                              </div>
+                                            )
+                                          })
+                                        
+                                      </div> */}
+                                      <div className="app-link">
+                                        <span>{ voting.app}</span><span className="tooltip" alt="Not yet announced">*</span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
+                              </a>
                             )
                           })
                         }
@@ -225,6 +227,7 @@ export default function Home({enableFrontpage}) {
                                     { dateRange }
                                   </div>
                                   <div className="details">
+                                    <h1>{ voting.name }</h1>
                                     <Grid container className="categories">
                                       {
                                         !!categories && !!voting.category && voting.category.map((category) => {
@@ -239,7 +242,6 @@ export default function Home({enableFrontpage}) {
                                         })
                                       }
                                     </Grid> 
-                                    <h1>{ voting.name }</h1>
                                     <Grid container className="app-link">
                                       <Grid item xs={12} sm={6}>
                                         Vote daily on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
@@ -281,9 +283,9 @@ export default function Home({enableFrontpage}) {
                             <div className="node">
           
                             </div>
-                            <div className="node-line">
+                            {/* <div className="node-line">
                               &nbsp;
-                            </div>
+                            </div> */}
                             <div className="content">
                               <div className="date">
                                 { dateRange }
@@ -295,6 +297,7 @@ export default function Home({enableFrontpage}) {
                                   <span className="rank-position">#1</span>
                                 </div>
                                 <div className="details">
+                                  <h1>{ voting.name }</h1>
                                   <div className="categories">
                                     {
                                       !!categories && !!voting.category && voting.category.map((category) => {
@@ -309,7 +312,6 @@ export default function Home({enableFrontpage}) {
                                       })
                                     }
                                   </div> 
-                                  <h1>{ voting.name }</h1>
                                   <Grid container className="app-link">
                                     <Grid item xs={12} sm={6}>
                                       Voted on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
@@ -322,6 +324,13 @@ export default function Home({enableFrontpage}) {
                             )})
                         }
                         </div>
+
+                      <div className="past-direction">
+                        <div className="past-arrow">
+                          <div className="icon-arrow-up down" />
+                        </div>
+                        <div className="past-heading"><a>See more of the past</a></div>
+                      </div>
                     </div>
                   </Grid>
                 </Grid>
@@ -370,7 +379,7 @@ export default function Home({enableFrontpage}) {
           </main>
           
 
-          <footer>
+          <footer className={`${lowerThanSm || lowerThanMd ? " mobile" : ""}`}>
             <div>BTS Voting Org 2021</div>
             <div>Developed and maintained by <a href="https://twitter.com/taeyadelune">@taeyadelune</a> &nbsp;&#9900;&nbsp; Content by BVO members</div>
           </footer>
