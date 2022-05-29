@@ -12,9 +12,11 @@ import AlbumIcon from '@mui/icons-material/Album';
 import PublicIcon from '@mui/icons-material/Public';
 // import { Public } from '@material-ui/icons';
 import StarIcon from '@mui/icons-material/Star';
+import { Apps } from '@material-ui/icons';
 
 export default function Home({enableFrontpage}) {
   // const [session, loading] = useSession();
+  const [apps, setApps] = useState([])
   const [pastVotings, setPastVotings] = useState()
   const [presentVotings, setPresentVotings] = useState()
   const [futureVotings, setFutureVotings] = useState()
@@ -78,9 +80,15 @@ export default function Home({enableFrontpage}) {
       }
     }
 
+    const retrieveApps = async () => {
+      const appsRes = await fetch(`/api/apps`);
+      setApps(await appsRes.json());
+    }
+
 
 
     moment.tz.setDefault("Asia/Seoul")
+    retrieveApps()
     retrievePresentVotings()
     retrievePastVotings()
     retrieveFutureVotings()
@@ -184,7 +192,15 @@ export default function Home({enableFrontpage}) {
                                         
                                       </div> */}
                                       <div className="app-link">
-                                        <span>{ voting.app}</span><span className="tooltip" alt="Not yet announced">*</span>
+                                      {!!voting.app && voting.app.map((votingApp, index) => {
+                                          const selectedApp = apps.find((app) => { return app.slug === votingApp })
+
+                                          if (!selectedApp) { return }
+
+                                          return (
+                                            <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
+                                          )}
+                                        )}<span className="tooltip" alt="Not yet announced">*</span>
                                       </div>
                                     </div>
                                   </div>
@@ -244,7 +260,15 @@ export default function Home({enableFrontpage}) {
                                     </Grid> 
                                     <Grid container className="app-link">
                                       <Grid item xs={12} sm={6}>
-                                        Vote daily on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
+                                        Vote daily on {!!voting.app && voting.app.map((votingApp, index) => {
+                                          const selectedApp = apps.find((app) => { return app.slug === votingApp })
+
+                                          if (!selectedApp) { return }
+
+                                          return (
+                                            <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
+                                          )}
+                                        )}<span className="tooltip" alt="Not yet announced">*</span>
                                       </Grid>
                                       <Grid item xs={12} sm={6}>
                                         Current ranking: <strong>#10</strong> (1,509,326)
@@ -314,7 +338,15 @@ export default function Home({enableFrontpage}) {
                                   </div> 
                                   <Grid container className="app-link">
                                     <Grid item xs={12} sm={6}>
-                                      Voted on <span>{ voting.app }</span><span className="tooltip" alt="Not yet announced">*</span>
+                                      Voted on {!!voting.app && voting.app.map((votingApp, index) => {
+                                          const selectedApp = apps.find((app) => { return app.slug === votingApp })
+
+                                          if (!selectedApp) { return }
+
+                                          return (
+                                            <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
+                                          )}
+                                        )}<span className="tooltip" alt="Not yet announced">*</span>
                                     </Grid>
                                   </Grid>
                                 </div>

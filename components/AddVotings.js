@@ -121,7 +121,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     endDate: null,
   });
   // const [awards, setAwards] = useState(null)
-  const [app, setApp] = useState(loadedData?.app || null);
+  const [app, setApp] = useState(loadedData?.app || []);
   // const [category, setCategory] = useState(loadedData?.category || null);
   const [category, setCategory] = useState(loadedData?.categories || [])
   const [tutorialURL, setTutorialURL] = useState(loadedData?.tutorialURL || null);
@@ -137,7 +137,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     setTutorialURL(loadedData?.tutorialURL || null)
     setCategory(loadedData?.category || [])
 
-    console.log("category", loadedData?.category)
+    // console.log("category", loadedData?.category)
 
 
     const start = !!loadedData?.startDate ? moment.tz(loadedData?.startDate, "Asia/Seoul").format("YYYY-MM-DD hh:mm:ss") : null
@@ -147,7 +147,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
     const end = !!loadedData?.endDate ? moment.tz(loadedData?.endDate, "Asia/Seoul").format("YYYY-MM-DD hh:mm:ss") : null
     setEndDate(end)
 
-    console.log("categories", categories)
+    // console.log("categories", categories)
 
     // setAwardType(loadedData?.awardKey || null)
 
@@ -438,7 +438,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} lg={4}>
-            <FormControl variant="outlined" className={classes.formControl}>
+            {/* <FormControl variant="outlined" className={classes.formControl}>
               <InputLabel ref={labelRef} htmlFor="my-input" error={validation.award}>App *</InputLabel>
               <Select
                 native
@@ -459,86 +459,111 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
                   ))
                 }
               </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6} lg={4}>
-            {/* <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel ref={labelRef} htmlFor="my-input" error={validation.award}>Category *</InputLabel>
+            </FormControl> */}
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel ref={labelRef} htmlFor="my-input" error={validation.app}>Apps *</InputLabel>
               <Select
-                native
-                value={category || "Category"}
-                onChange={handleCategoryChange}
-                label="Category *"
-                inputProps={{
-                  name: 'age',
-                  id: 'outlined-age-native-simple',
+                labelId="demo-mutiple-chip-label"
+                id="demo-mutiple-chip"
+                multiple
+                labelWidth={labelWidth}
+                label="Apps *"
+                required={true}
+                value={app || []}
+                // value={category || "Category"}
+                onChange={handleAppChange}
+                input={
+                  <OutlinedInput
+                    id="select-multiple-chip"
+                    labelWidth={labelWidth}
+                    label="Apps *"
+                    required={true}
+                    className={classes.outlinedInput}
+                    error={validation.app}
+                  />
+                }
+                variant="outlined"
+                renderValue={(selected) => {
+                  // console.log("selected", selected, Array.isArray(selected))
+                  return (
+                    <div className={classes.chips}>
+                      {
+                        Array.isArray(selected)  && selected.map((value) => {
+                          console.log("VALUE", value)
+                          const selectedApp = apps.find((app) => { return app.slug === value })
+                          return (
+                            <Chip key={value} label={selectedApp.name} className={classes.chip} size="small" />
+                          )
+                        })
+                      }
+                    </div>
+                  )
                 }}
-                // defaultValue="Category"
-                error={validation.category}
               >
-                <option aria-label="None" value="" />
                 {
-                  !!categories && categories.map((value) => (
-                    <option value={value.name} key={`category-type-${value.name}`} label={value.name}>{value.name}</option>
+                  apps.map(({name, slug}) => (
+                    <MenuItem key={slug} value={slug} style={getStyles(name, category, theme)}>
+                      {name}
+                    </MenuItem>
                   ))
                 }
               </Select>
-            </FormControl> */}
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel ref={labelRef} htmlFor="my-input" error={validation.category}>Categories *</InputLabel>
-                <Select
-                  labelId="demo-mutiple-chip-label"
-                  id="demo-mutiple-chip"
-                  multiple
-                  labelWidth={labelWidth}
-                  label="Categories *"
-                  required={true}
-                  value={category || "Categories"}
-                  // value={category || "Category"}
-                  onChange={handleCategoryChange}
-                  input={
-                    <OutlinedInput
-                      id="select-multiple-chip"
-                      labelWidth={labelWidth}
-                      label="Categories *"
-                      required={true}
-                      className={classes.outlinedInput}
-                      error={validation.category}
-                    />
-                  }
-                  variant="outlined"
-                  renderValue={(selected) => {
-                    console.log("selected", selected, Array.isArray(selected))
-                    return (
-                      <div className={classes.chips}>
-                        {
-                          Array.isArray(selected)  && selected.map((value) => {
-                            console.log("VALUE", value)
-                              return (
-                              <Chip key={value} label={value} className={classes.chip} size="small" />
-                              )
-                            }
-                          )
-                        }
-                      </div>
-                    )
-                  }
-                }
-
-                >
-                  {/*  style={getStyles(name, category, theme)} */}
-                  {
-                    categories.map(({name}) => (
-                      <MenuItem key={name} value={name} style={getStyles(name, category, theme)}>
-                        {name}
-                      </MenuItem>
-                    ))
-                  }
-                </Select>
-                <FormHelperText id="my-helper-text">Where voting and collection happens, can be multiple</FormHelperText>
-                </FormControl>
+              <FormHelperText id="my-helper-text">Where voting and collection happens, can be multiple</FormHelperText>
+            </FormControl>
           </Grid>
-          <Grid item xs={12} sm={12} lg={12}>
+          <Grid item xs={12} sm={6} lg={4}>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel ref={labelRef} htmlFor="my-input" error={validation.category}>Categories *</InputLabel>
+              <Select
+                labelId="demo-mutiple-chip-label"
+                id="demo-mutiple-chip"
+                multiple
+                labelWidth={labelWidth}
+                label="Categories *"
+                required={true}
+                value={category || []}
+                // value={category || "Category"}
+                onChange={handleCategoryChange}
+                input={
+                  <OutlinedInput
+                    id="select-multiple-chip"
+                    labelWidth={labelWidth}
+                    label="Categories *"
+                    required={true}
+                    className={classes.outlinedInput}
+                    error={validation.category}
+                  />
+                }
+                variant="outlined"
+                renderValue={(selected) => {
+                  console.log("selected", selected, Array.isArray(selected))
+                  return (
+                    <div className={classes.chips}>
+                      {
+                        Array.isArray(selected)  && selected.map((value) => {
+                          console.log("VALUE", value)
+                            return (
+                            <Chip key={value} label={value} className={classes.chip} size="small" />
+                            )
+                          }
+                        )
+                      }
+                    </div>
+                  )
+                }}
+              >
+                {
+                  categories.map(({name}) => (
+                    <MenuItem key={name} value={name} style={getStyles(name, category, theme)}>
+                      {name}
+                    </MenuItem>
+                  ))
+                }
+              </Select>
+              <FormHelperText id="my-helper-text">Where voting and collection happens, can be multiple</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} lg={4}>
             <TextField
               className="ticket"
               label="Description"
@@ -549,7 +574,7 @@ export default function AddVotings({open, submit, loadedData, closeModal, apps, 
               required
             />
           </Grid>
-          <Grid item xs={12} sm={12} lg={12}>
+          <Grid item xs={12} sm={6} lg={4}>
             <TextField
               className="ticket"
               label="Tutorial URL (optional)"

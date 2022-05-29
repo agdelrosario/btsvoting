@@ -45,15 +45,23 @@ const votingsColumns = [
   { field: 'app', headerName: 'App', width: 200 },
 ]
 
-const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], votings = [] }) => {
+const tutorialsColumns = [
+  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'name', headerName: 'Name', width: 200 },
+  // { field: 'awardType', headerName: 'Award Type', width: 200 },
+]
+
+const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], votings = [], tutorials = [] }) => {
   const [appsContainer, setAppsContainer] = useState(apps)
   const [categoriesContainer, setCategoriesContainer] = useState(categories)
   const [awardsContainer, setAwardsContainer] = useState(awards)
+  const [tutorialsContainer, setTutorialsContainer] = useState(tutorials)
   const [votingsContainer, setVotingsContainer] = useState(votings)
   const [addAppModalOpen, setAddAppModalOpen] = useState(false);
   const [addVotingsModalOpen, setAddVotingsModalOpen] = useState(false);
   const [addCategoriesModalOpen, setAddCategoriesModalOpen] = useState(false);
   const [addAwardsModalOpen, setAddAwardsModalOpen] = useState(false);
+  const [addTutorialsModalOpen, setAddTutorialsModalOpen] = useState(false);
   const [appsData, setAppsData] = useState(apps.map((app, index) => {
     return {
       id: index + 1,
@@ -103,10 +111,21 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
       tutorialURL: voting.tutorialURL,
     }
   }) : [])
+  const [tutorialsData, setTutorialsData] = useState(!!tutorials ? tutorials.map((tutorials, index) => {
+    return {
+      id: index + 1,
+      name: tutorials.name,
+      url: tutorials.url,
+      isInternal: tutorials.isInternal,
+      // awardType: award.awardType,
+      // awardTypeKey: award.awardTypeKey,
+    }
+  }) : [])
   const [editAppData, setEditAppData] = useState(null);
   const [editVotingsData, setEditVotingsData] = useState(null);
   const [editCategoriesData, setEditCategoriesData] = useState(null);
   const [editAwardsData, setEditAwardsData] = useState(null);
+  const [editTutorialsData, setEditTutorialsData] = useState(null);
   const [overallAppStatistics, setOverAllAppStatistics] = useState(null);
   const [teamStatistics, setTeamStatistics] = useState([]);
   const [teamStatsColumns, setTeamStatsColumns] = useState([
@@ -868,6 +887,22 @@ const AdminDashboard = ({ teams, apps, email, categories = [], awards = [], voti
             </Grid>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid rows={categoriesData} columns={categoriesColumns} pageSize={5} onRowClick={openEditCategories} />
+            </div>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Grid container>
+              <Grid item xs>
+                <h1>Tutorials</h1>
+              </Grid>
+              <Grid item xs align="right">
+                <Button variant="contained" color="secondary" onClick={openAddAwards} className="button">
+                  Add Tutorial
+                </Button>
+              </Grid>
+            </Grid>
+            <div style={{ height: 400, width: '100%' }}>
+              {/* <DataGrid rows={[]} columns={columns} pageSize={5} /> */}
+              <DataGrid rows={awardsData} columns={awardsColumns} pageSize={5} onRowClick={openEditAwards} />
             </div>
           </Grid>
         </Grid>
