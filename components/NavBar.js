@@ -14,7 +14,7 @@ const NavBar = ({lowerThanSm}) => {
       // spacing={1}
     >
       <Grid item xs={9} sm={6} className="title">
-        <a href="/portal">
+        <a href="/">
           BTS VOTING ORG<span className="title-dot">.</span>
         </a>
       </Grid>

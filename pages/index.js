@@ -12,7 +12,8 @@ import AlbumIcon from '@mui/icons-material/Album';
 import PublicIcon from '@mui/icons-material/Public';
 // import { Public } from '@material-ui/icons';
 import StarIcon from '@mui/icons-material/Star';
-import { Apps } from '@material-ui/icons';
+// import { Apps } from '@material-ui/icons';
+import Loading from '../components/Loading';
 
 export default function Home({enableFrontpage}) {
   // const [session, loading] = useSession();
@@ -21,12 +22,14 @@ export default function Home({enableFrontpage}) {
   const [presentVotings, setPresentVotings] = useState()
   const [futureVotings, setFutureVotings] = useState()
   const [categories, setCategories] = useState()
+  const [loading, setLoading] = useState(true)
+
 
   const theme = useTheme();
   const lowerThanSm = useMediaQuery(theme.breakpoints.down('xs'));
   const lowerThanMd = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
+  useEffect(async () => {
     const retrievePastVotings = async () => {
       const votingsRes = await fetch(`/api/votings/past`);
       let votingsJson = await votingsRes.json()
@@ -44,7 +47,7 @@ export default function Home({enableFrontpage}) {
       // console.log("votingsJson", votingsJson)
 
       if (!!votingsJson) {
-        setPresentVotings(votingsJson.concat(votingsJson).concat(votingsJson));
+        setPresentVotings(votingsJson);
       } else {
         setPresentVotings([])
       }
@@ -89,10 +92,12 @@ export default function Home({enableFrontpage}) {
 
     moment.tz.setDefault("Asia/Seoul")
     retrieveApps()
-    retrievePresentVotings()
-    retrievePastVotings()
-    retrieveFutureVotings()
     retrieveCategory()
+    await retrievePresentVotings()
+    await retrievePastVotings()
+    await retrieveFutureVotings()
+
+    setLoading(false)
   }, [])
 
   const formatDateRange = (startDate, endDate) => {
@@ -143,8 +148,13 @@ export default function Home({enableFrontpage}) {
             </Grid>
 
             <main>
-            {/* {
-              !lowerThanSm && ( */}
+            {
+              loading && (
+                <Loading />
+              )
+            }
+            {
+              !loading && (
                 <Grid container>
         
                   {/* <Grid item xs={12} lg={2} className="sidebar">
@@ -200,7 +210,8 @@ export default function Home({enableFrontpage}) {
                                           return (
                                             <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
                                           )}
-                                        )}<span className="tooltip" alt="Not yet announced">*</span>
+                                        )}
+                                        {/* <span className="tooltip" alt="Not yet announced">*</span> */}
                                       </div>
                                     </div>
                                   </div>
@@ -231,6 +242,7 @@ export default function Home({enableFrontpage}) {
                             
 
                             return (
+                              <a href={`/voting/${voting._id}`}>
                               <div className="card" key={voting.oid}>
                                 <div className="node">
               
@@ -268,7 +280,8 @@ export default function Home({enableFrontpage}) {
                                           return (
                                             <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
                                           )}
-                                        )}<span className="tooltip" alt="Not yet announced">*</span>
+                                        )}
+                                        {/* <span className="tooltip" alt="Not yet announced">*</span> */}
                                       </Grid>
                                       <Grid item xs={12} sm={6}>
                                         Current ranking: <strong>#10</strong> (1,509,326)
@@ -277,6 +290,7 @@ export default function Home({enableFrontpage}) {
                                   </div>
                                 </div>
                               </div>
+                              </a>
                             )
                           })
                         }
@@ -303,6 +317,7 @@ export default function Home({enableFrontpage}) {
                             
 
                             return (
+                              <a href={`/voting/${voting._id}`}>
                           <div className="card" key={voting.oid}>
                             <div className="node">
           
@@ -318,7 +333,7 @@ export default function Home({enableFrontpage}) {
                                 <div className="rank">
                                   <div className="rank-star"><StarIcon style={{color: "#C1C1C1"}} /></div>
                                   <span className="rank-title">RANK</span>
-                                  <span className="rank-position">#1</span>
+                                  <span className="rank-position">1</span>
                                 </div>
                                 <div className="details">
                                   <h1>{ voting.name }</h1>
@@ -336,23 +351,32 @@ export default function Home({enableFrontpage}) {
                                       })
                                     }
                                   </div> 
-                                  <Grid container className="app-link">
-                                    <Grid item xs={12} sm={6}>
-                                      Voted on {!!voting.app && voting.app.map((votingApp, index) => {
-                                          const selectedApp = apps.find((app) => { return app.slug === votingApp })
+                                  <Grid container className="breakdown" spacing={2}>
+                                    <Grid item xs={12} sm={6} spacing={1} align="flext-start" justify="flex-start">
+                                      <div className="breakdown-title">Voted on</div>
+                                      <div className="breakdown-content">
+                                        {!!voting.app && voting.app.map((votingApp, index) => {
+                                            const selectedApp = apps.find((app) => { return app.slug === votingApp })
 
-                                          if (!selectedApp) { return }
+                                            if (!selectedApp) { return }
 
-                                          return (
-                                            <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
+                                            return (
+                                              <span>{selectedApp.name}{index < (voting.app.length - 1) ? `, `: ''}</span>
+                                            )}
                                           )}
-                                        )}<span className="tooltip" alt="Not yet announced">*</span>
+                                        </div>
+                                        {/* <span className="tooltip" alt="Not yet announced">*</span> */}
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} spacing={1} align="flext-start" justify="flex-start">
+                                      <div item xs="12" className="breakdown-title">Final Score</div>
+                                      <div item xs="12" className="breakdown-content">1,500,000</div>
                                     </Grid>
                                   </Grid>
                                 </div>
                               {/* </div> */}
                             </div>
                           </div>
+                        </a>
                             )})
                         }
                         </div>
@@ -366,15 +390,8 @@ export default function Home({enableFrontpage}) {
                     </div>
                   </Grid>
                 </Grid>
-              {/* )
-            }
-            {
-              lowerThanSm && (
-                <Grid container>
-    
-                </Grid>
               )
-            } */}
+            }
     
     
             {/* 
@@ -413,7 +430,7 @@ export default function Home({enableFrontpage}) {
 
           <footer className={`${lowerThanSm || lowerThanMd ? " mobile" : ""}`}>
             <div>BTS Voting Org 2021</div>
-            <div>Developed and maintained by <a href="https://twitter.com/taeyadelune">@taeyadelune</a> &nbsp;&#9900;&nbsp; Content by BVO members</div>
+            <div>Developed and maintained by the <a href="/about/bvo-web-team">BVO Web Team</a></div>
           </footer>
         </div>
         )

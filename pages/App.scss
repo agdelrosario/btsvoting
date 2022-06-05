@@ -639,11 +639,15 @@ p {
     color: #a7a7a7;
 
     &.mobile {
-      padding: 0 40px;
+      padding: 0 30px;
 
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
+
+      div:first-child {
+        margin-bottom: 10px;
+      }
     }
 
     img {
@@ -683,6 +687,12 @@ p {
       max-width: 100%;
       padding: 0 30px !important;
     }
+
+    .main-content {
+      box-sizing: border-box;
+      max-width: 100%;
+      padding: 20px 30px !important;
+    }
   }
 
   .icon {
@@ -712,6 +722,13 @@ p {
     &.down {
 
     }
+  }
+
+  .main-content {
+
+    position: relative;
+    padding: 20px 70px 20px 70px;
+    box-sizing: border-box;
   }
 
   .timeline {
@@ -1223,6 +1240,7 @@ p {
         padding-bottom: 30px;
         margin-right: -70px;
         box-sizing: border-box;
+        width: 100vw;
 
         .card {
           position: relative;
@@ -1277,6 +1295,7 @@ p {
             // margin-left: -174px;
             justify-content: flex-start;
             align-items: flex-start;
+            // max-width: 100%;
             width: 100%;
   
             .date {
@@ -1333,7 +1352,8 @@ p {
               .details {
                 // display: flex;
                 // align-items: center;
-                // max-width: calc(100% - 320px);
+                width: calc(100% - 270px);
+                // width: 100%;
     
                 .app-link {
                   // margin-left: 20px;
@@ -1346,6 +1366,25 @@ p {
                     line-height: 10px;
                   }
                   
+                }
+
+                .breakdown {
+                  margin-top: 5px;
+
+                  &-title {
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    // max-height: 21px;
+                    margin-bottom: 5px;
+                  }
+
+                  &-content {
+                    // display: flex;
+                    font-size: 13px;
+                    // align-items: flex-start;
+                    // justify-content: flex-start;
+                  }
                 }
     
     
@@ -1729,7 +1768,7 @@ p {
                   flex-direction: column;
                   justify-content: flex-start;
                   align-items: flex-start;
-                  max-width: 100%;
+                  width: 100%;
   
                   h1 {
                     margin-top: 5px;
